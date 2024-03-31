@@ -177,3 +177,4 @@ dist
 .turbo
 
 # End of https://www.toptal.com/developers/gitignore/api/turbo,nextjs,node
+*storybook.log

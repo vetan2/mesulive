@@ -2,7 +2,11 @@
  * @type {import("eslint").Linter.Config}
  */
 module.exports = {
-  extends: ["next/core-web-vitals", "@vetan2/react"],
+  extends: [
+    "next/core-web-vitals",
+    "@vetan2/react",
+    "plugin:storybook/recommended",
+  ],
   plugins: ["@vetan2"],
   rules: {
     "@vetan2/import-path": 1,
