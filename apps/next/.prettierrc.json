@@ -3,5 +3,7 @@
     "prettier-plugin-tailwindcss",
     "prettier-plugin-classnames",
     "prettier-plugin-merge"
-  ]
+  ],
+  "tailwindFunctions": ["clsx", "cn"],
+  "customFunctions": ["clsx", "cn"]
 }
