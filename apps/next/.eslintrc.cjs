@@ -2,11 +2,7 @@
  * @type {import("eslint").Linter.Config}
  */
 module.exports = {
-  extends: [
-    "next/core-web-vitals",
-    "@vetan2/react",
-    "plugin:storybook/recommended",
-  ],
+  extends: ["next/core-web-vitals", "plugin:@vetan2/react", "plugin:storybook/recommended"],
   plugins: ["@vetan2"],
   rules: {
     "@vetan2/import-path": 1,
@@ -19,12 +15,7 @@ module.exports = {
           caseInsensitive: true,
         },
         "newlines-between": "always",
-        groups: [
-          "builtin",
-          "external",
-          "internal",
-          ["parent", "sibling", "index"],
-        ],
+        groups: ["builtin", "external", "internal", ["parent", "sibling", "index"]],
         pathGroups: [
           {
             pattern: "~*/**",
@@ -40,12 +31,7 @@ module.exports = {
     "import/no-extraneous-dependencies": [
       1,
       {
-        devDependencies: [
-          ".storybook/**",
-          "**/*.config.*",
-          "scripts/**",
-          "**/*.stories.ts*",
-        ],
+        devDependencies: [".storybook/**", "**/*.config.*", "scripts/**", "**/*.stories.ts*"],
       },
     ],
     "prettier/prettier": [1, {}, { usePrettierrc: true }],
@@ -54,10 +40,7 @@ module.exports = {
     {
       files: ["layout.tsx", "page.tsx"],
       rules: {
-        "react/function-component-definition": [
-          2,
-          { namedComponents: "function-declaration" },
-        ],
+        "react/function-component-definition": [2, { namedComponents: "function-declaration" }],
       },
     },
     {
