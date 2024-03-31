@@ -1,4 +1,5 @@
 {
   "git.ignoreLimitWarning": true,
-  "eslint.workingDirectories": ["./apps/next", "./packages/*"]
+  "eslint.workingDirectories": ["./apps/next", "./packages/*"],
+  "cSpell.words": ["clsx", "nextui"]
 }
