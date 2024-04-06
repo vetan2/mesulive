@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev:next": "next dev",
-    "dev:storyook": "storybook dev -p 6006 --no-open",
+    "dev:storybook": "storybook dev -p 6006 --no-open",
     "dev": "concurrently \"pnpm dev:next\" \"pnpm dev:storybook\"",
     "build": "next build",
     "start": "next start",
@@ -13,7 +13,9 @@
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
-    "@nextui-org/react": "^2.2.10",
+    "@nextui-org/button": "^2.0.27",
+    "@nextui-org/system": "^2.0.15",
+    "@nextui-org/theme": "^2.1.18",
     "clsx": "^2.1.0",
     "framer-motion": "^11.0.24",
     "next": "14.1.4",
@@ -27,6 +29,7 @@
     "@storybook/addon-interactions": "^8.0.5",
     "@storybook/addon-links": "^8.0.5",
     "@storybook/addon-onboarding": "^8.0.5",
+    "@storybook/addon-themes": "^8.0.5",
     "@storybook/blocks": "^8.0.5",
     "@storybook/nextjs": "^8.0.5",
     "@storybook/react": "^8.0.5",
