@@ -1,1 +1,1 @@
-export { cn } from "./utils";
+export { cx as cn } from "./utils";
