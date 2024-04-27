@@ -1,4 +1,4 @@
-import { NextUIProvider } from "@nextui-org/system";
+import { NextUIProvider } from "@nextui-org/react";
 import { withThemeFromJSXProvider } from "@storybook/addon-themes";
 import type { Preview } from "@storybook/react";
 
@@ -15,6 +15,7 @@ const preview: Preview = {
     nextjs: {
       appDirectory: true,
     },
+    layout: "centered",
   },
   decorators: [withThemeFromJSXProvider({ Provider: NextUIProvider })],
 };
