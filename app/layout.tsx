@@ -1,10 +1,9 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
 
 import { NextUIProvider } from "./_layer/next-ui";
 import "./_shared/style/globals.css";
-
-const inter = Inter({ subsets: ["latin"] });
+import { cn } from "./_shared/style";
+import { pretendard } from "./_shared/style/fonts";
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -17,9 +16,9 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body className={inter.className}>
-        <NextUIProvider>{children} </NextUIProvider>
+    <html lang="ko" className={cn(pretendard.variable, pretendard.className)}>
+      <body>
+        <NextUIProvider>{children}</NextUIProvider>
       </body>
     </html>
   );

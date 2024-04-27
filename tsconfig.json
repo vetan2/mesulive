@@ -28,8 +28,8 @@
     "**/*.ts",
     "**/*.tsx",
     ".next/types/**/*.ts",
-    ".storybook/**.*.ts",
-    ".storybook/**.*.tsx",
+    ".storybook/**/*.ts",
+    ".storybook/**/*.tsx",
     "types/**/*.d.ts"
   ]
 }
