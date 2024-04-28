@@ -1,1 +1,2 @@
-export { NextUIProvider } from "./provider";
+export { NextUIProvider } from "./NextUIProvider";
+export { JotaiProvider } from "./JotaiProvider";

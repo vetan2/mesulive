@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 
-import { NextUIProvider } from "./_layer/next-ui";
+import { JotaiProvider, NextUIProvider } from "./_layer/next-ui";
 import "./_shared/style/globals.css";
 import { cn } from "./_shared/style";
 import { pretendard } from "./_shared/style/fonts";
@@ -18,7 +18,9 @@ export default function RootLayout({
   return (
     <html lang="ko" className={cn(pretendard.variable, pretendard.className, "font-medium")}>
       <body>
-        <NextUIProvider>{children}</NextUIProvider>
+        <JotaiProvider>
+          <NextUIProvider>{children}</NextUIProvider>
+        </JotaiProvider>
       </body>
     </html>
   );
