@@ -16,7 +16,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="ko" className={cn(pretendard.variable, pretendard.className)}>
+    <html lang="ko" className={cn(pretendard.variable, pretendard.className, "font-medium")}>
       <body>
         <NextUIProvider>{children}</NextUIProvider>
       </body>
