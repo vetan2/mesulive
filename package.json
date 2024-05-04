@@ -2,7 +2,7 @@
   "name": "mesulive",
   "private": true,
   "scripts": {
-    "dev:next": "next dev",
+    "dev:next": "next dev --turbo",
     "dev:storybook": "storybook dev -p 6006 --no-open --quiet",
     "dev": "concurrently \"pnpm dev:next\" \"pnpm dev:storybook\"",
     "build": "next build",
@@ -24,6 +24,7 @@
     "react-dom": "^18.3.1",
     "tailwind-merge": "^2.3.0",
     "ts-pattern": "^5.1.1",
+    "usehooks-ts": "^3.1.0",
     "vaul": "^0.9.0"
   },
   "devDependencies": {
