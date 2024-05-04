@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 
-import { JotaiProvider, NextUIProvider } from "./_layer/next-ui";
+import { JotaiProvider, NextUIProvider } from "./_layer";
 import "./_shared/style/globals.css";
 import { cn } from "./_shared/style";
 import { pretendard } from "./_shared/style/fonts";

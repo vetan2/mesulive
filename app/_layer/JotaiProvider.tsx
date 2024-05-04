@@ -3,6 +3,7 @@
 import { Provider, createStore } from "jotai";
 import { DevTools } from "jotai-devtools";
 import { type PropsWithChildren } from "react";
+import "jotai-devtools/styles.css";
 
 const globalStore = createStore();
 
