@@ -9,10 +9,19 @@ export interface DrawerProps {
   children?: ReactNode;
   variant: "permanent" | "persisted" | "temporary";
   isOpen?: boolean;
+  onOpenChange?: (isOpen: boolean) => void;
+  onClose?: () => void;
   className?: string;
 }
 
-export const Drawer = ({ children, variant, isOpen, className }: DrawerProps) => {
+export const Drawer = ({
+  children,
+  variant,
+  isOpen,
+  onOpenChange,
+  onClose,
+  className,
+}: DrawerProps) => {
   return match(variant)
     .with("permanent", () => (
       <PermanentDrawer isOpen={isOpen} className={className}>
@@ -25,7 +34,7 @@ export const Drawer = ({ children, variant, isOpen, className }: DrawerProps) =>
       </PersistedDrawer>
     ))
     .otherwise(() => (
-      <TemporaryDrawer open={isOpen} direction="left">
+      <TemporaryDrawer open={isOpen} direction="left" onClose={onClose} onOpenChange={onOpenChange}>
         <TemporaryDrawerContent className={className}>{children}</TemporaryDrawerContent>
       </TemporaryDrawer>
     ));

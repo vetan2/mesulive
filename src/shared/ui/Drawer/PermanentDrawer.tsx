@@ -1,6 +1,6 @@
 import { type ReactNode } from "react";
 
-import { cx } from "@/_shared/style/utils";
+import { cx } from "~/shared/style";
 
 interface Props {
   isOpen?: boolean;

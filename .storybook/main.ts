@@ -11,7 +11,7 @@ function getAbsolutePath(value: string): any {
   return dirname(require.resolve(join(value, "package.json")));
 }
 const config: StorybookConfig = {
-  stories: ["../app/**/*.mdx", "../app/**/*.stories.@(js|jsx|mjs|ts|tsx)"],
+  stories: ["../src/**/*.mdx", "../src/**/*.stories.@(js|jsx|mjs|ts|tsx)"],
   addons: [
     getAbsolutePath("@storybook/addon-onboarding"),
     getAbsolutePath("@storybook/addon-links"),
@@ -29,8 +29,8 @@ const config: StorybookConfig = {
   staticDirs: [
     "../public",
     {
-      from: "../app/_shared/style/fonts",
-      to: "app/_shared/style/fonts",
+      from: "../src/shared/style/fonts",
+      to: "src/shared/style/fonts",
     },
   ],
   webpackFinal: async (config) => {
@@ -38,8 +38,7 @@ const config: StorybookConfig = {
       // eslint-disable-next-line no-param-reassign
       config.resolve.alias = {
         ...config.resolve.alias,
-        "@": resolve(__dirname, "../app"),
-        "~": resolve(__dirname, ".."),
+        "~": resolve(__dirname, "../src"),
       };
     }
 

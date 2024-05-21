@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { useDebounceCallback, useEventListener, useIsomorphicLayoutEffect } from "usehooks-ts";
 
-import { type BreakPoint } from "@/_shared/style/breakPoint/types";
-import { getBreakPoints } from "@/_shared/style/breakPoint/utils";
+import { type BreakPoint } from "~/shared/style/breakPoint/types";
+import { getBreakPoints } from "~/shared/style/breakPoint/utils";
 
 type UseBreakPointOptions<InitializeWithValue extends boolean | undefined> = {
   initializeWithValue: InitializeWithValue;
