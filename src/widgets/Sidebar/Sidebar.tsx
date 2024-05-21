@@ -1,30 +1,50 @@
 "use client";
 
+import { useAtom } from "jotai";
+import { useEffect, useRef } from "react";
 import { P, match } from "ts-pattern";
 
 import { BreakPoint, useBreakPoint } from "~/shared/style/breakPoint";
 import { Drawer } from "~/shared/ui/Drawer";
 
+import { sidebarAtoms } from "./atoms";
 import { SidebarContent } from "./SidebarContent";
 
-interface Props {
-  isOpen: boolean;
-  onOpenChange: (isOpen: boolean) => void;
-}
-
-export const Sidebar = ({ isOpen, onOpenChange }: Props) => {
+export const Sidebar = () => {
   const breakPoint = useBreakPoint({ initializeWithValue: false });
+  const [isOpen, setIsOpen] = useAtom(sidebarAtoms.isOpen);
+  const prevBreakPoint = useRef<BreakPoint | undefined>(undefined);
 
-  console.log((breakPoint ?? -Infinity) >= BreakPoint.md && isOpen);
+  useEffect(() => {
+    setIsOpen((prev) =>
+      match({ breakPoint, prevBreakPoint: prevBreakPoint.current })
+        .with(
+          {
+            breakPoint: P.union(BreakPoint.sm, BreakPoint.md),
+          },
+          () => false,
+        )
+        .with(
+          {
+            breakPoint: P.union(BreakPoint.lg, BreakPoint.xl),
+            prevBreakPoint: P.union(BreakPoint.sm, BreakPoint.md),
+          },
+          () => true,
+        )
+        .otherwise(() => prev),
+    );
+
+    prevBreakPoint.current = breakPoint;
+  }, [breakPoint, setIsOpen]);
 
   return (
     <>
       <Drawer
         variant="temporary"
         isOpen={breakPoint === BreakPoint.sm && isOpen}
-        onOpenChange={onOpenChange}
+        onOpenChange={setIsOpen}
         onClose={() => {
-          onOpenChange(false);
+          setIsOpen(false);
         }}
         className="h-full w-60 bg-white md:hidden"
       >
@@ -35,9 +55,9 @@ export const Sidebar = ({ isOpen, onOpenChange }: Props) => {
         isOpen={match(breakPoint)
           .with(P.nullish, () => false)
           .otherwise(() => isOpen)}
-        onOpenChange={onOpenChange}
+        onOpenChange={setIsOpen}
         onClose={() => {
-          onOpenChange(false);
+          setIsOpen(false);
         }}
         className="hidden h-full w-60 bg-white md:max-lg:block"
       >
@@ -47,10 +67,10 @@ export const Sidebar = ({ isOpen, onOpenChange }: Props) => {
         variant="persisted"
         isOpen={match(breakPoint)
           .with(P.nullish, () => true)
-          .otherwise((breakPoint) => breakPoint >= BreakPoint.lg && isOpen)}
-        onOpenChange={onOpenChange}
+          .otherwise(() => isOpen)}
+        onOpenChange={setIsOpen}
         onClose={() => {
-          onOpenChange(false);
+          setIsOpen(false);
         }}
         className="hidden h-full w-[280px] bg-white lg:block"
       >
