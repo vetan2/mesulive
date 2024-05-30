@@ -62,7 +62,7 @@ export const Sidebar = () => {
       <Drawer
         variant="persisted"
         isOpen={match(breakPoint)
-          .with(P.nullish, () => true)
+          .with(P.union(P.nullish, BreakPoint.xl), () => true)
           .otherwise(() => isOpen)}
         onOpenChange={setIsOpen}
         onClose={() => {
