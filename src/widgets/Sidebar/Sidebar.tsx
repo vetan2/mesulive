@@ -1,8 +1,8 @@
 "use client";
 
 import { useAtom } from "jotai";
-import { useEffect, useRef } from "react";
 import { P, match } from "ts-pattern";
+import { useIsomorphicLayoutEffect } from "usehooks-ts";
 
 import { BreakPoint, useBreakPoint } from "~/shared/style/breakPoint";
 import { Drawer } from "~/shared/ui/Drawer";
@@ -13,11 +13,10 @@ import { SidebarContent } from "./SidebarContent";
 export const Sidebar = () => {
   const breakPoint = useBreakPoint({ initializeWithValue: false });
   const [isOpen, setIsOpen] = useAtom(sidebarAtoms.isOpen);
-  const prevBreakPoint = useRef<BreakPoint | undefined>(undefined);
 
-  useEffect(() => {
+  useIsomorphicLayoutEffect(() => {
     setIsOpen((prev) =>
-      match({ breakPoint, prevBreakPoint: prevBreakPoint.current })
+      match({ breakPoint })
         .with(
           {
             breakPoint: P.union(BreakPoint.sm, BreakPoint.md),
@@ -26,15 +25,12 @@ export const Sidebar = () => {
         )
         .with(
           {
-            breakPoint: P.union(BreakPoint.lg, BreakPoint.xl),
-            prevBreakPoint: P.union(BreakPoint.sm, BreakPoint.md),
+            breakPoint: BreakPoint.lg,
           },
           () => true,
         )
         .otherwise(() => prev),
     );
-
-    prevBreakPoint.current = breakPoint;
   }, [breakPoint, setIsOpen]);
 
   return (
@@ -46,7 +42,7 @@ export const Sidebar = () => {
         onClose={() => {
           setIsOpen(false);
         }}
-        className="h-full w-60 bg-white md:hidden"
+        className="h-full w-72 bg-white md:hidden"
       >
         <SidebarContent />
       </Drawer>
@@ -59,20 +55,20 @@ export const Sidebar = () => {
         onClose={() => {
           setIsOpen(false);
         }}
-        className="hidden h-full w-60 bg-white md:max-lg:block"
+        className="hidden h-full w-72 border-r-1 border-r-default-100 bg-white md:max-lg:block"
       >
         <SidebarContent />
       </Drawer>
       <Drawer
         variant="persisted"
         isOpen={match(breakPoint)
-          .with(P.nullish, () => true)
+          .with(P.union(P.nullish, BreakPoint.xl), () => true)
           .otherwise(() => isOpen)}
         onOpenChange={setIsOpen}
         onClose={() => {
           setIsOpen(false);
         }}
-        className="hidden h-full w-[280px] bg-white lg:block"
+        className="hidden h-full border-r-1 border-r-default-100 bg-white lg:block"
       >
         <SidebarContent />
       </Drawer>

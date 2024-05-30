@@ -9,5 +9,5 @@ interface Props {
 }
 
 export const PermanentDrawer = ({ isOpen = true, children, className }: Props) => {
-  return <div className={cx("h-screen w-60", !isOpen && "hidden", className)}>{children}</div>;
+  return <div className={cx("h-screen w-72", !isOpen && "hidden", className)}>{children}</div>;
 };
