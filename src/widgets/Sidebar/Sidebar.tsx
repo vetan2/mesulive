@@ -1,7 +1,7 @@
 "use client";
 
 import { useAtom } from "jotai";
-import { useEffect, useRef } from "react";
+import { useLayoutEffect, useRef } from "react";
 import { P, match } from "ts-pattern";
 
 import { BreakPoint, useBreakPoint } from "~/shared/style/breakPoint";
@@ -15,7 +15,7 @@ export const Sidebar = () => {
   const [isOpen, setIsOpen] = useAtom(sidebarAtoms.isOpen);
   const prevBreakPoint = useRef<BreakPoint | undefined>(undefined);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     setIsOpen((prev) =>
       match({ breakPoint, prevBreakPoint: prevBreakPoint.current })
         .with(
@@ -27,7 +27,7 @@ export const Sidebar = () => {
         .with(
           {
             breakPoint: P.union(BreakPoint.lg, BreakPoint.xl),
-            prevBreakPoint: P.union(BreakPoint.sm, BreakPoint.md),
+            prevBreakPoint: P.union(BreakPoint.sm, BreakPoint.md, P.nullish),
           },
           () => true,
         )
