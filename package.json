@@ -2,7 +2,7 @@
   "name": "mesulive",
   "private": true,
   "scripts": {
-    "dev:next": "next dev --turbo",
+    "dev:next": "next dev",
     "dev:storybook": "storybook dev -p 6006 --no-open --quiet",
     "dev": "concurrently \"pnpm dev:next\" \"pnpm dev:storybook\"",
     "build": "next build",
