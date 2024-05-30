@@ -1,7 +1,6 @@
 "use client";
 
 import { useAtom } from "jotai";
-import { useRef } from "react";
 import { P, match } from "ts-pattern";
 import { useIsomorphicLayoutEffect } from "usehooks-ts";
 
@@ -14,11 +13,10 @@ import { SidebarContent } from "./SidebarContent";
 export const Sidebar = () => {
   const breakPoint = useBreakPoint({ initializeWithValue: false });
   const [isOpen, setIsOpen] = useAtom(sidebarAtoms.isOpen);
-  const prevBreakPoint = useRef<BreakPoint | undefined>(undefined);
 
   useIsomorphicLayoutEffect(() => {
     setIsOpen((prev) =>
-      match({ breakPoint, prevBreakPoint: prevBreakPoint.current })
+      match({ breakPoint })
         .with(
           {
             breakPoint: P.union(BreakPoint.sm, BreakPoint.md),
@@ -27,15 +25,12 @@ export const Sidebar = () => {
         )
         .with(
           {
-            breakPoint: P.union(BreakPoint.lg, BreakPoint.xl),
-            prevBreakPoint: P.union(BreakPoint.sm, BreakPoint.md, P.nullish),
+            breakPoint: BreakPoint.lg,
           },
           () => true,
         )
         .otherwise(() => prev),
     );
-
-    prevBreakPoint.current = breakPoint;
   }, [breakPoint, setIsOpen]);
 
   return (
