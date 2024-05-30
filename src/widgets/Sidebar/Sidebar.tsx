@@ -1,8 +1,9 @@
 "use client";
 
 import { useAtom } from "jotai";
-import { useLayoutEffect, useRef } from "react";
+import { useRef } from "react";
 import { P, match } from "ts-pattern";
+import { useIsomorphicLayoutEffect } from "usehooks-ts";
 
 import { BreakPoint, useBreakPoint } from "~/shared/style/breakPoint";
 import { Drawer } from "~/shared/ui/Drawer";
@@ -15,7 +16,7 @@ export const Sidebar = () => {
   const [isOpen, setIsOpen] = useAtom(sidebarAtoms.isOpen);
   const prevBreakPoint = useRef<BreakPoint | undefined>(undefined);
 
-  useLayoutEffect(() => {
+  useIsomorphicLayoutEffect(() => {
     setIsOpen((prev) =>
       match({ breakPoint, prevBreakPoint: prevBreakPoint.current })
         .with(
