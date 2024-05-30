@@ -18,6 +18,7 @@ export const MenuButton = () => {
       onClick={() => {
         setIsSidebarOpen((prev) => !prev);
       }}
+      className="xl:hidden"
     >
       <MenuIcon className="size-5 md:size-6" />
     </S.Button>
