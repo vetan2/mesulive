@@ -36,7 +36,12 @@ export const Drawer = ({
       </PersistedDrawer>
     ))
     .otherwise(() => (
-      <TemporaryDrawer open={isOpen} direction="left" onClose={onClose} onOpenChange={onOpenChange}>
+      <TemporaryDrawer
+        open={isOpen}
+        direction="left"
+        onClose={onClose}
+        onOpenChange={onOpenChange}
+      >
         <TemporaryDrawerContent className={cx("flex flex-row", className)}>
           <div className="flex-1">{children}</div>
           <div className="mx-4 my-auto h-12 w-1.5 flex-shrink-0 rounded-full bg-zinc-300 md:hidden" />

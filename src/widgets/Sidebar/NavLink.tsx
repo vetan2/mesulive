@@ -12,7 +12,13 @@ interface Props extends LinkProps {
   Label?: ReactNode;
 }
 
-export const NavLink = ({ Icon, children, Label, className, ...linkProps }: Props) => {
+export const NavLink = ({
+  Icon,
+  children,
+  Label,
+  className,
+  ...linkProps
+}: Props) => {
   console.log(Icon);
   const pathname = usePathname();
 
@@ -21,7 +27,8 @@ export const NavLink = ({ Icon, children, Label, className, ...linkProps }: Prop
       as={NextLink}
       {...linkProps}
       className={cx(
-        "group flex items-center justify-between rounded-xl px-4 py-2.5 text-sm font-bold transition-colors",
+        `group flex items-center justify-between rounded-xl px-4 py-2.5 text-sm font-bold
+        transition-colors`,
         pathname === linkProps.href
           ? "bg-primary-50 text-primary"
           : "text-default-700 hover:opacity-100",

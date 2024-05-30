@@ -19,7 +19,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="ko" className={cx(pretendard.variable, pretendard.className, "font-medium")}>
+    <html
+      lang="ko"
+      className={cx(pretendard.variable, pretendard.className, "font-medium")}
+    >
       <body>
         <MotionProvider>
           <JotaiProvider>

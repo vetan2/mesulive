@@ -21,7 +21,10 @@ const meta: Meta<typeof Drawer> = {
   render: (props) => (
     <div className="flex h-screen w-full">
       <Drawer {...props} />
-      <div className="flex h-full flex-1 items-center justify-center border-4 border-primary-100 bg-primary-50">
+      <div
+        className="flex h-full flex-1 items-center justify-center border-4 border-primary-100
+          bg-primary-50"
+      >
         Content
       </div>
     </div>

@@ -1,7 +1,13 @@
 import { nextui } from "@nextui-org/react";
 import type { Config } from "tailwindcss";
 
-import { danger, primary, secondary, success, warning } from "./src/shared/style/colors";
+import {
+  danger,
+  primary,
+  secondary,
+  success,
+  warning,
+} from "./src/shared/style/colors";
 
 const config: Config = {
   content: [

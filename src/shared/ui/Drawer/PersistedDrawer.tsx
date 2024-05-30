@@ -8,7 +8,11 @@ interface Props {
   className?: string;
 }
 
-export const PersistedDrawer = ({ isOpen = true, children, className }: Props) => {
+export const PersistedDrawer = ({
+  isOpen = true,
+  children,
+  className,
+}: Props) => {
   return (
     <div
       className={cx(
