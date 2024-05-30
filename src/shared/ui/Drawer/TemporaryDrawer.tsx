@@ -9,7 +9,10 @@ const TemporaryDrawer = ({
   shouldScaleBackground = false,
   ...props
 }: React.ComponentProps<typeof DrawerPrimitive.Root>) => (
-  <DrawerPrimitive.Root shouldScaleBackground={shouldScaleBackground} {...props} />
+  <DrawerPrimitive.Root
+    shouldScaleBackground={shouldScaleBackground}
+    {...props}
+  />
 );
 TemporaryDrawer.displayName = "Drawer";
 
@@ -51,13 +54,25 @@ const TemporaryDrawerContent = React.forwardRef<
 ));
 TemporaryDrawerContent.displayName = "DrawerContent";
 
-const TemporaryDrawerHeader = ({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) => (
-  <div className={cx("grid gap-1.5 p-4 text-center sm:text-left", className)} {...props} />
+const TemporaryDrawerHeader = ({
+  className,
+  ...props
+}: React.HTMLAttributes<HTMLDivElement>) => (
+  <div
+    className={cx("grid gap-1.5 p-4 text-center sm:text-left", className)}
+    {...props}
+  />
 );
 TemporaryDrawerHeader.displayName = "DrawerHeader";
 
-const TemporaryDrawerFooter = ({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) => (
-  <div className={cx("mt-auto flex flex-col gap-2 p-4", className)} {...props} />
+const TemporaryDrawerFooter = ({
+  className,
+  ...props
+}: React.HTMLAttributes<HTMLDivElement>) => (
+  <div
+    className={cx("mt-auto flex flex-col gap-2 p-4", className)}
+    {...props}
+  />
 );
 TemporaryDrawerFooter.displayName = "DrawerFooter";
 
@@ -67,7 +82,10 @@ const TemporaryDrawerTitle = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <DrawerPrimitive.Title
     ref={ref}
-    className={cx("text-lg font-semibold leading-none tracking-tight", className)}
+    className={cx(
+      "text-lg font-semibold leading-none tracking-tight",
+      className,
+    )}
     {...props}
   />
 ));
@@ -83,7 +101,8 @@ const TemporaryDrawerDescription = React.forwardRef<
     {...props}
   />
 ));
-TemporaryDrawerDescription.displayName = DrawerPrimitive.Description.displayName;
+TemporaryDrawerDescription.displayName =
+  DrawerPrimitive.Description.displayName;
 
 export {
   TemporaryDrawer,

@@ -14,7 +14,9 @@ export const MainLayout = ({ children }: Props) => {
       <Header />
       <div className="relative flex h-0 flex-1">
         <Sidebar />
-        <main className={cx("max-h-full flex-1 overflow-y-auto bg-default-50")}>{children}</main>
+        <main className={cx("max-h-full flex-1 overflow-y-auto bg-default-50")}>
+          {children}
+        </main>
       </div>
     </div>
   );

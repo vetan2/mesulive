@@ -5,7 +5,8 @@ import { type PropsWithChildren, type ComponentProps, type FC } from "react";
 export const withScopeProvider =
   <ScopeProps extends object>(
     atoms: ComponentProps<typeof ScopeProvider>["atoms"],
-    HydrateAtoms: FC<PropsWithChildren<ScopeProps>> = ({ children }) => children,
+    HydrateAtoms: FC<PropsWithChildren<ScopeProps>> = ({ children }) =>
+      children,
   ) =>
   <ComponentProps extends object>(
     forwardedProps: (keyof ScopeProps)[],

@@ -3,5 +3,5 @@
   "pluginSearchDirs": ["."],
   "tailwindFunctions": ["clsx", "cn"],
   "customFunctions": ["clsx", "cn"],
-  "printWidth": 100
+  "printWidth": 80
 }
