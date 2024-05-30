@@ -1,6 +1,8 @@
 import { type ReactNode } from "react";
 import { match } from "ts-pattern";
 
+import { cx } from "~/shared/style";
+
 import { PermanentDrawer } from "./PermanentDrawer";
 import { PersistedDrawer } from "./PersistedDrawer";
 import { TemporaryDrawer, TemporaryDrawerContent } from "./TemporaryDrawer";
@@ -35,7 +37,10 @@ export const Drawer = ({
     ))
     .otherwise(() => (
       <TemporaryDrawer open={isOpen} direction="left" onClose={onClose} onOpenChange={onOpenChange}>
-        <TemporaryDrawerContent className={className}>{children}</TemporaryDrawerContent>
+        <TemporaryDrawerContent className={cx("flex flex-row", className)}>
+          <div className="flex-1">{children}</div>
+          <div className="mx-4 my-auto h-12 w-1.5 flex-shrink-0 rounded-full bg-zinc-300 md:hidden" />
+        </TemporaryDrawerContent>
       </TemporaryDrawer>
     ));
 };

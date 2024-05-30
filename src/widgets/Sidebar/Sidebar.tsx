@@ -42,7 +42,7 @@ export const Sidebar = () => {
         onClose={() => {
           setIsOpen(false);
         }}
-        className="h-full w-60 bg-white md:hidden"
+        className="h-full w-72 bg-white md:hidden"
       >
         <SidebarContent />
       </Drawer>
@@ -55,7 +55,7 @@ export const Sidebar = () => {
         onClose={() => {
           setIsOpen(false);
         }}
-        className="hidden h-full w-60 bg-white md:max-lg:block"
+        className="hidden h-full w-72 border-r-1 border-r-default-100 bg-white md:max-lg:block"
       >
         <SidebarContent />
       </Drawer>
@@ -68,7 +68,7 @@ export const Sidebar = () => {
         onClose={() => {
           setIsOpen(false);
         }}
-        className="hidden h-full w-[280px] bg-white lg:block"
+        className="hidden h-full border-r-1 border-r-default-100 bg-white lg:block"
       >
         <SidebarContent />
       </Drawer>
