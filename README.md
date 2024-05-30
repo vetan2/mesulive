@@ -1,36 +1,12 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# 메수라이브
 
-## Getting Started
+메이플스토리에 도움이 되는 정보를 제공하는 서드파티 웹 앱입니다.
 
-First, run the development server:
-
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
-
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+## Tools
+[![React](https://img.shields.io/badge/React-61DAFB.svg?&style=for-the-badge&logo=React&logoColor=333)](https://react.dev/)
+[![Next.js](https://img.shields.io/badge/Next.js-000000.svg?&style=for-the-badge&logo=Next.js)](https://nextjs.org/)
+[![NextUI](https://img.shields.io/badge/NextUI-000000.svg?&style=for-the-badge&logo=NextUI)](https://nextui.org/)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-06B6D4.svg?&style=for-the-badge&logo=Tailwind-CSS&logoColor=FFF)](https://nextui.org/)
+[![Payload CMS](https://img.shields.io/badge/Payload_CMS-000000.svg?&style=for-the-badge&logo=Payload-CMS&logoColor=FFF)](https://payloadcms.com/)
+[![Tembo](https://img.shields.io/badge/Tembo-db39cb.svg?&style=for-the-badge&logo=PostgreSQL&logoColor=white)](https://tembo.io/)
+[![Relay](https://img.shields.io/badge/Relay-F26B00.svg?&style=for-the-badge&logo=Relay&logoColor=FFF)](https://payloadcms.com/)
