@@ -4,7 +4,7 @@ import { JotaiProvider, MotionProvider, NextUIProvider } from "~/layer";
 import { cx } from "~/shared/style";
 import { pretendard } from "~/shared/style/fonts";
 
-import { MainLayout } from "./_components/MainLayout";
+import { MainLayout } from "./_components";
 
 import "~/shared/style/globals.css";
 

@@ -3,12 +3,13 @@
 import { Link, Spacer, type LinkProps } from "@nextui-org/react";
 import NextLink from "next/link";
 import { usePathname } from "next/navigation";
-import { type ReactNode, type FC, type SVGProps } from "react";
+import { type ReactNode } from "react";
 
 import { cx } from "~/shared/style";
+import { type SVGComponent } from "~/shared/types";
 
 interface Props extends LinkProps {
-  Icon: FC<SVGProps<SVGSVGElement>>;
+  Icon: SVGComponent;
   Label?: ReactNode;
 }
 
@@ -19,7 +20,6 @@ export const NavLink = ({
   className,
   ...linkProps
 }: Props) => {
-  console.log(Icon);
   const pathname = usePathname();
 
   return (
@@ -30,9 +30,9 @@ export const NavLink = ({
         `group flex items-center justify-between rounded-xl px-4 py-2.5 text-sm font-bold
         transition-colors`,
         pathname === linkProps.href
-          ? "bg-primary-50 text-primary"
+          ? "bg-primary-50/75 text-primary"
           : "text-default-700 hover:opacity-100",
-        "hover:bg-primary-50 hover:text-primary",
+        "hover:bg-primary-50/75 hover:text-primary",
         className,
       )}
     >
