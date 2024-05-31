@@ -6,6 +6,7 @@ import { type SVGComponent } from "~/shared/types";
 import { S } from "~/shared/ui";
 
 interface Props {
+  href: string;
   title: ReactNode;
   subtitle?: ReactNode;
   Icon: SVGComponent;
@@ -17,16 +18,14 @@ interface Props {
 }
 
 export const MainLinkButton = ({
+  href,
   title,
   subtitle,
   Icon,
   classNames,
 }: Props) => {
   return (
-    <NextLink
-      href="/calc/bonus-stat"
-      className={cx("w-full", classNames?.link)}
-    >
+    <NextLink href={href} className={cx("w-full", classNames?.link)}>
       <S.Button
         size="lg"
         className={cx(

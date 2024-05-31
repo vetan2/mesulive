@@ -29,16 +29,19 @@ export default function Home() {
         </p>
         <div className="mt-4 flex w-full flex-col gap-4 md:grid md:grid-cols-2 md:grid-rows-2">
           <MainLinkButton
+            href="/calc/bonus-stat"
             title="추가옵션 기댓값 계산기"
             Icon={Flame}
             classNames={{ button: cx("bg-secondary-500") }}
           />
           <MainLinkButton
+            href="/calc/potential"
             title="잠재능력 기댓값 계산기"
             Icon={Potential}
             classNames={{ button: cx("bg-warning-500") }}
           />
           <MainLinkButton
+            href="/sim/starforce"
             title="스타포스 시뮬레이터"
             Icon={Star}
             classNames={{
