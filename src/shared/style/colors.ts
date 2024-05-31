@@ -1,31 +1,31 @@
 import { type ColorScale } from "@nextui-org/react";
 
 export const primary: ColorScale = {
-  50: "#ffecda",
-  100: "#ffcfae",
-  200: "#ffb47d",
-  300: "#ff9d4c",
-  400: "#ff891a",
-  500: "#e66000",
-  600: "#b43e00",
-  700: "#812400",
-  800: "#4f0f00",
-  900: "#200001",
-  DEFAULT: "#ff891a",
+  DEFAULT: "#FF8009",
+  50: "#FFDFC1",
+  100: "#FFD4AC",
+  200: "#FFBF83",
+  300: "#FFAA5B",
+  400: "#FF9532",
+  500: "#FF8009",
+  600: "#D06500",
+  700: "#984900",
+  800: "#602E00",
+  900: "#281300",
 };
 
 export const secondary: ColorScale = {
-  50: "#fff3da",
-  100: "#ffe1ad",
-  200: "#ffd27d",
-  300: "#ffc64b",
-  400: "#ffbd1a",
-  500: "#e69500",
-  600: "#b36700",
-  700: "#804100",
-  800: "#4e2200",
-  900: "#1e0700",
-  DEFAULT: "#ffbd1a",
+  DEFAULT: "#FFB703",
+  50: "#FFEBBB",
+  100: "#FFE6A6",
+  200: "#FFDA7D",
+  300: "#FFCE55",
+  400: "#FFC32C",
+  500: "#FFB703",
+  600: "#CA9000",
+  700: "#926800",
+  800: "#5A4000",
+  900: "#221800",
 };
 
 export const success: ColorScale = {

@@ -3,8 +3,8 @@
 import { useSetAtom } from "jotai";
 import { MenuIcon } from "lucide-react";
 
+import { sidebarAtoms } from "~/app/_components/Sidebar/atoms";
 import { S } from "~/shared/ui";
-import { sidebarAtoms } from "~/widgets/Sidebar/atoms";
 
 export const MenuButton = () => {
   const setIsSidebarOpen = useSetAtom(sidebarAtoms.isOpen);

@@ -22,6 +22,9 @@ const config: Config = {
       transitionTimingFunction: {
         vaul: "cubic-bezier(0.32, 0.72, 0, 1)",
       },
+      boxShadow: {
+        section: "rgba(113, 118, 121, 0.1) 0px 0px 30px",
+      },
     },
   },
   darkMode: "class",
