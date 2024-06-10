@@ -1,6 +1,5 @@
-"use client";
-
 import { Link } from "@nextui-org/react";
+import { type Metadata } from "next";
 import NextImage from "next/image";
 
 import {
@@ -16,9 +15,19 @@ import { SectionContainer } from "~/shared/ui";
 
 import { MainLinkButton } from "./_components";
 
+export const metadata: Metadata = {
+  title: "메수라이브 - 메이플 시뮬레이터, 계산기",
+  description: "메수라이브, 각종 메이플 시뮬레이터와 기댓값 계산기",
+  openGraph: {
+    title: "메수라이브 - 메이플 시뮬레이터, 계산기",
+    description: "메수라이브, 각종 메이플 시뮬레이터와 기댓값 계산기",
+  },
+  keywords: ["메이플스토리", "시뮬레이터", "기댓값", "계산기"],
+};
+
 export default function Home() {
   return (
-    <>
+    <div className="mx-auto max-w-screen-xl">
       <SectionContainer className="flex flex-col items-center">
         <Logo className="h-8 lg:h-12" />
         <p className="mt-1 text-center text-sm text-default-500">
@@ -66,6 +75,6 @@ export default function Home() {
           </Link>
         </div>
       </SectionContainer>
-    </>
+    </div>
   );
 }
