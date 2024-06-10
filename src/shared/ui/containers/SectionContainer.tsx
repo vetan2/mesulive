@@ -8,7 +8,7 @@ export const SectionContainer = ({
 }: HTMLAttributes<HTMLDivElement>) => {
   return (
     <div
-      className={cx("rounded-2xl bg-white p-4 shadow-section", className)}
+      className={cx("rounded-3xl bg-white p-4 shadow-section", className)}
       {...props}
     />
   );
