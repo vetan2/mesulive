@@ -1,10 +1,14 @@
 import type { Metadata } from "next";
 
-import { JotaiProvider, MotionProvider, NextUIProvider } from "~/layer";
 import { cx } from "~/shared/style";
 import { pretendard } from "~/shared/style/fonts";
 
 import { MainLayout } from "./_components";
+import {
+  JotaiProvider,
+  MotionProvider,
+  NextUIProvider,
+} from "./_components/providers";
 
 import "~/shared/style/globals.css";
 
