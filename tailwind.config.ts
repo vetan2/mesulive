@@ -30,6 +30,7 @@ const config: Config = {
   darkMode: "class",
   plugins: [
     nextui({
+      prefix: "mesulive",
       themes: {
         light: {
           colors: {
