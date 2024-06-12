@@ -15,7 +15,9 @@ export const SectionContainer = forwardRef<
       {...props}
     >
       {title && (
-        <h2 className="text-base font-bold text-primary lg:text-lg">{title}</h2>
+        <h2 className="mb-4 text-base font-bold text-primary lg:text-lg">
+          {title}
+        </h2>
       )}
       {children}
     </section>

@@ -1,6 +1,31 @@
-import { Button } from "@nextui-org/react";
+import {
+  Button,
+  Input,
+  Modal,
+  ModalBody,
+  ModalContent,
+  ModalFooter,
+  Select,
+  SelectItem,
+} from "@nextui-org/react";
 
-export const S = { Button };
+import { Checkbox } from "./Checkbox";
+import { ModalHeader } from "./ModalHeader";
+
+export const S = {
+  Button,
+  Input,
+  Modal,
+  ModalContent,
+  ModalBody,
+  ModalFooter,
+  Select,
+  SelectItem,
+
+  // custom
+  Checkbox,
+  ModalHeader,
+};
 
 export * from "./containers";
 export * from "./typographies";
