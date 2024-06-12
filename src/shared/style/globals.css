@@ -13,4 +13,9 @@
   input[type="number"] {
     -moz-appearance: textfield;
   }
+  
+  body {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
 }
