@@ -1,7 +1,7 @@
 "use client";
 
 import { atom } from "jotai";
-import { atomFamily } from "jotai/utils";
+import { atomFamily, atomWithStorage } from "jotai/utils";
 import { omit, values } from "lodash-es";
 import { type PropsWithChildren } from "react";
 import { z } from "zod";
@@ -45,7 +45,12 @@ const weaponGrade = atom<"none" | number>("none");
 weaponGrade.debugLabel = "bonusStatCalc/weaponGrade";
 
 const statEfficiency = atomFamily((stat: BonusStat.PossibleStat) => {
-  const _atom = atom<number | undefined>(undefined);
+  const _atom = atomWithStorage<number | undefined>(
+    `bonusStatCalc/statEfficiency-${stat}`,
+    undefined,
+    undefined,
+    { getOnInit: true },
+  );
   _atom.debugLabel = `bonusStatCalc/statEfficiency-${stat}`;
   return _atom;
 });
@@ -79,6 +84,26 @@ const isInputValid = atom(
 );
 isInputValid.debugLabel = "bonusStatCalc/isInputValid";
 
+const simulatedStatFigure = atomFamily((stat: BonusStat.PossibleStat) => {
+  const _atom = atom<number | undefined>(undefined);
+  _atom.debugLabel = `bonusStatCalc/simulatedStatFigure-${stat}`;
+  return _atom;
+});
+
+const simulatedStatSum = atom((get) =>
+  BonusStat.possibleStats.reduce(
+    (acc, stat) =>
+      acc +
+      (get(statEfficiency(stat)) ?? 0) * (get(simulatedStatFigure(stat)) ?? 0),
+    0,
+  ),
+);
+simulatedStatSum.debugLabel = "bonusStatCalc/simulatedStatSum";
+
+const isStatSimulationModalOpen = atom(false);
+isStatSimulationModalOpen.debugLabel =
+  "bonusStatCalc/isStatSimulationModalOpen";
+
 export const bonusStatCalcAtoms = {
   equipType,
   equipLevelErrorMessage,
@@ -91,6 +116,9 @@ export const bonusStatCalcAtoms = {
   statEfficiencyErrorMessage,
   isStatEfficiencyModalOpen,
   isInputValid,
+  simulatedStatFigure,
+  simulatedStatSum,
+  isStatSimulationModalOpen,
 };
 
 export const BonusStatCalcProvider = createScopeProvider(
@@ -99,10 +127,12 @@ export const BonusStatCalcProvider = createScopeProvider(
       omit(bonusStatCalcAtoms, [
         "statEfficiency",
         "statEfficiencyErrorMessage",
+        "simulatedStatFigure",
       ]),
     ),
     ...BonusStat.possibleStats.map(statEfficiency),
     ...BonusStat.possibleStats.map(statEfficiencyErrorMessage),
+    ...BonusStat.possibleStats.map(simulatedStatFigure),
   ],
   ({ children }: PropsWithChildren) => children,
 );

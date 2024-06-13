@@ -1,2 +1,4 @@
 export * from "./SettingSectionContent";
-export { StatEfficiencyModal } from "./StatEfficiencyModal/StatEfficiencyModal";
+export * from "./StatSimulationContent";
+export * from "./StatEfficiencyModal";
+export { StatSimulationModal } from "./StatSimulationModal";

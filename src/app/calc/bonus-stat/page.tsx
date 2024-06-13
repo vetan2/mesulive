@@ -2,7 +2,12 @@ import { type Metadata } from "next";
 
 import { PageTitle, SectionContainer } from "~/shared/ui";
 
-import { SettingSectionContent, StatEfficiencyModal } from "./_components";
+import {
+  SettingSectionContent,
+  StatEfficiencyModal,
+  StatSimulationContent,
+  StatSimulationModal,
+} from "./_components";
 import { BonusStatCalcProvider } from "./_lib";
 
 export const metadata: Metadata = {
@@ -24,12 +29,15 @@ export default function Page() {
         </PageTitle>
 
         <div className="mt-4 flex flex-col gap-4 lg:flex-row">
-          <div className="w-full lg:flex-1">
+          <div className="flex w-full flex-col gap-4 lg:flex-1">
             <SectionContainer title="설정">
               <SettingSectionContent />
             </SectionContainer>
-            <SectionContainer title="스탯 환산치 계산">
-              스탯 환산치 계산
+            <SectionContainer
+              title="스탯 환산치 계산"
+              className="hidden lg:block"
+            >
+              <StatSimulationContent />
             </SectionContainer>
           </div>
           <SectionContainer title="계산 결과" className="w-full lg:flex-1">
@@ -38,6 +46,7 @@ export default function Page() {
         </div>
       </div>
       <StatEfficiencyModal />
+      <StatSimulationModal />
     </BonusStatCalcProvider>
   );
 }

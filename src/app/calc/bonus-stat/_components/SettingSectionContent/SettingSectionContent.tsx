@@ -3,6 +3,7 @@ import { EquipLevelInput } from "./EquipLevelInput";
 import { EquipTypeSelect } from "./EquipTypeSelect";
 import { IsBossDropCheckbox } from "./IsBossDropCheckbox";
 import { OpenStatEfficiencyModalButton } from "./OpenStatEfficiencyModalButton";
+import { OpenStatSimulationModalButton } from "./OpenStatSimulationModalButton";
 import { WeaponGradeSelect } from "./WeaponGradeSelect";
 
 export const SettingSectionContent = () => {
@@ -15,7 +16,10 @@ export const SettingSectionContent = () => {
         <WeaponGradeSelect />
         <AimStatInput />
       </div>
-      <OpenStatEfficiencyModalButton />
+      <div className="flex flex-col gap-4">
+        <OpenStatEfficiencyModalButton />
+        <OpenStatSimulationModalButton />
+      </div>
     </>
   );
 };
