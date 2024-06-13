@@ -49,6 +49,7 @@ module.exports = {
       },
     ],
     "prettier/prettier": [1, {}, { usePrettierrc: true }],
+    "no-console": 1,
   },
   overrides: [
     {
