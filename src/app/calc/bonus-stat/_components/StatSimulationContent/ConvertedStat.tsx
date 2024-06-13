@@ -3,6 +3,7 @@
 import { useAtomValue } from "jotai";
 
 import { bonusStatCalcAtoms } from "~/app/calc/bonus-stat/_lib";
+import { maxFractionDigits } from "~/shared/math";
 
 export const ConvertedStat = () => {
   const statSum = useAtomValue(bonusStatCalcAtoms.simulatedStatSum);
@@ -10,7 +11,7 @@ export const ConvertedStat = () => {
   return (
     <p className="text-center">
       <span className="mr-1 text-3xl font-bold text-primary-400">
-        {Math.round(statSum * 10000) / 10000}
+        {maxFractionDigits(4)(statSum)}
       </span>
       급
     </p>
