@@ -1,5 +1,5 @@
 import { pipe } from "fp-ts/lib/function";
-import { useAtom } from "jotai";
+import { useAtom, useAtomValue } from "jotai";
 
 import { bonusStatCalcAtoms } from "~/app/calc/bonus-stat/_lib";
 import { type BonusStat } from "~/entities/bonus-stat";
@@ -17,6 +17,7 @@ export const FigureInput = ({ stat }: Props) => {
   const [figure, setFigure] = useAtom(
     bonusStatCalcAtoms.simulatedStatFigure(stat),
   );
+  const efficiency = useAtomValue(bonusStatCalcAtoms.statEfficiency(stat));
 
   return (
     <S.Input
@@ -27,8 +28,8 @@ export const FigureInput = ({ stat }: Props) => {
       onValueChange={(v) => {
         setFigure(pipe(convertToNumber(v), O.toUndefined));
       }}
-      color={figure != null ? "primary" : undefined}
-      classNames={{ label: cx(figure != null && "font-bold") }}
+      color={efficiency != null ? "primary" : undefined}
+      classNames={{ label: cx(efficiency != null && "font-bold") }}
     />
   );
 };
