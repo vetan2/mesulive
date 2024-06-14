@@ -69,5 +69,10 @@
     "tailwindcss": "^3.4.3",
     "typescript": "^5.4.5",
     "vitest": "^1.6.0"
+  },
+  "pnpm": {
+    "patchedDependencies": {
+      "@nextui-org/use-scroll-position@2.0.6": "patches/@nextui-org__use-scroll-position@2.0.6.patch"
+    }
   }
 }

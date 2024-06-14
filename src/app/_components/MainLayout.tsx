@@ -1,4 +1,6 @@
-import { type ReactNode } from "react";
+"use client";
+
+import { useRef, type ReactNode } from "react";
 
 import { cx } from "~/shared/style";
 
@@ -11,12 +13,17 @@ interface Props {
 }
 
 export const MainLayout = ({ children }: Props) => {
+  const ref = useRef<HTMLDivElement>(null);
+
   return (
     <div className="flex h-screen max-h-screen flex-col">
-      <Header />
+      <Header parentRef={ref} />
       <div className="relative flex h-0 flex-1">
         <Sidebar />
-        <div className="max-h-full flex-1 overflow-y-auto bg-default-50">
+        <div
+          ref={ref}
+          className="mt-[-65px] h-screen flex-1 overflow-y-auto bg-default-50 pt-[65px]"
+        >
           <main className={cx("p-4")}>{children}</main>
           <Footer />
         </div>
