@@ -1,5 +1,6 @@
 import {
   Button,
+  CircularProgress,
   Input,
   Link,
   Modal,
@@ -16,6 +17,7 @@ import { ModalHeader } from "./ModalHeader";
 
 export const S = {
   Button,
+  CircularProgress,
   Input,
   Link,
   Modal,

@@ -3,6 +3,7 @@ import { type Metadata } from "next";
 import { PageTitle, SectionContainer } from "~/shared/ui";
 
 import {
+  ResultSectionContent,
   SettingSectionContent,
   StatEfficiencyModal,
   StatSimulationContent,
@@ -41,7 +42,7 @@ export default function Page() {
             </SectionContainer>
           </div>
           <SectionContainer title="계산 결과" className="w-full lg:flex-1">
-            계산 결과
+            <ResultSectionContent />
           </SectionContainer>
         </div>
       </div>

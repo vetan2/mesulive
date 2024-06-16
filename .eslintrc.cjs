@@ -45,6 +45,7 @@ module.exports = {
           "**/*.config.*",
           "scripts/**",
           "**/*.stories.ts*",
+          "**/*.test.ts*",
         ],
       },
     ],

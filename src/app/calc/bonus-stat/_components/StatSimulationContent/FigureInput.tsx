@@ -1,3 +1,5 @@
+"use client";
+
 import { pipe } from "fp-ts/lib/function";
 import { useAtom, useAtomValue } from "jotai";
 

@@ -2,7 +2,7 @@ import {
   getCombinations,
   getRepeatPermutations,
   maxFractionDigits,
-} from "./math";
+} from "./utils";
 
 describe("getCombinations", () => {
   test("number", () => {

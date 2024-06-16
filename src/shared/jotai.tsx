@@ -1,3 +1,4 @@
+import { type Atom } from "jotai";
 import { ScopeProvider } from "jotai-scope";
 import { type PropsWithChildren, type ComponentProps, type FC } from "react";
 
@@ -13,3 +14,5 @@ export const createScopeProvider =
       <HydrateAtoms {...(props as any)}>{children}</HydrateAtoms>
     </ScopeProvider>
   );
+
+export type AtomValue<T> = T extends Atom<infer U> ? U : never;

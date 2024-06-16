@@ -1,5 +1,3 @@
-"use client";
-
 import { BonusStat } from "~/entities/bonus-stat";
 
 import { ConvertedStat } from "./ConvertedStat";

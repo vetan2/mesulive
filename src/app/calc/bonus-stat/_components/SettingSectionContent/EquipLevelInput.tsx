@@ -4,14 +4,19 @@ import { pipe } from "fp-ts/lib/function";
 import { useAtom, useAtomValue } from "jotai";
 
 import { bonusStatCalcAtoms } from "~/app/calc/bonus-stat/_lib";
-import { O } from "~/shared/fp";
+import { E, O } from "~/shared/fp";
 import { convertToNumber } from "~/shared/number";
 import { S } from "~/shared/ui";
+import { getFirstZodErrorMessage } from "~/shared/zod";
 
 export const EquipLevelInput = () => {
   const [equipLevel, setEquipLevel] = useAtom(bonusStatCalcAtoms.equipLevel);
-  const equipLevelErrorMessage = useAtomValue(
-    bonusStatCalcAtoms.equipLevelErrorMessage,
+  const equipLevelParseResult = useAtomValue(
+    bonusStatCalcAtoms.equipLevelParseResult,
+  );
+  const equipLevelErrorMessage = pipe(
+    equipLevelParseResult,
+    E.match(getFirstZodErrorMessage, () => undefined),
   );
   const isTouched = equipLevel != null;
 
@@ -27,8 +32,8 @@ export const EquipLevelInput = () => {
           ),
         );
       }}
-      isInvalid={isTouched && !!equipLevelErrorMessage}
-      defaultValue={equipLevel?.toString() || undefined}
+      isInvalid={isTouched && E.isLeft(equipLevelParseResult)}
+      defaultValue={equipLevel?.toString() || ""}
       errorMessage={isTouched && equipLevelErrorMessage}
     />
   );

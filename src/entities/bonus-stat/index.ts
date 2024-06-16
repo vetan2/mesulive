@@ -1,1 +1,1 @@
-export * as BonusStat from "./constants";
+export * as BonusStat from "./external";

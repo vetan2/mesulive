@@ -4,7 +4,7 @@ import { S } from "~/shared/ui";
 
 export const Footer = () => {
   return (
-    <footer className="mx-auto mt-14 flex flex-col items-center">
+    <footer className="mx-auto my-14 flex flex-col items-center">
       <Link href="https://toss.me/vetan2" target="_blank" rel="noreferrer">
         <S.Button size="lg" color="primary" className="font-semibold">
           제작자에게 커피 사주기
