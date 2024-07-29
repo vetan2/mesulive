@@ -19,7 +19,6 @@ export const ResultSectionContent = () => {
           key={method}
           method={method}
           prob={match({ state, method })
-            .with({ method: "ABYSS" }, () => undefined)
             .with({ state: "success" }, () => result?.[method] ?? 0)
             .otherwise(() => undefined)}
         />

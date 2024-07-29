@@ -136,9 +136,6 @@ export const ResultRow = ({ method, prob }: Props) => {
           )}
         />
       </div>
-      {method === "ABYSS" && (
-        <div className="absolute inset-0 h-full w-full bg-white/50" />
-      )}
     </div>
   );
 };
