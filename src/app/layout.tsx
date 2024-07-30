@@ -3,7 +3,6 @@ import type { Metadata } from "next";
 import { cx } from "~/shared/style";
 import { pretendard } from "~/shared/style/fonts";
 
-import { MainLayout } from "./_components";
 import {
   JotaiProvider,
   MotionProvider,
@@ -30,9 +29,7 @@ export default function RootLayout({
       <body>
         <MotionProvider>
           <JotaiProvider>
-            <NextUIProvider>
-              <MainLayout>{children}</MainLayout>
-            </NextUIProvider>
+            <NextUIProvider>{children}</NextUIProvider>
           </JotaiProvider>
         </MotionProvider>
       </body>

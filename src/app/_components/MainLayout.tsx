@@ -10,9 +10,10 @@ import { Sidebar } from "./Sidebar";
 
 interface Props {
   children?: ReactNode;
+  disableFooter?: boolean;
 }
 
-export const MainLayout = ({ children }: Props) => {
+export const MainLayout = ({ children, disableFooter }: Props) => {
   const ref = useRef<HTMLDivElement>(null);
 
   return (
@@ -25,7 +26,7 @@ export const MainLayout = ({ children }: Props) => {
           className="mt-[-65px] h-screen flex-1 overflow-y-auto bg-default-50 pt-[65px]"
         >
           <main className={cx("p-4")}>{children}</main>
-          <Footer />
+          {!disableFooter && <Footer />}
         </div>
       </div>
     </div>
