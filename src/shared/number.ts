@@ -1,6 +1,7 @@
 import { pipe } from "fp-ts/lib/function";
 
 import { O } from "./fp";
+import { maxFractionDigits } from "./math";
 
 export const isNumeric = (value: unknown): value is `${number}` => {
   if (typeof value != "string") return false;
@@ -47,3 +48,13 @@ export const putUnit = (n: number) => {
 
   return `${unsafe ? "약 " : ""}${isMinus ? "-" : ""}${resultString}`;
 };
+
+export const percentStringToNumber =
+  (fractionDigits: number) => (str: string) =>
+    pipe(
+      str,
+      O.fromPredicate((s) => /^\d+(\.\d+)?%$/.test(s)),
+      O.chain((s) => convertToNumber(s.slice(0, -1))),
+      O.map((v) => v / 100),
+      O.map(maxFractionDigits(fractionDigits)),
+    );

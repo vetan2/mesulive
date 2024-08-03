@@ -1,0 +1,79 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model PotentialDataVersion {
+  id          Int @id @default(autoincrement())
+  gameVersion Int
+  appVersion  Int
+}
+
+enum PotentialResetMethod {
+  RED
+  POTENTIAL
+  ADDI
+  ADDI_POTENTIAL
+  STRANGE
+  MASTER
+  ARTISAN
+  STRANGE_ADDI
+}
+
+enum PotentialGrade {
+  RARE
+  EPIC
+  UNIQUE
+  LEGENDARY
+}
+
+model PotentialGradeUpRecord {
+  id           Int                  @id @default(autoincrement())
+  method       PotentialResetMethod
+  currentGrade PotentialGrade
+  probability  Float
+  ceil         Int?
+}
+
+model PotentialOption {
+  id            Int                     @id @default(autoincrement())
+  name          String                  @unique
+  stat          String?
+  figure        Float?
+  optionRecords PotentialOptionRecord[]
+}
+
+model PotentialOptionRecord {
+  id                  Int                        @id @default(autoincrement())
+  option              PotentialOption            @relation(fields: [optionId], references: [id])
+  optionId            Int
+  probability         Float
+  optionRecordArray   PotentialOptionRecordList? @relation(fields: [optionRecordArrayId], references: [id])
+  optionRecordArrayId Int?
+}
+
+model PotentialOptionRecordList {
+  id            Int                     @id @default(autoincrement())
+  records       PotentialOptionRecord[]
+  optionTable   PotentialOptionTable?   @relation(fields: [optionTableId], references: [id])
+  optionTableId Int?
+}
+
+model PotentialOptionTable {
+  id          Int                         @id @default(autoincrement())
+  optionTable PotentialOptionRecordList[]
+  method      PotentialResetMethod
+  grade       PotentialGrade
+  level       Int
+  equip       String
+}

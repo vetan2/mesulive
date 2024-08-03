@@ -3,5 +3,6 @@
   "eslint.codeActionsOnSave.mode": "problems",
   "git.ignoreLimitWarning": true,
   "prettier.requireConfig": true,
-  "editor.formatOnSave": false
+  "editor.formatOnSave": false,
+  "typescript.tsdk": "node_modules/typescript/lib"
 }
