@@ -1,5 +1,6 @@
 import "server-only";
 
+import { type Prisma } from "@prisma/client";
 import { record } from "fp-ts";
 import { flow, pipe } from "fp-ts/lib/function";
 import { type Option } from "fp-ts/lib/Option";
@@ -15,7 +16,11 @@ import { entries } from "~/shared/object";
 import { prisma } from "~/shared/prisma";
 
 import { cubeItemIds, gradeUrls } from "./constants";
-import { type GradeUpRecord, type OptionTable } from "./types";
+import {
+  type OptionTable,
+  type GradeUpRecord,
+  type RawOptionTable,
+} from "./types";
 
 export const findNewVersion = TE.tryCatch(
   () =>
@@ -80,7 +85,7 @@ export const fetchOptionData = TE.tryCatchK(
     equip: Equip;
     level: number;
     grade: Potential.Grade;
-  }): Promise<OptionTable> => {
+  }): Promise<RawOptionTable> => {
     const body = new URLSearchParams(
       pipe(
         {
@@ -160,41 +165,82 @@ export const createPotentialOptionTable = TE.tryCatchK(
     method: Potential.ResetMethod;
     grade: Potential.Grade;
     level: number;
-    optionTable: OptionTable;
-  }) =>
-    prisma.potentialOptionTable.create({
-      data: {
-        method: params.method,
-        equip: params.equip,
-        level: params.level,
-        grade: params.grade,
-        optionTable: {
-          create: params.optionTable.map((record) => ({
-            records: {
-              create: record.map(
-                ({ optionName, probability, stat, figure }) => ({
-                  probability,
-                  option: {
-                    connectOrCreate: {
-                      where: {
-                        name: optionName,
-                      },
-                      create: {
-                        name: optionName,
-                        figure,
-                        stat,
+    optionTable: RawOptionTable;
+  }): Promise<OptionTable> =>
+    prisma.potentialOptionTable
+      .create({
+        data: {
+          method: params.method,
+          equip: params.equip,
+          level: params.level,
+          grade: params.grade,
+          optionTable: {
+            create: params.optionTable.map((record) => ({
+              records: {
+                create: record.map(
+                  ({ optionName, probability, stat, figure }) => ({
+                    probability,
+                    option: {
+                      connectOrCreate: {
+                        where: {
+                          name: optionName,
+                        },
+                        create: {
+                          name: optionName,
+                          figure,
+                          stat,
+                        },
                       },
                     },
-                  },
-                }),
-              ),
-            },
-          })),
+                  }),
+                ),
+              },
+            })),
+          },
         },
-      },
-    }),
+        include: {
+          optionTable: {
+            include: {
+              records: {
+                include: {
+                  option: true,
+                },
+              },
+            },
+          },
+        },
+      })
+      .then(optionTablePayloadToOptionTable),
   E.toError,
 );
+
+const optionTablePayloadToOptionTable = (
+  payload: Prisma.PotentialOptionTableGetPayload<{
+    include: {
+      optionTable: {
+        include: {
+          records: {
+            include: {
+              option: true;
+            };
+          };
+        };
+      };
+    };
+  }>,
+) =>
+  payload.optionTable.map(({ records }) =>
+    records.map(({ option: { stat, figure, id }, probability }) => ({
+      optionId: id,
+      probability,
+      stat: pipe(
+        O.fromNullable(stat),
+        O.map(Potential.possibleStatsSchema.parse),
+        O.toUndefined,
+      ),
+      figure: figure ?? undefined,
+    })),
+  );
 
 export const findOptionTable = TE.tryCatchK(
   (params: {
@@ -202,7 +248,7 @@ export const findOptionTable = TE.tryCatchK(
     method: Potential.ResetMethod;
     grade: Potential.Grade;
     level: number;
-  }) =>
+  }): Promise<Option<OptionTable>> =>
     prisma.potentialOptionTable
       .findFirst({
         where: {
@@ -223,27 +269,24 @@ export const findOptionTable = TE.tryCatchK(
           },
         },
       })
-      .then(
-        flow(
-          O.fromNullable,
-          O.map((table) =>
-            table.optionTable.map(({ records }) =>
-              records.map(
-                ({ option: { name, stat, figure }, probability }) => ({
-                  optionName: name,
-                  probability,
-                  stat: pipe(
-                    O.fromNullable(stat),
-                    O.map(Potential.possibleStatsSchema.parse),
-                    O.toUndefined,
-                  ),
-                  figure: figure ?? undefined,
-                }),
-              ),
-            ),
-          ),
-        ),
-      ),
+      .then((v) => v)
+      .then(flow(O.fromNullable, O.map(optionTablePayloadToOptionTable))),
+  E.toError,
+);
+
+export const fetchOptionIdNameMap = TE.tryCatchK(
+  (params: { optionIds: number[] }) =>
+    prisma.potentialOption.findMany({
+      where: {
+        id: {
+          in: params.optionIds,
+        },
+      },
+      select: {
+        id: true,
+        name: true,
+      },
+    }),
   E.toError,
 );
 

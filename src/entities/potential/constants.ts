@@ -15,6 +15,16 @@ export const resetMethods: ResetMethod[] = [
   "STRANGE_ADDI",
 ];
 
+export type Cube = Exclude<ResetMethod, "POTENTIAL" | "ADDI_POTENTIAL">;
+export const cubes: Cube[] = [
+  "RED",
+  "ADDI",
+  "STRANGE",
+  "MASTER",
+  "ARTISAN",
+  "STRANGE_ADDI",
+];
+
 export const resetMethodLabels: Record<ResetMethod, string> = {
   RED: "레드 큐브",
   POTENTIAL: "잠재능력 재설정/블랙 큐브",
@@ -45,6 +55,23 @@ export const gradesEnableToPromote: Record<ResetMethod, Grade[]> = {
   ARTISAN: ["RARE", "EPIC", "UNIQUE"],
   STRANGE_ADDI: ["RARE"],
 };
+
+export const gradesEnableToReset: Record<ResetMethod, Grade[]> = {
+  RED: ["RARE", "EPIC", "UNIQUE", "LEGENDARY"],
+  POTENTIAL: ["RARE", "EPIC", "UNIQUE", "LEGENDARY"],
+  ADDI: ["RARE", "EPIC", "UNIQUE", "LEGENDARY"],
+  ADDI_POTENTIAL: ["RARE", "EPIC", "UNIQUE", "LEGENDARY"],
+  STRANGE: ["RARE", "EPIC"],
+  MASTER: ["RARE", "EPIC", "UNIQUE"],
+  ARTISAN: ["RARE", "EPIC", "UNIQUE", "LEGENDARY"],
+  STRANGE_ADDI: ["RARE", "EPIC"],
+};
+
+export const aimTypes = ["GRADE_UP", "OPTIONS"] as const;
+export type AimType = (typeof aimTypes)[number];
+
+export const types = ["COMMON", "ADDI"] as const;
+export type Type = (typeof types)[number];
 
 export const possibleStats = [
   "STR",

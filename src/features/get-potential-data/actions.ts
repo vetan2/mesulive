@@ -17,10 +17,11 @@ import {
   fetchGradeUpRecords,
   findGradeUpRecord,
   createGradeUpRecords,
+  fetchOptionIdNameMap,
 } from "./serverLogics";
-import { type GradeUpRecord } from "./types";
+import { type OptionIdNameMap, type GradeUpRecord } from "./types";
 
-export const getPotentialOptionRecords = (_params: {
+export const getPotentialOptionTable = (params: {
   method: Potential.ResetMethod;
   equip: Equip;
   level: number;
@@ -32,27 +33,45 @@ export const getPotentialOptionRecords = (_params: {
     TE.apS(
       "params",
       TE.right({
-        ..._params,
-        level: Potential.flattenLevel(_params.level),
+        ...params,
+        level: Potential.flattenLevel(params.level),
         method:
-          _params.method === "ADDI"
+          params.method === "ADDI"
             ? ("ADDI_POTENTIAL" satisfies Potential.ResetMethod)
-            : _params.method,
+            : params.method,
       }),
     ),
     TE.bind("fetchedTable", ({ params }) => findOptionTable(params)),
-    TE.chainW(({ fetchedTable, params }) =>
+    TE.chain(({ fetchedTable, params }) =>
       pipe(
         fetchedTable,
-        TE.fromOption(() => undefined),
-        TE.orElse(() =>
-          pipe(
-            fetchOptionData(params),
-            TE.chainFirst((table) =>
-              createPotentialOptionTable({ ...params, optionTable: table }),
+        O.match(
+          () =>
+            pipe(
+              fetchOptionData(params),
+              TE.chain((table) =>
+                createPotentialOptionTable({ ...params, optionTable: table }),
+              ),
             ),
-          ),
+          (v) => TE.right(v),
         ),
+      ),
+    ),
+    taskEitherToPromise,
+  );
+
+export const getPotentialOptionIdNameMap = (params: { optionIds: number[] }) =>
+  pipe(
+    TE.Do,
+    TE.chainFirstW(() => resetDatabaseIfGameVersionAhead),
+    TE.chain(() => fetchOptionIdNameMap(params)),
+    TE.map((arr) =>
+      arr.reduce(
+        (acc, { id, name }) => ({
+          ...acc,
+          [id]: name satisfies OptionIdNameMap[number],
+        }),
+        {} as OptionIdNameMap,
       ),
     ),
     taskEitherToPromise,
