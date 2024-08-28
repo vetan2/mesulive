@@ -5,7 +5,7 @@ import { X } from "lucide-react";
 import { P, match } from "ts-pattern";
 
 import { PotentialCalcRootMachineContext } from "~/app/(app)/calc/potential/_lib/machines/contexts";
-import { E } from "~/shared/fp";
+import { E, O } from "~/shared/fp";
 import { entries } from "~/shared/object";
 import { cx } from "~/shared/style";
 import { S } from "~/shared/ui";
@@ -47,7 +47,13 @@ export const OptionRecordsSetting = ({ index }: Props) => {
             className="flex-[3]"
             placeholder="옵션 선택"
             aria-label="옵션 선택"
-            selectedKeys={record.stat.input ? [record.stat.input] : []}
+            selectedKeys={pipe(
+              record.stat,
+              O.match(
+                () => [],
+                (v) => [v],
+              ),
+            )}
             onChange={(e) => {
               inputActorRef.send({
                 index,
@@ -82,19 +88,20 @@ export const OptionRecordsSetting = ({ index }: Props) => {
                 figure: v,
               });
             }}
-            isInvalid={E.isLeft(record.figure.value)}
+            isInvalid={O.isSome(record.stat) && E.isLeft(record.figure.value)}
             errorMessage={pipe(
-              record.figure.value,
-              E.match(identity, () => undefined),
+              record.stat,
+              O.map(() =>
+                pipe(
+                  record.figure.value,
+                  E.match(identity, () => undefined),
+                ),
+              ),
+              O.toUndefined,
             )}
             endContent={
               <span className="text-sm text-gray-400">
-                {match(
-                  pipe(
-                    record.stat.value,
-                    E.getOrElseW(() => undefined),
-                  ),
-                )
+                {match(O.toUndefined(record.stat))
                   .with(
                     P.union(
                       P.union(
@@ -131,7 +138,7 @@ export const OptionRecordsSetting = ({ index }: Props) => {
         color="danger"
         variant="flat"
         onClick={() => {
-          inputActorRef.send({ type: "REMOVE_OPTION_RECORD", index });
+          inputActorRef.send({ type: "REMOVE_OPTION_RECORDS", index });
         }}
       >
         <X />

@@ -2,7 +2,7 @@
 
 import { createBrowserInspector } from "@statelyai/inspect";
 import { createActorContext } from "@xstate/react";
-import { useEffect, type PropsWithChildren } from "react";
+import { type PropsWithChildren } from "react";
 
 import { potentialCalcRootMachine } from "./potentialCalcRootMachine";
 
@@ -16,15 +16,6 @@ export const PotentialCalcRootMachineContext = createActorContext(
 export const PotentialCalcRootMachineProvider = ({
   children,
 }: PropsWithChildren) => {
-  useEffect(() => {
-    if (
-      process.env.NODE_ENV === "development" &&
-      inspector.adapter["status"] === "disconnected"
-    ) {
-      // inspector.start();
-    }
-  }, []);
-
   return (
     <PotentialCalcRootMachineContext.Provider>
       {children}

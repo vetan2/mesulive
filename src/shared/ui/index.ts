@@ -1,5 +1,4 @@
 import {
-  Button,
   Card,
   CircularProgress,
   Input,
@@ -9,8 +8,10 @@ import {
   ModalFooter,
   Navbar,
   SelectItem,
+  Tooltip,
 } from "@nextui-org/react";
 
+import { Button } from "./Button";
 import { Checkbox } from "./Checkbox";
 import { CheckboxGroup } from "./CheckboxGroup";
 import { Modal } from "./Modal";
@@ -20,7 +21,6 @@ import { RadioGroup } from "./RadioGroup";
 import { Select } from "./Select";
 
 export const S = {
-  Button,
   Card,
   CircularProgress,
   Input,
@@ -30,8 +30,10 @@ export const S = {
   ModalFooter,
   Navbar,
   SelectItem,
+  Tooltip,
 
   // custom
+  Button,
   Checkbox,
   CheckboxGroup,
   Modal,

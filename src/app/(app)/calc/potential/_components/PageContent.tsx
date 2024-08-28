@@ -3,8 +3,9 @@
 import { useSelector } from "@xstate/react";
 
 import { PotentialCalcRootMachineContext } from "~/app/(app)/calc/potential/_lib/machines/contexts";
-import { PageTitle, S, SectionContainer } from "~/shared/ui";
+import { PageTitle, SectionContainer } from "~/shared/ui";
 
+import { CalculateButton } from "./CalculateButton";
 import { OptionSectionContent } from "./OptionSectionContent";
 import { SettingSectionContent } from "./SettingSectionContent";
 
@@ -26,13 +27,7 @@ export const PageContent = () => {
           <SectionContainer title="설정">
             <SettingSectionContent />
           </SectionContainer>
-          <S.Button
-            size="lg"
-            color="primary"
-            className="hidden font-bold lg:block"
-          >
-            계산하기
-          </S.Button>
+          <CalculateButton className="hidden lg:block" />
         </div>
         {aimType === "OPTIONS" && (
           <div className="flex w-full flex-col gap-4 lg:min-h-full lg:flex-1">
@@ -41,9 +36,7 @@ export const PageContent = () => {
             </SectionContainer>
           </div>
         )}
-        <S.Button size="lg" color="primary" className="font-bold lg:hidden">
-          계산하기
-        </S.Button>
+        <CalculateButton className="lg:hidden" />
       </div>
     </div>
   );

@@ -55,6 +55,7 @@ export const CubePriceSettingModal = ({ inputActorRef, ...props }: Props) => {
                       price: value,
                     });
                   }}
+                  description="빈칸이면 0으로 계산됩니다."
                   isInvalid={E.isLeft(price.value)}
                   errorMessage={pipe(
                     price.value,
