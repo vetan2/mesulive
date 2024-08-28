@@ -1,33 +1,22 @@
 "use client";
 
-import { useSelector } from "@xstate/react";
+import { useMolecule } from "bunshi/react";
 import { identity, pipe } from "fp-ts/lib/function";
-import { useCallback, useState } from "react";
+import { useAtom } from "jotai";
+import { useState } from "react";
 
-import { PotentialCalcRootMachineContext } from "~/app/(app)/calc/potential/_lib/machines/contexts";
+import { PotentialCalcMolecule } from "~/app/(app)/calc/potential/_lib/molecules";
 import { E } from "~/shared/fp";
 import { S } from "~/shared/ui";
 
 export const EquipLevelInput = () => {
-  const inputActorRef = PotentialCalcRootMachineContext.useSelector(
-    ({ context }) => context.inputActorRef,
-  );
   const [touched, setTouched] = useState(false);
 
-  const input = useSelector(
-    inputActorRef,
-    ({ context }) => context.level.input,
-  );
-  const errorMessage = useSelector(
-    inputActorRef,
-    useCallback(
-      ({ context }) =>
-        pipe(
-          context.level.value,
-          E.match(identity, () => undefined),
-        ),
-      [],
-    ),
+  const { levelAtom } = useMolecule(PotentialCalcMolecule);
+  const [level, setLevel] = useAtom(levelAtom);
+  const errorMessage = pipe(
+    level.value,
+    E.match(identity, () => undefined),
   );
 
   return (
@@ -36,13 +25,13 @@ export const EquipLevelInput = () => {
       type="number"
       onValueChange={(value) => {
         setTouched(true);
-        inputActorRef.send({ type: "SET_LEVEL", value });
+        setLevel(value);
       }}
       onBlur={() => {
         setTouched(true);
       }}
       isInvalid={touched && !!errorMessage}
-      value={input}
+      value={level.input}
       errorMessage={touched && errorMessage}
     />
   );

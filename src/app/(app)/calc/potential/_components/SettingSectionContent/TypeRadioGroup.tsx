@@ -1,8 +1,9 @@
 "use client";
 
-import { useSelector } from "@xstate/react";
+import { useMolecule } from "bunshi/react";
+import { useAtom } from "jotai";
 
-import { PotentialCalcRootMachineContext } from "~/app/(app)/calc/potential/_lib/machines/contexts";
+import { PotentialCalcMolecule } from "~/app/(app)/calc/potential/_lib/molecules";
 import { Potential } from "~/entities/potential";
 import { cx } from "~/shared/style";
 import { S } from "~/shared/ui";
@@ -12,27 +13,16 @@ interface Props {
 }
 
 export const TypeRadioGroup = ({ className }: Props) => {
-  const inputActorRef = PotentialCalcRootMachineContext.useSelector(
-    ({ context }) => context.inputActorRef,
-  );
-
-  const type = useSelector(inputActorRef, ({ context }) => context.type);
-  const disabled = useSelector(
-    inputActorRef,
-    ({ value }) => value === "locked",
-  );
+  const { typeAtom } = useMolecule(PotentialCalcMolecule);
+  const [type, setType] = useAtom(typeAtom);
 
   return (
     <S.RadioGroup
       label="잠재능력 타입"
-      isDisabled={disabled}
       className={cx(className)}
       size="sm"
       onValueChange={(value) => {
-        inputActorRef.send({
-          type: "SET_TYPE",
-          value,
-        });
+        setType(value);
       }}
       value={type}
     >

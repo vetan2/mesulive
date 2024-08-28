@@ -14,7 +14,7 @@ export type OptionTable = {
   figure?: number;
 }[][];
 
-export type OptionIdNameMap = {
+export type OptionIdNameRecord = {
   [key: number]: string;
 };
 

@@ -1,9 +1,10 @@
 "use client";
 
-import { useSelector } from "@xstate/react";
+import { useMolecule } from "bunshi/react";
 import { identity, pipe } from "fp-ts/lib/function";
+import { useAtomValue } from "jotai";
 
-import { PotentialCalcRootMachineContext } from "~/app/(app)/calc/potential/_lib/machines/contexts";
+import { PotentialCalcMolecule } from "~/app/(app)/calc/potential/_lib/molecules";
 import { E } from "~/shared/fp";
 import { cx } from "~/shared/style";
 import { S } from "~/shared/ui";
@@ -13,14 +14,8 @@ interface Props {
 }
 
 export const CalculateButton = ({ className }: Props) => {
-  const inputActorRef = PotentialCalcRootMachineContext.useSelector(
-    ({ context }) => context.inputActorRef,
-  );
-
-  const inputStatus = useSelector(
-    inputActorRef,
-    ({ context }) => context.inputStatus,
-  );
+  const { inputStatusAtom } = useMolecule(PotentialCalcMolecule);
+  const inputStatus = useAtomValue(inputStatusAtom);
 
   return (
     <S.Tooltip

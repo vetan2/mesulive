@@ -1,11 +1,12 @@
 "use client";
 
-import { useSelector } from "@xstate/react";
+import { useMolecule } from "bunshi/react";
+import { useAtomValue, useSetAtom } from "jotai";
 import NextImage from "next/image";
 import { overlay } from "overlay-kit";
 import { match } from "ts-pattern";
 
-import { PotentialCalcRootMachineContext } from "~/app/(app)/calc/potential/_lib/machines/contexts";
+import { PotentialCalcMolecule } from "~/app/(app)/calc/potential/_lib/molecules";
 import { Potential } from "~/entities/potential";
 import { cx } from "~/shared/style";
 import { S } from "~/shared/ui";
@@ -17,22 +18,22 @@ interface Props {
 }
 
 export const ResetMethodCheckboxGroup = ({ className }: Props) => {
-  const inputActorRef = PotentialCalcRootMachineContext.useSelector(
-    ({ context }) => context.inputActorRef,
-  );
+  const potentialCalcMolecule = useMolecule(PotentialCalcMolecule);
+  const {
+    resetMethodsAtom,
+    addResetMethodAtom,
+    removeResetMethodAtom,
+    aimTypeAtom,
+    gradeAtom,
+    typeAtom,
+  } = potentialCalcMolecule;
+  const resetMethods = useAtomValue(resetMethodsAtom);
+  const aimType = useAtomValue(aimTypeAtom);
+  const grade = useAtomValue(gradeAtom);
+  const type = useAtomValue(typeAtom);
 
-  const input = useSelector(
-    inputActorRef,
-    ({ context }) => context.resetMethods,
-  );
-  const aimType = useSelector(inputActorRef, ({ context }) => context.aimType);
-  const grade = useSelector(inputActorRef, ({ context }) => context.grade);
-  const type = useSelector(inputActorRef, ({ context }) => context.type);
-
-  const disabled = useSelector(
-    inputActorRef,
-    ({ value }) => value === "locked",
-  );
+  const addResetMethod = useSetAtom(addResetMethodAtom);
+  const removeResetMethod = useSetAtom(removeResetMethodAtom);
 
   return (
     <S.CheckboxGroup
@@ -47,7 +48,6 @@ export const ResetMethodCheckboxGroup = ({ className }: Props) => {
             onClick={() => {
               overlay.open(({ isOpen, unmount, close }) => (
                 <CubePriceSettingModal
-                  inputActorRef={inputActorRef}
                   isOpen={isOpen}
                   onClose={close}
                   onExit={unmount}
@@ -59,13 +59,12 @@ export const ResetMethodCheckboxGroup = ({ className }: Props) => {
           </S.Button>
         </div>
       }
-      isDisabled={disabled}
       className={cx(className)}
       classNames={{
         wrapper: cx("w-fit gap-3 md:grid md:grid-cols-2 md:gap-4"),
       }}
       size="sm"
-      value={input}
+      value={resetMethods}
     >
       {Potential.resetMethods.map((method) => (
         <S.Checkbox
@@ -73,17 +72,11 @@ export const ResetMethodCheckboxGroup = ({ className }: Props) => {
           value={method}
           onValueChange={(selected) => {
             if (selected) {
-              inputActorRef.send({
-                type: "ADD_RESET_METHOD",
-                value: method,
-              });
+              addResetMethod(method);
               return;
             }
 
-            inputActorRef.send({
-              type: "REMOVE_RESET_METHOD",
-              value: method,
-            });
+            removeResetMethod(method);
           }}
           classNames={{
             label: cx(
@@ -128,7 +121,6 @@ export const ResetMethodCheckboxGroup = ({ className }: Props) => {
             ),
           }}
           isDisabled={
-            disabled ||
             !Potential.getIsResetMethodEnable({
               resetMethod: method,
               type,

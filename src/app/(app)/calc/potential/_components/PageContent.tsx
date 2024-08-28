@@ -1,8 +1,9 @@
 "use client";
 
-import { useSelector } from "@xstate/react";
+import { useMolecule } from "bunshi/react";
+import { useAtomValue } from "jotai";
 
-import { PotentialCalcRootMachineContext } from "~/app/(app)/calc/potential/_lib/machines/contexts";
+import { PotentialCalcMolecule } from "~/app/(app)/calc/potential/_lib/molecules";
 import { PageTitle, SectionContainer } from "~/shared/ui";
 
 import { CalculateButton } from "./CalculateButton";
@@ -10,11 +11,8 @@ import { OptionSectionContent } from "./OptionSectionContent";
 import { SettingSectionContent } from "./SettingSectionContent";
 
 export const PageContent = () => {
-  const inputActorRef = PotentialCalcRootMachineContext.useSelector(
-    ({ context }) => context.inputActorRef,
-  );
-
-  const aimType = useSelector(inputActorRef, ({ context }) => context.aimType);
+  const { aimTypeAtom } = useMolecule(PotentialCalcMolecule);
+  const aimType = useAtomValue(aimTypeAtom);
 
   return (
     <div className="mx-auto max-w-screen-xl">

@@ -1,12 +1,18 @@
-import { useSelector } from "@xstate/react";
+import { useMolecule } from "bunshi/react";
+import { ord } from "fp-ts";
 import { identity, pipe } from "fp-ts/lib/function";
-import { isEqual } from "lodash-es";
+import { atom, useAtomValue, useSetAtom } from "jotai";
 import { X } from "lucide-react";
+import { useCallback, useEffect, useMemo } from "react";
+import { type inferData, type inferVariables } from "react-query-kit";
 import { P, match } from "ts-pattern";
+import { useDebounceValue } from "usehooks-ts";
 
-import { PotentialCalcRootMachineContext } from "~/app/(app)/calc/potential/_lib/machines/contexts";
-import { E, O } from "~/shared/fp";
-import { entries } from "~/shared/object";
+import { PotentialCalcMolecule } from "~/app/(app)/calc/potential/_lib/molecules";
+import { type Potential } from "~/entities/potential";
+import { effectiveStatLabels, effectiveStatOptions } from "~/entities/stat";
+import { PotentialQueries } from "~/features/get-potential-data/queries";
+import { A, E, O } from "~/shared/fp";
 import { cx } from "~/shared/style";
 import { S } from "~/shared/ui";
 
@@ -15,34 +21,88 @@ interface Props {
 }
 
 export const OptionRecordsSetting = ({ index }: Props) => {
-  const inputActorRef = PotentialCalcRootMachineContext.useSelector(
-    ({ context }) => context.inputActorRef,
+  const {
+    optionSetsAtom,
+    equipAtom,
+    gradeAtom,
+    typeAtom,
+    aimTypeAtom,
+    editOptionAtom,
+    removeOptionSetAtom,
+    adjustOptionSetsAtom,
+  } = useMolecule(PotentialCalcMolecule);
+  const optionSetAtom = useMemo(
+    () => atom((get) => get(optionSetsAtom).at(index)),
+    [index, optionSetsAtom],
+  );
+  const optionSet = useAtomValue(optionSetAtom);
+  const equip = useAtomValue(equipAtom);
+  const grade = useAtomValue(gradeAtom);
+  const type = useAtomValue(typeAtom);
+  const aimType = useAtomValue(aimTypeAtom);
+  const editOption = useSetAtom(editOptionAtom);
+  const removeOptionSet = useSetAtom(removeOptionSetAtom);
+  const adjustOptionSets = useSetAtom(adjustOptionSetsAtom);
+
+  const [variables] = useDebounceValue<
+    inferVariables<typeof PotentialQueries.useOptionTable>
+  >(
+    useMemo(
+      () => ({
+        equip,
+        grade,
+        type,
+        level: 200,
+        method: match(type)
+          .returnType<Potential.ResetMethod>()
+          .with("ADDI", () => "ADDI_POTENTIAL")
+          .with("COMMON", () => "POTENTIAL")
+          .exhaustive(),
+      }),
+      [equip, grade, type],
+    ),
+    300,
   );
 
-  const optionRecords = useSelector(
-    inputActorRef,
-    ({ context }) => context.optionRecordsArray.at(index),
-    isEqual,
-  );
+  const possibleOptionIds = PotentialQueries.useOptionTable({
+    variables,
+    enabled: aimType === "OPTIONS",
+    select: useCallback(
+      (data: inferData<typeof PotentialQueries.useOptionTable>) =>
+        pipe(
+          data,
+          A.flatMap(A.filterMap(({ stat }) => O.fromNullable(stat))),
+          (arr) => [...new Set(arr)],
+          A.sort(
+            ord.fromCompare<Potential.PossibleStat>((statA, statB) =>
+              effectiveStatOptions.indexOf(statA) >
+              effectiveStatOptions.indexOf(statB)
+                ? 1
+                : -1,
+            ),
+          ),
+        ),
+      [],
+    ),
+  });
 
-  const possibleOptionIds = useSelector(
-    inputActorRef,
-    ({ context }) => context.possibleStats,
-  );
+  useEffect(() => {
+    if (possibleOptionIds.isSuccess) {
+      adjustOptionSets(possibleOptionIds.data);
+    }
+  }, [adjustOptionSets, possibleOptionIds.data, possibleOptionIds.isSuccess]);
 
-  const state = useSelector(inputActorRef, ({ value }) => value);
-
-  if (!optionRecords) {
+  if (!optionSet) {
     return null;
   }
 
   return (
     <S.Card shadow="sm" className="flex flex-col gap-3 overflow-visible p-3">
-      {optionRecords.map((record, recordIndex) => (
+      {optionSet.map((record, recordIndex) => (
         <div key={recordIndex} className="flex items-start gap-3">
           <S.Select
-            isLoading={state === "fetchingPossibleOptionIds"}
-            isDisabled={state === "fetchingPossibleOptionIds"}
+            isLoading={possibleOptionIds.isLoading}
+            isDisabled={possibleOptionIds.isLoading}
             size="sm"
             className="flex-[3]"
             placeholder="옵션 선택"
@@ -55,25 +115,28 @@ export const OptionRecordsSetting = ({ index }: Props) => {
               ),
             )}
             onChange={(e) => {
-              inputActorRef.send({
-                index,
-                recordIndex,
-                type: "EDIT_OPTION_RECORD",
+              editOption({
+                setIndex: index,
+                optionIndex: recordIndex,
                 stat: e.target.value,
               });
             }}
           >
-            {[["NONE", "없음"], ...entries(possibleOptionIds)].map(
-              ([stat, name]) => (
-                <S.SelectItem
-                  key={stat}
-                  value={stat}
-                  className={cx(stat === "NONE" && "text-gray-400")}
-                >
-                  {name}
-                </S.SelectItem>
-              ),
-            )}
+            {[
+              ["NONE", "없음"],
+              ...(possibleOptionIds.data ?? []).map((stat) => [
+                stat,
+                effectiveStatLabels[stat],
+              ]),
+            ].map(([stat, name]) => (
+              <S.SelectItem
+                key={stat}
+                value={stat}
+                className={cx(stat === "NONE" && "text-gray-400")}
+              >
+                {name}
+              </S.SelectItem>
+            ))}
           </S.Select>
           <S.Input
             type="number"
@@ -81,10 +144,9 @@ export const OptionRecordsSetting = ({ index }: Props) => {
             className="flex-1"
             value={record.figure.input}
             onValueChange={(v) => {
-              inputActorRef.send({
-                index,
-                recordIndex,
-                type: "EDIT_OPTION_RECORD",
+              editOption({
+                setIndex: index,
+                optionIndex: recordIndex,
                 figure: v,
               });
             }}
@@ -138,7 +200,7 @@ export const OptionRecordsSetting = ({ index }: Props) => {
         color="danger"
         variant="flat"
         onClick={() => {
-          inputActorRef.send({ type: "REMOVE_OPTION_RECORDS", index });
+          removeOptionSet(index);
         }}
       >
         <X />

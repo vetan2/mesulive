@@ -1,7 +1,9 @@
 import { type Metadata } from "next";
 
+import { ScopeProvider } from "~/app/_components/providers";
+
 import { PageContent } from "./_components/PageContent";
-import { PotentialCalcRootMachineProvider } from "./_lib/machines/contexts";
+import { PotentialCalcScope } from "./_lib/scopes";
 
 export const metadata: Metadata = {
   title: "메이플스토리 잠재능력 계산기",
@@ -15,8 +17,8 @@ export const metadata: Metadata = {
 
 export default function Page() {
   return (
-    <PotentialCalcRootMachineProvider>
+    <ScopeProvider scope={PotentialCalcScope}>
       <PageContent />
-    </PotentialCalcRootMachineProvider>
+    </ScopeProvider>
   );
 }

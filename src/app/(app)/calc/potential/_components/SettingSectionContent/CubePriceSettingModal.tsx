@@ -1,10 +1,10 @@
-import { useSelector } from "@xstate/react";
+import { useMolecule } from "bunshi/react";
 import { identity, pipe } from "fp-ts/lib/function";
+import { useAtomValue, useSetAtom } from "jotai";
 import NextImage from "next/image";
 import { type ComponentProps } from "react";
-import { type ActorRefFrom } from "xstate";
 
-import { type potentialInputMachine } from "~/app/(app)/calc/potential/_lib/machines/potentialInputMachine";
+import { PotentialCalcMolecule } from "~/app/(app)/calc/potential/_lib/molecules";
 import { currencyUnitLabels, currencyUnits } from "~/entities/game";
 import { Potential } from "~/entities/potential";
 import { E } from "~/shared/fp";
@@ -12,15 +12,14 @@ import { entries } from "~/shared/object";
 import { cx } from "~/shared/style";
 import { S } from "~/shared/ui";
 
-interface Props extends Omit<ComponentProps<typeof S.Modal>, "children"> {
-  inputActorRef: ActorRefFrom<typeof potentialInputMachine>;
-}
+interface Props extends Omit<ComponentProps<typeof S.Modal>, "children"> {}
 
-export const CubePriceSettingModal = ({ inputActorRef, ...props }: Props) => {
-  const cubePrices = useSelector(
-    inputActorRef,
-    ({ context }) => context.cubePrices,
+export const CubePriceSettingModal = ({ ...props }: Props) => {
+  const { cubePricesAtom, setCubePriceAtom } = useMolecule(
+    PotentialCalcMolecule,
   );
+  const cubePrices = useAtomValue(cubePricesAtom);
+  const setCubePrice = useSetAtom(setCubePriceAtom);
 
   return (
     <S.Modal {...props}>
@@ -49,11 +48,7 @@ export const CubePriceSettingModal = ({ inputActorRef, ...props }: Props) => {
                   className="flex-[2]"
                   value={price.input}
                   onValueChange={(value) => {
-                    inputActorRef.send({
-                      type: "SET_CUBE_PRICE",
-                      cube,
-                      price: value,
-                    });
+                    setCubePrice(cube, { priceInput: value });
                   }}
                   description="빈칸이면 0으로 계산됩니다."
                   isInvalid={E.isLeft(price.value)}
@@ -61,18 +56,16 @@ export const CubePriceSettingModal = ({ inputActorRef, ...props }: Props) => {
                     price.value,
                     E.match(identity, () => ""),
                   )}
+                  aria-label={Potential.resetMethodLabels[cube]}
                 />
                 <S.Select
                   size="sm"
                   className="flex-1"
                   selectedKeys={[unit]}
                   onChange={(e) => {
-                    inputActorRef.send({
-                      type: "SET_CUBE_PRICE",
-                      cube,
-                      unit: e.target.value,
-                    });
+                    setCubePrice(cube, { unitInput: e.target.value });
                   }}
+                  aria-label={Potential.resetMethodLabels[cube]}
                 >
                   {currencyUnits.map((unit) => (
                     <S.SelectItem key={unit} value={unit}>

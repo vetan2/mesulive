@@ -31,6 +31,10 @@ const nextConfig = {
 
     return config;
   },
+
+  experimental: {
+    swcPlugins: [["@swc-jotai/debug-label", {}]],
+  },
 };
 
 export default nextConfig;

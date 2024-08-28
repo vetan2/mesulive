@@ -17,7 +17,7 @@ import { parseZod } from "~/shared/zod";
 import { type GetMethodProbRecord } from "./logic";
 
 const equipType = atom<EquipType>(equipTypeSchema.enum.NON_WEAPON);
-equipType.debugLabel = "bonusStatCalc/equipType";
+// equipType.debugLabel = "bonusStatCalc/equipType";
 
 const equipLevel = atom<number | undefined>(undefined);
 equipLevel.debugLabel = "bonusStatCalc/equipLevel";

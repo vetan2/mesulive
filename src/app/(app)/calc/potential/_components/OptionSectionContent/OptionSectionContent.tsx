@@ -1,9 +1,12 @@
 "use client";
 
-import { useSelector } from "@xstate/react";
+import { useMolecule } from "bunshi/react";
+import { atom, useAtomValue, useSetAtom } from "jotai";
+import { RESET } from "jotai/utils";
 import { Plus, RefreshCcw } from "lucide-react";
+import { useMemo } from "react";
 
-import { PotentialCalcRootMachineContext } from "~/app/(app)/calc/potential/_lib/machines/contexts";
+import { PotentialCalcMolecule } from "~/app/(app)/calc/potential/_lib/molecules";
 import { S } from "~/shared/ui";
 
 import { OptionRecordsSetting } from "./OptionRecordsSetting";
@@ -13,33 +16,23 @@ interface Props {
 }
 
 export const OptionSectionContent = ({ className }: Props) => {
-  const inputActorRef = PotentialCalcRootMachineContext.useSelector(
-    ({ context }) => context.inputActorRef,
+  const { optionSetsAtom, addOptionSetAtom } = useMolecule(
+    PotentialCalcMolecule,
   );
-
-  const optionRecordsArrayLength = useSelector(
-    inputActorRef,
-    ({ context }) => context.optionRecordsArray.length,
+  const setOptionSets = useSetAtom(optionSetsAtom);
+  const optionSetsLengthAtom = useMemo(
+    () => atom((get) => get(optionSetsAtom).length),
+    [optionSetsAtom],
   );
-
-  const shouldRefreshPossibleStats = useSelector(
-    inputActorRef,
-    ({ context }) => context.shouldRefreshPossibleStats,
-  );
+  const optionSetsLength = useAtomValue(optionSetsLengthAtom);
+  const addOptionSet = useSetAtom(addOptionSetAtom);
 
   return (
-    <div
-      onMouseOver={() => {
-        if (shouldRefreshPossibleStats) {
-          inputActorRef.send({ type: "FETCH_POSSIBLE_OPTION_IDS" });
-        }
-      }}
-      className={className}
-    >
+    <div className={className}>
       <S.Button
         size="sm"
         onClick={() => {
-          inputActorRef.send({ type: "ADD_OPTION_RECORDS" });
+          addOptionSet();
         }}
         color="primary"
         className="w-20"
@@ -49,7 +42,7 @@ export const OptionSectionContent = ({ className }: Props) => {
       <S.Button
         size="sm"
         onClick={() => {
-          inputActorRef.send({ type: "RESET_OPTION_RECORDS_ARRAY" });
+          setOptionSets(RESET);
         }}
         className="ml-2 w-20"
         variant="flat"
@@ -58,7 +51,7 @@ export const OptionSectionContent = ({ className }: Props) => {
         <RefreshCcw className="size-4" /> 초기화
       </S.Button>
       <div className="mt-3 flex flex-col gap-3">
-        {Array.from({ length: optionRecordsArrayLength }).map((_, i) => (
+        {Array.from({ length: optionSetsLength }).map((_, i) => (
           <OptionRecordsSetting key={i} index={i} />
         ))}
       </div>

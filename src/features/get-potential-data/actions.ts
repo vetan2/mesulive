@@ -18,7 +18,7 @@ import {
   fetchOptionIdNameMap,
   getPotentialOptionTable as _getPotentialOptionTable,
 } from "./serverLogics";
-import { type OptionIdNameMap, type GradeUpRecord } from "./types";
+import { type OptionIdNameRecord, type GradeUpRecord } from "./types";
 
 export const getPotentialOptionTable = (params: {
   method: Potential.ResetMethod;
@@ -62,9 +62,9 @@ export const getPotentialOptionIdNameMap = (params: { optionIds: number[] }) =>
       arr.reduce(
         (acc, { id, name }) => ({
           ...acc,
-          [id]: name satisfies OptionIdNameMap[number],
+          [id]: name satisfies OptionIdNameRecord[number],
         }),
-        {} as OptionIdNameMap,
+        {} as OptionIdNameRecord,
       ),
     ),
     taskEitherToPromise,
