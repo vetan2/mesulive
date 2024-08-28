@@ -1,10 +1,22 @@
 import { type $Enums } from "@prisma/client";
+import { type StaticImageData } from "next/image";
 import { z } from "zod";
 
 import { type EffectiveStat } from "~/entities/stat";
+import {
+  AddiCube,
+  AddiPotential,
+  ArtisanCube,
+  MasterCube,
+  Potential,
+  RedCube,
+  StrangeAddiCube,
+  StrangeCube,
+} from "~/shared/assets/images";
+import { cx } from "~/shared/style";
 
 export type ResetMethod = $Enums.PotentialResetMethod;
-export const resetMethods: ResetMethod[] = [
+export const resetMethodSchema = z.enum([
   "RED",
   "POTENTIAL",
   "ADDI",
@@ -13,7 +25,8 @@ export const resetMethods: ResetMethod[] = [
   "MASTER",
   "ARTISAN",
   "STRANGE_ADDI",
-];
+] as const satisfies ResetMethod[]);
+export const resetMethods = resetMethodSchema.options;
 
 export type Cube = Exclude<ResetMethod, "POTENTIAL" | "ADDI_POTENTIAL">;
 export const cubes: Cube[] = [
@@ -35,9 +48,44 @@ export const resetMethodLabels: Record<ResetMethod, string> = {
   ARTISAN: "명장의 큐브",
   STRANGE_ADDI: "수상한 에디셔널 큐브",
 };
+export const resetMethodImages: Record<ResetMethod, StaticImageData> = {
+  RED: RedCube,
+  POTENTIAL: Potential,
+  ADDI: AddiCube,
+  ADDI_POTENTIAL: AddiPotential,
+  STRANGE: StrangeCube,
+  MASTER: MasterCube,
+  ARTISAN: ArtisanCube,
+  STRANGE_ADDI: StrangeAddiCube,
+};
+export const resetMethodColorClassNames: Record<
+  ResetMethod,
+  { text: string; bg: string }
+> = {
+  RED: { text: cx("text-redCube"), bg: cx("bg-redCube") },
+  POTENTIAL: { text: cx("text-potential"), bg: cx("bg-potential") },
+  ADDI: { text: cx("text-addiCube"), bg: cx("bg-addiCube") },
+  ADDI_POTENTIAL: {
+    text: cx("text-addiPotential"),
+    bg: cx("bg-addiPotential"),
+  },
+  STRANGE: { text: cx("text-strangeCube"), bg: cx("bg-strangeCube") },
+  MASTER: { text: cx("text-masterCube"), bg: cx("bg-masterCube") },
+  ARTISAN: { text: cx("text-artisanCube"), bg: cx("bg-artisanCube") },
+  STRANGE_ADDI: {
+    text: cx("text-strangeAddiCube"),
+    bg: cx("bg-strangeAddiCube"),
+  },
+};
 
 export type Grade = $Enums.PotentialGrade;
-export const grades: Grade[] = ["RARE", "EPIC", "UNIQUE", "LEGENDARY"];
+export const gradeSchema = z.enum([
+  "RARE",
+  "EPIC",
+  "UNIQUE",
+  "LEGENDARY",
+] as const satisfies Grade[]);
+export const grades = gradeSchema.options;
 export const gradeLabels: Record<Grade, string> = {
   RARE: "레어",
   EPIC: "에픽",
@@ -67,11 +115,32 @@ export const gradesEnableToReset: Record<ResetMethod, Grade[]> = {
   STRANGE_ADDI: ["RARE", "EPIC"],
 };
 
-export const aimTypes = ["GRADE_UP", "OPTIONS"] as const;
-export type AimType = (typeof aimTypes)[number];
+export const aimTypeSchema = z.enum(["GRADE_UP", "OPTIONS"]);
+export const aimTypes = aimTypeSchema.options;
+export type AimType = z.infer<typeof aimTypeSchema>;
+export const aimTypeLabels: Record<AimType, string> = {
+  GRADE_UP: "등급 업",
+  OPTIONS: "옵션 띄우기",
+};
 
-export const types = ["COMMON", "ADDI"] as const;
-export type Type = (typeof types)[number];
+export const typeSchema = z.enum(["COMMON", "ADDI"]);
+export const types = typeSchema.options;
+export type Type = z.infer<typeof typeSchema>;
+export const typeLabels: Record<Type, string> = {
+  COMMON: "일반",
+  ADDI: "에디셔널",
+};
+
+export const typesEnableToReset: Record<ResetMethod, Type[]> = {
+  RED: ["COMMON"],
+  POTENTIAL: ["COMMON"],
+  ADDI: ["ADDI"],
+  ADDI_POTENTIAL: ["ADDI"],
+  STRANGE: ["COMMON"],
+  MASTER: ["COMMON"],
+  ARTISAN: ["COMMON"],
+  STRANGE_ADDI: ["ADDI"],
+};
 
 export const possibleStats = [
   "STR",

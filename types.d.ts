@@ -16,6 +16,7 @@ declare module "next/link" {
 }
 
 declare module "next/image" {
-  import NextImage from "next/image";
+  import NextImage, { StaticImageData } from "next/image";
+  export { StaticImageData };
   export default NextImage;
 }

@@ -16,7 +16,7 @@ export const Header = ({ parentRef }: Props) => {
   return (
     <S.Navbar
       classNames={{
-        base: cx("border-b-1 border-b-default-100 p-4 justify-start"),
+        base: cx("justify-start border-b-1 border-b-default-100 p-4"),
         wrapper: cx("h-fit justify-start gap-0 p-0"),
       }}
       shouldHideOnScroll

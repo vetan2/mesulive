@@ -11,13 +11,12 @@ import { taskEitherToPromise } from "~/shared/function";
 
 import {
   resetDatabaseIfGameVersionAhead,
-  fetchOptionData,
-  createPotentialOptionTable,
   findOptionTable,
   fetchGradeUpRecords,
   findGradeUpRecord,
   createGradeUpRecords,
   fetchOptionIdNameMap,
+  getPotentialOptionTable as _getPotentialOptionTable,
 } from "./serverLogics";
 import { type OptionIdNameMap, type GradeUpRecord } from "./types";
 
@@ -46,13 +45,7 @@ export const getPotentialOptionTable = (params: {
       pipe(
         fetchedTable,
         O.match(
-          () =>
-            pipe(
-              fetchOptionData(params),
-              TE.chain((table) =>
-                createPotentialOptionTable({ ...params, optionTable: table }),
-              ),
-            ),
+          () => _getPotentialOptionTable(params),
           (v) => TE.right(v),
         ),
       ),

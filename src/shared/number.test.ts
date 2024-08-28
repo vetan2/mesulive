@@ -9,6 +9,7 @@ describe("isNumeric", () => {
     expect(isNumeric("1.1e1")).toBe(true);
     expect(isNumeric("1.1e-1")).toBe(true);
     expect(isNumeric("1.1e+1")).toBe(true);
+    expect(isNumeric(0)).toBe(true);
   });
 
   it("should return false for non-numeric strings", () => {

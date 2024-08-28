@@ -4,9 +4,9 @@ import { O } from "./fp";
 import { maxFractionDigits } from "./math";
 
 export const isNumeric = (value: unknown): value is `${number}` => {
-  if (typeof value != "string") return false;
+  if (typeof value != "string" && typeof value != "number") return false;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  return !isNaN(value as any) && !isNaN(parseFloat(value));
+  return !isNaN(value as any) && !isNaN(parseFloat(String(value)));
 };
 
 export const convertToNumber = (value: unknown) =>

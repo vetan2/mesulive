@@ -7,6 +7,7 @@ import {
   JotaiProvider,
   MotionProvider,
   NextUIProvider,
+  OverlayProvider,
 } from "./_components/providers";
 
 import "~/shared/style/globals.css";
@@ -29,7 +30,9 @@ export default function RootLayout({
       <body>
         <MotionProvider>
           <JotaiProvider>
-            <NextUIProvider>{children}</NextUIProvider>
+            <NextUIProvider>
+              <OverlayProvider>{children}</OverlayProvider>
+            </NextUIProvider>
           </JotaiProvider>
         </MotionProvider>
       </body>

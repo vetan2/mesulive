@@ -27,7 +27,8 @@ export const StatEfficiencyInput = ({ stat }: Props) => {
   );
   const efficiencyErrorMessage = pipe(
     efficiencyParseResult,
-    E.match(getFirstZodErrorMessage, () => undefined),
+    E.match(getFirstZodErrorMessage, () => O.none),
+    O.toUndefined,
   );
   const isTouched = efficiency != null;
 

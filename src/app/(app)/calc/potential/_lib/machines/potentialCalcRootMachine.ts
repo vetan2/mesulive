@@ -1,21 +1,21 @@
-import { pipe } from "fp-ts/lib/function";
+import { identity, pipe } from "fp-ts/lib/function";
 import { assign, fromPromise, sendTo, setup } from "xstate";
 
-import { potentialInputMachine } from "~/app/(app)/calc/potential/_lib/machines/potentialInputMachine";
 import { type Potential } from "~/entities/potential";
 import {
   getPotentialGradeUpRecord,
   getPotentialOptionIdNameMap,
   getPotentialOptionTable,
 } from "~/features/get-potential-data/actions";
-import { A } from "~/shared/fp";
+import { A, E } from "~/shared/fp";
 
+import { potentialInputMachine } from "./potentialInputMachine";
 import {
   type PotentialCalcRootContext,
   type PotentialCalcRootEvent,
 } from "./types";
 
-export const potentialCalcMachine = setup({
+export const potentialCalcRootMachine = setup({
   types: {
     context: {} as PotentialCalcRootContext,
     events: {} as PotentialCalcRootEvent,
@@ -80,12 +80,13 @@ export const potentialCalcMachine = setup({
     ),
   },
 }).createMachine({
-  /** @xstate-layout N4IgpgJg5mDOIC5QAcD2AXMA7dBLAhgDYDCRAxgEqoYB0uEhYAxAGICiAKsQBID6A4hQCCAETa8AqgAVeFNsQDyFEQGUA2gAYAuohSpYuPKiy6QAD0QAWAEwAaEAE9E1gMyWalgBzXvLgOwAjNaWli4BAL7h9miYOAQk5FS09IysnDwCwmKSMnKKyuoBOkggaAZGJiUWCJYArNY0frUaGnUAbBq1lgCctbX2TghhfjTdGm3WzZ5jAX7d3ZHRGNh4RKSElNTodAzM7Fx8ClIcAJIKAHK8HEIAQgAybOrapmWGuMam1R00bv7dni5-m1at5LANEAEAaNvL5PBNmhpJotSss4mtElsdql9hkjqcLldbg9CsU9OV3pVQNU6g0mi12p0en1wQhZu46mEXG1AXVam1PLVkTEVvF1ptaAAzMDoMgAC1wWCg-AATvgIGAJMgKGAyKhlRBYEwIMYwHQsAA3VAAa1NwrRCQ2SW2Upl8sVKrVGq1Or1BoQCstZHwFU0WlDL30bw+VUQtW6Iz8Ghc1ms3RTXW6LhcLJT7l6nImIR63W5QtRqwd4ud0rlCqgCmQFQ4+AARoxDcasKaA9bbeXRRjJTW3fXGxTm224P6LaggyHtOGSq8Kp9EBMGoDxp5PAEJnCvCydzQES0NGm-G1L-VIlEQFhUOr4Ev++jHVsI+To1TEABaNosv8aFPYCQJaPwy1iCsxSdLEwA-KNKXMCFahGaZxksRNMxcfpHGcaZoR8Vw+VcAUFlvO0oMHatXTrD11U1bVdX1J8yQQ1cEE8EIaGsSE6UwnoD1whAfDaGhtx8LNQVIsilkggc3yHGjFQbJtW3beCVxjDiuJ4zw+LPATPBZIINEaJMgj5IILxQsjIiAA */
+  /** @xstate-layout N4IgpgJg5mDOIC5QAcD2AXMA7dBLAhgDYDCRAxgEqoYB0uEhYAxAGICiAKsQBID6A4hQCCAETa8AqgAVeFNsQDyFEQGUA2gAYAuohSpYuPKiy6QAD0QAWAEwAaEAE9E1gMyWalgBzXPngKzWli4aAGwA7ACMLgC+0fZomDgEJORUtPSMrJw8AsJikjJyisrqETpIIGgGRiYVFgiWATRhfhoaEZF+AJwuLl12joguHTRdodZdlpPhISGx8RjYeESkhJTU6HQMzOxcfApSHACSCgByvBxCAEIAMmzq2qZVhrjGpvUhGjRuLi1+bp4wl0-CDLPYnAgIp4XKNvL5oZYwhowpZkfNKoskitUhstpldjkDsczhdrndSuU9NVXrVQPVGtZmq12p0en0BhCOu5GsNEV0wi5fFDLOiEktkqt1rQAGZgdBkAAWuCwUH4ACd8BAwBJkBQwGRUGqILAmBBjGA6FgAG6oADWFrFWJSazSm1l8qVKvVmu1uv1huNCGVNrI+Bqmi0Eae+hebzqiG6YWaGl5nnaAUsIU84OcgVG-wili8IS6gKmosxy2dUrdcsVyqgCmQNQ4+AARowTWasBbg3aHZWJTiZXXPY3mzTWx24EHrahQ+HtFGKs8au9ECFrIy+qFM0iNJ5ZjmEJ4Ih4uhf+Z4uiWxmFrLE4iAsKgtfAV4PsS6NtHqXG6YgAC0ITHsBFaJFWkquniYC-rGtLmIgER+Em16hIK1jptYYT+MePhdLCPjeFEYyfB04Hil+NY0O69ZehqWo6nqBpGu+VLweuJ5FjQ1hQmE-FBBorSbnhh40L4PjdH4NieKicxPo6kHDrWHoNk2Lbtp2cFrvGXHuLxgICcEwkckhmHJsMIITP0EQ9A+j5AA */
   id: "potentialCalcRoot",
-  /** @xstate-layout N4IgpgJg5mDOIC5QAoC2BDAxgCwJYDswBKAOlwgBswBiAZQFEAVAfXoEUBVASQAUBtAAwBdRKAAOAe1i4ALrgn5RIAB6IAjADYAzCQ0C1AVg0AmY2sMB2NcYA0IAJ7qDxgBwkAnBpcWtLrRYsDF3cDAF9QuzQsPEJScio6JmYAGXoANXpkwREkEElpOQUlVQRNHT1DEzNLaztHUoAWAQ0SI2MDNQDnYwsvcMiMHAJiMkoaBhYAcQAlAEEAEXpspXzZeUVckrLdfTbqgytbB3VXBpJKwwMBAU9gi36QKKHY0YSJ5lmuAFlmRgBNHhLYQrKRrIqbJzlDRNNo3Ay+DRqOrqTRqEgWBrudxaBq+XG9e4RR6DGIjeLjJL-QHLXKrQobUBbbQ7SqmcwHWrHUoCLTuEg4rQaCwuUzuDEdB5PUlxMbUBbzZjTejvL5MAASAHl5jTxKD6cUTm4-AZ3A1tGoBGaLEd6u5NB5-A0DnoGrjjA1JSThjKEkqvhqMorlUlVYxNdrgbS9esDaU1Dobo73AIgtYNCZkQgLKbWlprIKxXa1GLPdFva8KSwAMIcABC9GYPGmXCrQJyuoKMYhjQMJFMGg5vOLWMFmaFxnO7X02nhLmaLlLzzJsvlzA1PEYXA1ADkg1WNdN5rQdXlo+DGScBPyhZ1sz1gkLMwZMei1N4KljOgdF9KK9R6PMXAsOum47nuB4Ru2p6dueKgnGcA4mA0nQwmoDTGO4mboRY-LWFcTSus+yEekSUrluS1B+gGDYgVuu5Kvuh4nnSXYXtyfKYmYLjQuhxrYpmWiWh4zTusKwR2q4P7kbKSrvLRYEMRBtAfNMcx-MxZ4MnBCAuGc1iYliAgYsmc42uoIokAZn4+M4LhoVJLwUQAYkwVZqswMwLA2HA8OBh7HpGHZglpJToZm8ZoliUUHLiiJaGEpFeo5souYwbkeXMizMD5flHnwahQSxsGhc46JXNcGGuCmdnhemHHuiEwrXE0xgaA5y4JKl6XybujCzLWqQBYVmmxno-L4h06aIi4M0NJmdmWVFWKBMWTqIu1Po0F17k9b8-WDflw0wSFiBOhOgTXAIlVzqm4XOL2YpvvF1r6NxJEDGWLwAGZgDIzxQJMABO6AQGAHBiNMYCYBIgMQLA1AQAoYBkPgABuEgANbI2R32-f9QMg2DENQzDcMIAQ6OYOg9LZBpx2xiaOEWDylSYrp0JmaUzqWVYfidOYLjPglH1LqQP1-TEUAamI9KMOgABGVDw4jhAo+jWMkDjIzi-90uywrSvk2jEhUzTwh08Fo2mPyyYmhopquFcGjhbiCZvsznh5to3HhES+ASKD8C5FrRAgvT3YALTO1yUckJd8cJ9chIi7+5Jh5b3bFr2SaeHoz4YemtVGPyxkmhVyamBtJA65LBOg+DkPQ7DQdBfq3a6WcXHWgX2FaLVWgJgIIpWF4s7oVXNcEFLMvrHLitwOnbdsR3fbu6KHM+C7wStAYziuvF1ydAuvtAA */
   context: ({ spawn, self }) => ({
     results: new Map(),
-    inputActorRef: spawn("inputActor", { input: { rootMachineId: self.id } }),
+    inputActorRef: spawn("inputActor", {
+      input: { rootActorRef: self },
+    }),
   }),
   initial: "idle",
   states: {
@@ -133,7 +134,7 @@ export const potentialCalcMachine = setup({
         onDone: {
           target: "idle",
           actions: assign({
-            results: ({ event: { output } }) => {
+            results: () => {
               // TODO 계산로직
               return new Map();
             },
@@ -152,14 +153,17 @@ export const potentialCalcMachine = setup({
             ({ equip, grade, level, resetMethods }) => ({
               grade,
               equip,
-              level,
+              level: pipe(
+                level.value,
+                E.match(() => -1, identity),
+              ),
               resetMethods,
             }),
           ),
         onDone: {
           target: "idle",
           actions: assign({
-            results: ({ event: { output } }) => {
+            results: () => {
               // TODO 계산로직
               return new Map();
             },
@@ -170,4 +174,4 @@ export const potentialCalcMachine = setup({
   },
 });
 
-export type PotentialCalcMachine = typeof potentialCalcMachine;
+export type PotentialCalcMachine = typeof potentialCalcRootMachine;

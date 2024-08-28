@@ -25,6 +25,16 @@ const config: Config = {
       boxShadow: {
         section: "rgba(113, 118, 121, 0.1) 0px 0px 30px",
       },
+      colors: {
+        redCube: "#CC291B",
+        potential: "#dd9c00",
+        addiCube: "#44bb00",
+        addiPotential: "#1e8600",
+        strangeCube: "#6B7B99",
+        masterCube: "#99780C",
+        artisanCube: "#6B4D99",
+        strangeAddiCube: "#668866",
+      },
     },
   },
   darkMode: "class",

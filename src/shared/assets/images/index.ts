@@ -1,8 +1,15 @@
-import DeveloperCharacter from "./developer-character.png";
-import Flame from "./flame.svg";
-import Logo from "./logo.svg";
-import Potential from "./potential.svg";
-import Reboot from "./reboot-icon.png";
-import Star from "./star.svg";
-
-export { Logo, Flame, Potential, Star, DeveloperCharacter, Reboot };
+export { default as AddiCube } from "./addi_cube.png";
+export { default as AddiPotential } from "./addi_potential.png";
+export { default as ArtisanCube } from "./artisan_cube.png";
+export { default as BlackCube } from "./black_cube.png";
+export { default as DeveloperCharacter } from "./developer-character.png";
+export { default as Flame } from "./flame.svg";
+export { default as Logo } from "./logo.svg";
+export { default as MasterCube } from "./master_cube.png";
+export { default as Potential } from "./potential.png";
+export { default as PotentialSVG } from "./potential.svg";
+export { default as Reboot } from "./reboot-icon.png";
+export { default as RedCube } from "./red_cube.png";
+export { default as Star } from "./star.svg";
+export { default as StrangeAddiCube } from "./strange_addi_cube.png";
+export { default as StrangeCube } from "./strange_cube.png";

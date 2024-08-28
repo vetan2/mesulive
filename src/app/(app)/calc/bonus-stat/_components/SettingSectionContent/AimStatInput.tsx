@@ -19,7 +19,8 @@ export const AimStatInput = ({ classNames }: Props) => {
   );
   const aimStatErrorMessage = pipe(
     aimStatParseResult,
-    E.match(getFirstZodErrorMessage, () => undefined),
+    E.match(getFirstZodErrorMessage, () => O.none),
+    O.toUndefined,
   );
   const equipType = useAtomValue(bonusStatCalcAtoms.equipType);
   const isTouched = aimStat != null;

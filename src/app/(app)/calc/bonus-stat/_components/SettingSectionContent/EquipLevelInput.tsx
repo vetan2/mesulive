@@ -16,7 +16,8 @@ export const EquipLevelInput = () => {
   );
   const equipLevelErrorMessage = pipe(
     equipLevelParseResult,
-    E.match(getFirstZodErrorMessage, () => undefined),
+    E.match(getFirstZodErrorMessage, () => O.none),
+    O.toUndefined,
   );
   const isTouched = equipLevel != null;
 

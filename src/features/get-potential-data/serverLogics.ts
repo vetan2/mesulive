@@ -214,6 +214,16 @@ export const createPotentialOptionTable = TE.tryCatchK(
   E.toError,
 );
 
+export const getPotentialOptionTable = (
+  params: Parameters<typeof fetchOptionData>[0],
+) =>
+  pipe(
+    fetchOptionData(params),
+    TE.chain((table) =>
+      createPotentialOptionTable({ ...params, optionTable: table }),
+    ),
+  );
+
 const optionTablePayloadToOptionTable = (
   payload: Prisma.PotentialOptionTableGetPayload<{
     include: {

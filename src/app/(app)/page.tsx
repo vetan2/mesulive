@@ -6,7 +6,7 @@ import { MainLinkButton } from "~/app/_components";
 import {
   Flame,
   Logo,
-  Potential,
+  PotentialSVG,
   Reboot,
   Star,
   DeveloperCharacter,
@@ -45,7 +45,7 @@ export default function Home() {
           <MainLinkButton
             href="/calc/potential"
             title="잠재능력 기댓값 계산기"
-            Icon={Potential}
+            Icon={PotentialSVG}
             classNames={{ button: cx("bg-warning-500") }}
           />
           <MainLinkButton

@@ -29,4 +29,5 @@ export const equips = [
   "펜던트",
   "기계심장",
 ] as const;
+export const equipSchema = z.enum(equips);
 export type Equip = (typeof equips)[number];

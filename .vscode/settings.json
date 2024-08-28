@@ -1,5 +1,9 @@
 {
-  "cSpell.words": ["clsx", "nextui"],
+  "cSpell.words": [
+    "ADDI",
+    "clsx",
+    "nextui"
+  ],
   "eslint.codeActionsOnSave.mode": "problems",
   "git.ignoreLimitWarning": true,
   "prettier.requireConfig": true,

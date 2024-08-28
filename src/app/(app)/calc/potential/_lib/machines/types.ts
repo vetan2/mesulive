@@ -1,8 +1,9 @@
 import { type ActorRefFrom } from "xstate";
 
-import { type potentialInputMachine } from "~/app/(app)/calc/potential/_lib/machines/potentialInputMachine";
 import { type CurrencyUnit } from "~/entities/game";
 import { type Potential } from "~/entities/potential";
+
+import { type potentialInputMachine } from "./potentialInputMachine";
 
 export type PotentialCalcRootContext = {
   inputActorRef: ActorRefFrom<typeof potentialInputMachine>;

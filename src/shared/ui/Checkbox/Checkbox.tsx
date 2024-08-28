@@ -16,6 +16,7 @@ export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(
         classNames={{
           ...classNames,
           label: cx(
+            "text-default-600",
             "group-data-[selected=true]:text-primary",
             classNames?.label,
           ),
