@@ -20,7 +20,7 @@ interface Props {
   index: number;
 }
 
-export const OptionRecordsSetting = ({ index }: Props) => {
+export const OptionSetSetting = ({ index }: Props) => {
   const {
     optionSetsAtom,
     equipAtom,
@@ -30,6 +30,7 @@ export const OptionRecordsSetting = ({ index }: Props) => {
     editOptionAtom,
     removeOptionSetAtom,
     adjustOptionSetsAtom,
+    completeLoadingPossibleOptionIdsAtom,
   } = useMolecule(PotentialCalcMolecule);
   const optionSetAtom = useMemo(
     () => atom((get) => get(optionSetsAtom).at(index)),
@@ -43,6 +44,9 @@ export const OptionRecordsSetting = ({ index }: Props) => {
   const editOption = useSetAtom(editOptionAtom);
   const removeOptionSet = useSetAtom(removeOptionSetAtom);
   const adjustOptionSets = useSetAtom(adjustOptionSetsAtom);
+  const completeLoadingPossibleOptionIds = useSetAtom(
+    completeLoadingPossibleOptionIdsAtom,
+  );
 
   const [variables] = useDebounceValue<
     inferVariables<typeof PotentialQueries.useOptionTable>
@@ -89,8 +93,14 @@ export const OptionRecordsSetting = ({ index }: Props) => {
   useEffect(() => {
     if (possibleOptionIds.isSuccess) {
       adjustOptionSets(possibleOptionIds.data);
+      completeLoadingPossibleOptionIds();
     }
-  }, [adjustOptionSets, possibleOptionIds.data, possibleOptionIds.isSuccess]);
+  }, [
+    adjustOptionSets,
+    possibleOptionIds.data,
+    possibleOptionIds.isSuccess,
+    completeLoadingPossibleOptionIds,
+  ]);
 
   if (!optionSet) {
     return null;

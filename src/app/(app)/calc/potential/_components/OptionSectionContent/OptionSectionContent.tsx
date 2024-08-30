@@ -9,7 +9,7 @@ import { useMemo } from "react";
 import { PotentialCalcMolecule } from "~/app/(app)/calc/potential/_lib/molecules";
 import { S } from "~/shared/ui";
 
-import { OptionRecordsSetting } from "./OptionRecordsSetting";
+import { OptionSetSetting } from "./OptionSetSetting";
 
 interface Props {
   className?: string;
@@ -52,7 +52,7 @@ export const OptionSectionContent = ({ className }: Props) => {
       </S.Button>
       <div className="mt-3 flex flex-col gap-3">
         {Array.from({ length: optionSetsLength }).map((_, i) => (
-          <OptionRecordsSetting key={i} index={i} />
+          <OptionSetSetting key={i} index={i} />
         ))}
       </div>
     </div>

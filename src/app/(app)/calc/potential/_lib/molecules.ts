@@ -33,6 +33,8 @@ export const PotentialCalcMolecule = molecule((_, scope) => {
           E.getOrElse(() => prev),
         ),
       );
+
+      loadPossibleOptionIds(get, set);
     },
   );
 
@@ -77,6 +79,7 @@ export const PotentialCalcMolecule = molecule((_, scope) => {
       );
 
       adjustResetMethods(get, set);
+      loadPossibleOptionIds(get, set);
     },
   );
 
@@ -93,6 +96,7 @@ export const PotentialCalcMolecule = molecule((_, scope) => {
       );
 
       adjustResetMethods(get, set);
+      loadPossibleOptionIds(get, set);
     },
   );
 
@@ -109,6 +113,7 @@ export const PotentialCalcMolecule = molecule((_, scope) => {
       );
 
       adjustResetMethods(get, set);
+      loadPossibleOptionIds(get, set);
     },
   );
 
@@ -299,6 +304,22 @@ export const PotentialCalcMolecule = molecule((_, scope) => {
     },
   );
 
+  const _isPendingForPossibleOptionIdsAtom = atom(false);
+  const isPendingForPossibleOptionIdsAtom = atom(
+    (get) =>
+      get(_aimTypeAtom) === "OPTIONS" &&
+      get(_isPendingForPossibleOptionIdsAtom),
+  );
+  const completeLoadingPossibleOptionIdsAtom = atom(null, (get, set) => {
+    set(_isPendingForPossibleOptionIdsAtom, false);
+  });
+  const loadPossibleOptionIds = (get: Getter, set: Setter) => {
+    const aimType = get(_aimTypeAtom);
+    if (aimType === "OPTIONS") {
+      set(_isPendingForPossibleOptionIdsAtom, true);
+    }
+  };
+
   const inputStatusAtom = atom((get) => {
     const level = get(_levelAtom);
     const aimType = get(_aimTypeAtom);
@@ -355,6 +376,8 @@ export const PotentialCalcMolecule = molecule((_, scope) => {
     editOptionAtom,
     removeOptionSetAtom,
     adjustOptionSetsAtom,
+    isPendingForPossibleOptionIdsAtom,
+    completeLoadingPossibleOptionIdsAtom,
     inputStatusAtom,
   };
 });

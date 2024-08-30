@@ -14,8 +14,15 @@ interface Props {
 }
 
 export const CalculateButton = ({ className }: Props) => {
-  const { inputStatusAtom } = useMolecule(PotentialCalcMolecule);
+  const {
+    inputStatusAtom,
+    isPendingForPossibleOptionIdsAtom: isPossibleOptionIdsLoadingAtom,
+  } = useMolecule(PotentialCalcMolecule);
   const inputStatus = useAtomValue(inputStatusAtom);
+  const isPossibleOptionIdsLoading = useAtomValue(
+    isPossibleOptionIdsLoadingAtom,
+  );
+  const isDisabled = E.isLeft(inputStatus) || isPossibleOptionIdsLoading;
 
   return (
     <S.Tooltip
@@ -27,9 +34,9 @@ export const CalculateButton = ({ className }: Props) => {
     >
       <S.Button
         size="lg"
-        color={E.isLeft(inputStatus) ? "default" : "primary"}
+        color={isDisabled ? "default" : "primary"}
         className={cx("font-bold", className)}
-        isDisabled={E.isLeft(inputStatus)}
+        isDisabled={isDisabled}
       >
         계산하기
       </S.Button>
