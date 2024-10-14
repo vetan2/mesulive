@@ -52,7 +52,7 @@ describe("TopPctCost", () => {
     expect(Math.floor(topPctCost.meanTopPct ?? 0)).toBe(46);
     // n = 99에서 누적확률 : 63.03%
     expect(Math.floor(topPctCost.getCostFromTopPct(75) ?? 0)).toBe(100);
-    expect(topPctCost.getTopPctFromCost(100)).toBe(1);
+    expect(topPctCost.getTopPctFromCost(100)).toBe(100);
 
     // Edge case
     expect(topPctCost.getCostFromTopPct(100)).toBe(100);

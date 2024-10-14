@@ -106,13 +106,15 @@ export class TopPctCost {
   public getCostFromTopPct(topPct: number): number | undefined {
     return match(this.params)
       .with({ type: "Bernoulli", ceil: P.number }, () =>
-        topPct > 100
-          ? this.cumulativeProbabilities.length
-          : Math.min(
-              this.cumulativeProbabilities.filter((cp) => cp * 100 < topPct)
-                .length + 1,
-              this.cumulativeProbabilities.length,
-            ),
+        topPct <= 0
+          ? undefined
+          : topPct > 100
+            ? this.cumulativeProbabilities.length
+            : Math.min(
+                this.cumulativeProbabilities.filter((cp) => cp * 100 < topPct)
+                  .length + 1,
+                this.cumulativeProbabilities.length,
+              ),
       )
       .with({ type: "Bernoulli" }, ({ probability }) =>
         getCostFromTopPct(probability)(topPct),
@@ -136,9 +138,11 @@ export class TopPctCost {
   public getTopPctFromCost(cost: number): number | undefined {
     return match(this.params)
       .with({ type: "Bernoulli", ceil: P.number }, () =>
-        cost >= this.cumulativeProbabilities.length
-          ? 100
-          : this.cumulativeProbabilities[cost - 1] * 100,
+        cost <= 0
+          ? undefined
+          : cost >= this.cumulativeProbabilities.length
+            ? 100
+            : this.cumulativeProbabilities[cost - 1] * 100,
       )
       .with({ type: "Bernoulli" }, ({ probability }) =>
         getTopPctFromCost(probability)(cost),
