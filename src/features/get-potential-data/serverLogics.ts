@@ -101,21 +101,19 @@ export const fetchOptionData = TE.tryCatchK(
       ),
     );
 
-    const html = await fetchQueue
-      .enqueue(() =>
-        fetch(
-          "https://maplestory.nexon.com/Guide/OtherProbability/cube/GetSearchProbList",
-          {
-            headers: {
-              "content-type":
-                "application/x-www-form-urlencoded; charset=UTF-8",
-              "x-requested-with": "XMLHttpRequest",
-            },
-            body: body.toString(),
-            method: "POST",
-          },
-        ),
-      )
+    const html = await // fetchQueue.enqueue(() =>
+    fetch(
+      "https://maplestory.nexon.com/Guide/OtherProbability/cube/GetSearchProbList",
+      {
+        headers: {
+          "content-type": "application/x-www-form-urlencoded; charset=UTF-8",
+          "x-requested-with": "XMLHttpRequest",
+        },
+        body: body.toString(),
+        method: "POST",
+      },
+      // ),
+    )
       .then((r) => {
         console.log(
           "fetchOptionData",
