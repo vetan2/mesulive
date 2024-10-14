@@ -1,6 +1,6 @@
 "use client";
 
-import { molecule } from "bunshi";
+import { molecule, type MoleculeConstructor } from "bunshi";
 import { flow, pipe } from "fp-ts/lib/function";
 import { type Option } from "fp-ts/lib/Option";
 import { produce } from "immer";
@@ -19,7 +19,7 @@ import { parseZod, parseZodWithErrorMessage } from "~/shared/zod";
 
 import { PotentialCalcScope } from "./scopes";
 
-export const PotentialCalcMolecule = molecule((_, scope) => {
+const potentialCalcMoleculeConstructor = ((_, scope) => {
   scope(PotentialCalcScope);
 
   const _equipAtom = atom<Equip>(equips[0]);
@@ -208,6 +208,8 @@ export const PotentialCalcMolecule = molecule((_, scope) => {
     },
   );
 
+  const cubePriceSettingModalOpen = atom(false);
+
   type OptionSets = {
     stat: Option<Potential.PossibleStat>;
     figure: FormPayload<number>;
@@ -218,12 +220,29 @@ export const PotentialCalcMolecule = molecule((_, scope) => {
       figure: { input: "", value: E.right(0) },
     }));
   const _optionSetsAtom = atomWithReset<OptionSets>([createNewOptionSet()]);
-  const optionSetsAtom = atom(
+  const optionSetFormAtom = atom(
     (get) => get(_optionSetsAtom),
     (get, set, reset: typeof RESET) => {
       set(_optionSetsAtom, reset);
     },
   );
+  const optionSetsAtom = atom(
+    (get) =>
+      pipe(
+        get(_optionSetsAtom),
+        A.map(
+          A.filterMap(({ stat, figure: { value } }) =>
+            O.isSome(stat) && E.isRight(value) && value.right > 0
+              ? O.some({ stat: stat.value, figure: value.right })
+              : O.none,
+          ),
+        ),
+      ),
+    (get, set, reset: typeof RESET) => {
+      set(_optionSetsAtom, reset);
+    },
+  );
+
   const addOptionSetAtom = atom(null, (get, set) => {
     set(_optionSetsAtom, (prev) => prev.concat([createNewOptionSet()]));
   });
@@ -254,8 +273,7 @@ export const PotentialCalcMolecule = molecule((_, scope) => {
             O.chainEitherK(
               parseZod(z.enum([...Potential.possibleStats, "NONE"])),
             ),
-            O.filter((s): s is Exclude<typeof s, "NONE"> => s !== "NONE"),
-            O.match(() => draft[setIndex][optionIndex].stat, O.some),
+            O.match(() => draft[setIndex][optionIndex].stat, O.fromPredicate((s): s is Exclude<typeof s, "NONE"> => s !== "NONE"),),
           );
 
           draft[setIndex][optionIndex].figure = pipe(
@@ -352,13 +370,27 @@ export const PotentialCalcMolecule = molecule((_, scope) => {
             A.every(
               ({ stat, figure }) =>
                 // 입력값이 비정상인 경우
-                O.isNone(stat) || E.isLeft(figure.value),
+                O.isNone(stat) || E.isLeft(figure.value) || figure.value.right === 0,
             ),
           ),
         () => "옵션 세트를 정확히 입력해주세요.",
       ),
     );
   });
+
+  type Result = {
+    method: Potential.ResetMethod;
+    prob: number;
+    ceil?: number;
+    optionResults?: {
+      options: { name: string; id: number }[];
+      prob: number;
+    }[];
+  }[];
+  const resultAtom = atom<Result>([]);
+  const resultStateAtom = atom<"idle" | "pending" | "success" | "failure">(
+    "idle",
+  );
 
   return {
     equipAtom,
@@ -370,7 +402,9 @@ export const PotentialCalcMolecule = molecule((_, scope) => {
     addResetMethodAtom,
     removeResetMethodAtom,
     cubePricesAtom,
+    cubePriceSettingModalOpen,
     setCubePriceAtom,
+    optionSetFormAtom,
     optionSetsAtom,
     addOptionSetAtom,
     editOptionAtom,
@@ -379,5 +413,13 @@ export const PotentialCalcMolecule = molecule((_, scope) => {
     isPendingForPossibleOptionIdsAtom,
     completeLoadingPossibleOptionIdsAtom,
     inputStatusAtom,
+    resultAtom,
+    resultStateAtom,
   };
-});
+}) satisfies MoleculeConstructor<unknown>;
+
+export const PotentialCalcMolecule = molecule(potentialCalcMoleculeConstructor);
+
+export type PotentialCalcMoleculeStructure = ReturnType<
+  typeof potentialCalcMoleculeConstructor
+>;

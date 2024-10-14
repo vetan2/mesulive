@@ -34,3 +34,7 @@ export const getRepeatPermutations = <T>(array: T[], length: number): T[][] => {
 
 export const maxFractionDigits = (fractionDigits: number) => (num: number) =>
   Number(num.toFixed(fractionDigits));
+
+export const maxFractionDigitsString =
+  (fractionDigits: number) => (num: number) =>
+    num.toFixed(fractionDigits);

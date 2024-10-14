@@ -1,6 +1,6 @@
 import { useMolecule } from "bunshi/react";
 import { identity, pipe } from "fp-ts/lib/function";
-import { useAtomValue, useSetAtom } from "jotai";
+import { useAtom, useAtomValue, useSetAtom } from "jotai";
 import NextImage from "next/image";
 import { type ComponentProps } from "react";
 
@@ -12,17 +12,27 @@ import { entries } from "~/shared/object";
 import { cx } from "~/shared/style";
 import { S } from "~/shared/ui";
 
-interface Props extends Omit<ComponentProps<typeof S.Modal>, "children"> {}
+interface Props
+  extends Omit<
+    ComponentProps<typeof S.Modal>,
+    "children" | "isOpen" | "onClose" | "onExit"
+  > {}
 
 export const CubePriceSettingModal = ({ ...props }: Props) => {
-  const { cubePricesAtom, setCubePriceAtom } = useMolecule(
-    PotentialCalcMolecule,
-  );
+  const { cubePricesAtom, setCubePriceAtom, cubePriceSettingModalOpen } =
+    useMolecule(PotentialCalcMolecule);
   const cubePrices = useAtomValue(cubePricesAtom);
   const setCubePrice = useSetAtom(setCubePriceAtom);
+  const [isOpen, setIsOpen] = useAtom(cubePriceSettingModalOpen);
 
   return (
-    <S.Modal {...props}>
+    <S.Modal
+      {...props}
+      isOpen={isOpen}
+      onClose={() => {
+        setIsOpen(false);
+      }}
+    >
       <S.ModalContent>
         <S.ModalHeader>큐브 가격 설정</S.ModalHeader>
         <S.ModalBody className="flex flex-col gap-4 pb-6">

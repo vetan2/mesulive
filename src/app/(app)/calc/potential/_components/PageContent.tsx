@@ -25,7 +25,7 @@ export const PageContent = () => {
           <SectionContainer title="설정">
             <SettingSectionContent />
           </SectionContainer>
-          <CalculateButton className="hidden lg:block" />
+          <CalculateButton className="hidden lg:flex" />
         </div>
         {aimType === "OPTIONS" && (
           <div className="flex w-full flex-col gap-4 lg:min-h-full lg:flex-1">

@@ -16,13 +16,13 @@ interface Props {
 }
 
 export const OptionSectionContent = ({ className }: Props) => {
-  const { optionSetsAtom, addOptionSetAtom } = useMolecule(
+  const { optionSetFormAtom, addOptionSetAtom } = useMolecule(
     PotentialCalcMolecule,
   );
-  const setOptionSets = useSetAtom(optionSetsAtom);
+  const setOptionSets = useSetAtom(optionSetFormAtom);
   const optionSetsLengthAtom = useMemo(
-    () => atom((get) => get(optionSetsAtom).length),
-    [optionSetsAtom],
+    () => atom((get) => get(optionSetFormAtom).length),
+    [optionSetFormAtom],
   );
   const optionSetsLength = useAtomValue(optionSetsLengthAtom);
   const addOptionSet = useSetAtom(addOptionSetAtom);

@@ -9,7 +9,7 @@ import { P, match } from "ts-pattern";
 import { useDebounceValue } from "usehooks-ts";
 
 import { PotentialCalcMolecule } from "~/app/(app)/calc/potential/_lib/molecules";
-import { type Potential } from "~/entities/potential";
+import { Potential } from "~/entities/potential";
 import { effectiveStatLabels, effectiveStatOptions } from "~/entities/stat";
 import { PotentialQueries } from "~/features/get-potential-data/queries";
 import { A, E, O } from "~/shared/fp";
@@ -22,7 +22,7 @@ interface Props {
 
 export const OptionSetSetting = ({ index }: Props) => {
   const {
-    optionSetsAtom,
+    optionSetFormAtom,
     equipAtom,
     gradeAtom,
     typeAtom,
@@ -33,8 +33,8 @@ export const OptionSetSetting = ({ index }: Props) => {
     completeLoadingPossibleOptionIdsAtom,
   } = useMolecule(PotentialCalcMolecule);
   const optionSetAtom = useMemo(
-    () => atom((get) => get(optionSetsAtom).at(index)),
-    [index, optionSetsAtom],
+    () => atom((get) => get(optionSetFormAtom).at(index)),
+    [index, optionSetFormAtom],
   );
   const optionSet = useAtomValue(optionSetAtom);
   const equip = useAtomValue(equipAtom);
@@ -56,7 +56,7 @@ export const OptionSetSetting = ({ index }: Props) => {
         equip,
         grade,
         type,
-        level: 200,
+        level: equip === "포스실드, 소울링" ? 100 : 120,
         method: match(type)
           .returnType<Potential.ResetMethod>()
           .with("ADDI", () => "ADDI_POTENTIAL")

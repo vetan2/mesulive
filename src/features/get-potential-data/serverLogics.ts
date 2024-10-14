@@ -11,6 +11,7 @@ import { Potential } from "~/entities/potential";
 import { gradesEnableToPromote } from "~/entities/potential/constants";
 import { E, O, TE } from "~/shared/fp";
 import { taskEitherToPromise } from "~/shared/function";
+import { IntervalQueue } from "~/shared/IntervalQueue";
 import { convertToNumber, percentStringToNumber } from "~/shared/number";
 import { entries } from "~/shared/object";
 import { prisma } from "~/shared/prisma";
@@ -21,6 +22,8 @@ import {
   type GradeUpRecord,
   type RawOptionTable,
 } from "./types";
+
+const fetchQueue = new IntervalQueue(100);
 
 export const findNewVersion = TE.tryCatch(
   () =>
@@ -98,17 +101,31 @@ export const fetchOptionData = TE.tryCatchK(
       ),
     );
 
-    const html = await fetch(
-      "https://maplestory.nexon.com/Guide/OtherProbability/cube/GetSearchProbList",
-      {
-        headers: {
-          "content-type": "application/x-www-form-urlencoded; charset=UTF-8",
-          "x-requested-with": "XMLHttpRequest",
-        },
-        body: body.toString(),
-        method: "POST",
-      },
-    ).then((r) => r.text());
+    const html = await fetchQueue
+      .enqueue(() =>
+        fetch(
+          "https://maplestory.nexon.com/Guide/OtherProbability/cube/GetSearchProbList",
+          {
+            headers: {
+              "content-type":
+                "application/x-www-form-urlencoded; charset=UTF-8",
+              "x-requested-with": "XMLHttpRequest",
+            },
+            body: body.toString(),
+            method: "POST",
+          },
+        ),
+      )
+      .then((r) => {
+        console.log(
+          "fetchOptionData",
+          params,
+          new Date().toLocaleString("ko-KR", { timeZone: "Asia/Seoul" }),
+          r.status,
+        );
+        return r;
+      })
+      .then((r) => r.text());
 
     // console.table(body);
     const dom = new JSDOM(html);
@@ -304,7 +321,9 @@ export const fetchGradeUpRecords = TE.tryCatchK(
   async (params: {
     method: Potential.ResetMethod;
   }): Promise<Map<Potential.Grade, GradeUpRecord>> => {
-    const html = await fetch(gradeUrls[params.method]).then((r) => r.text());
+    const html = await fetchQueue.enqueue(() =>
+      fetch(gradeUrls[params.method]).then((r) => r.text()),
+    );
     const dom = new JSDOM(html);
 
     const cubeInfoTable = dom.window.document.querySelectorAll(".cube_info");

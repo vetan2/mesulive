@@ -27,3 +27,6 @@ export const taskEitherKToPromise = <E, A extends readonly unknown[], B>(
 ): Promise<B> => {
   return taskEitherToPromise(f(...a));
 };
+
+export const delay = (ms: number): Promise<void> =>
+  new Promise((resolve) => setTimeout(resolve, ms));

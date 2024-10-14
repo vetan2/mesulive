@@ -4,6 +4,9 @@ import { useCallback, useMemo } from "react";
 
 import { GD } from "~/shared/math";
 
+/**
+ * @deprecated Use `GD.TopPctCost` instead
+ */
 export const useTopPctCost = (
   params:
     | {

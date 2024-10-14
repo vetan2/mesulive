@@ -1,6 +1,8 @@
 import { auth } from "~/entities/auth";
 import { ImmediatelySignIn } from "~/features/sign-in";
 
+import { TestButton } from "./TestButton";
+
 export default async function Page() {
   const session = await auth();
 
@@ -8,5 +10,10 @@ export default async function Page() {
     return <ImmediatelySignIn provider="google" />;
   }
 
-  return <>어드민 페이지</>;
+  return (
+    <div>
+      <p>어드민 페이지</p>
+      <TestButton />
+    </div>
+  );
 }
