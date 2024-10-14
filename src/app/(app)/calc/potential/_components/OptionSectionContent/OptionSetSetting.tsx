@@ -9,7 +9,7 @@ import { P, match } from "ts-pattern";
 import { useDebounceValue } from "usehooks-ts";
 
 import { PotentialCalcMolecule } from "~/app/(app)/calc/potential/_lib/molecules";
-import { Potential } from "~/entities/potential";
+import { type Potential } from "~/entities/potential";
 import { effectiveStatLabels, effectiveStatOptions } from "~/entities/stat";
 import { PotentialQueries } from "~/features/get-potential-data/queries";
 import { A, E, O } from "~/shared/fp";

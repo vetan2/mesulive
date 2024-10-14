@@ -1,5 +1,5 @@
 import { delay } from "./function";
-import { IntervalQueue } from "./IntervalQueue";
+import { IntervalQueue } from "./intervalQueue";
 
 describe("IntervalQueue", () => {
   beforeEach(() => {

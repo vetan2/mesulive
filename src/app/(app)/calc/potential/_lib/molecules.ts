@@ -273,7 +273,12 @@ const potentialCalcMoleculeConstructor = ((_, scope) => {
             O.chainEitherK(
               parseZod(z.enum([...Potential.possibleStats, "NONE"])),
             ),
-            O.match(() => draft[setIndex][optionIndex].stat, O.fromPredicate((s): s is Exclude<typeof s, "NONE"> => s !== "NONE"),),
+            O.match(
+              () => draft[setIndex][optionIndex].stat,
+              O.fromPredicate(
+                (s): s is Exclude<typeof s, "NONE"> => s !== "NONE",
+              ),
+            ),
           );
 
           draft[setIndex][optionIndex].figure = pipe(
@@ -370,7 +375,9 @@ const potentialCalcMoleculeConstructor = ((_, scope) => {
             A.every(
               ({ stat, figure }) =>
                 // 입력값이 비정상인 경우
-                O.isNone(stat) || E.isLeft(figure.value) || figure.value.right === 0,
+                O.isNone(stat) ||
+                E.isLeft(figure.value) ||
+                figure.value.right === 0,
             ),
           ),
         () => "옵션 세트를 정확히 입력해주세요.",

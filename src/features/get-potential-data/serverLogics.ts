@@ -11,7 +11,7 @@ import { Potential } from "~/entities/potential";
 import { gradesEnableToPromote } from "~/entities/potential/constants";
 import { E, O, TE } from "~/shared/fp";
 import { taskEitherToPromise } from "~/shared/function";
-import { IntervalQueue } from "~/shared/IntervalQueue";
+import { IntervalQueue } from "~/shared/intervalQueue";
 import { convertToNumber, percentStringToNumber } from "~/shared/number";
 import { entries } from "~/shared/object";
 import { prisma } from "~/shared/prisma";

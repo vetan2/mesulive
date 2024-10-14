@@ -22,7 +22,6 @@
     "skipLibCheck": true,
     "strict": true,
     "strictNullChecks": true,
-    "forceConsistentCasingInFileNames": false,
     "types": ["vitest/globals"]
   },
   "exclude": ["node_modules"],
