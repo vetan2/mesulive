@@ -2,7 +2,6 @@
 
 import { useQueryClient } from "@tanstack/react-query";
 import { useMolecule } from "bunshi/react";
-import { map } from "fp-ts";
 import { identity, pipe } from "fp-ts/lib/function";
 import { type Option } from "fp-ts/lib/Option";
 import { useAtomValue } from "jotai";
@@ -106,35 +105,6 @@ export const CalculateButton = ({ className }: Props) => {
                     .then((result) => [method, result] as const),
                 ),
               ).then((entries) => new Map(entries)),
-            ),
-          ),
-          TO.bind(
-            "nameMap",
-            TO.tryCatchK(({ optionTable }) =>
-              queryClient.fetchQuery(
-                PotentialQueries.useOptionIdNameMap.getFetchOptions({
-                  optionIds: [
-                    ...new Set(
-                      [...optionTable.values()]
-                        .flat()
-                        .flatMap(A.map(({ optionId }) => optionId)),
-                    ),
-                  ],
-                }),
-              ),
-            ),
-          ),
-          TO.map(({ optionTable, nameMap }) =>
-            pipe(
-              optionTable,
-              map.map(
-                A.map(
-                  A.map((option) => ({
-                    ...option,
-                    name: nameMap[option.optionId],
-                  })),
-                ),
-              ),
             ),
           ),
         )();
@@ -255,7 +225,7 @@ export const CalculateButton = ({ className }: Props) => {
           case "OPTIONS":
             fetchPotentialData().then((result) => {
               if (O.isSome(result)) {
-                startOptionCalc(result.value);
+                startOptionCalc(result.value.optionTable);
               }
             });
             break;

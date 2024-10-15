@@ -53,6 +53,9 @@ export const getPotentialOptionTable = (params: {
     taskEitherToPromise,
   );
 
+/**
+ * @deprecated
+ */
 export const getPotentialOptionIdNameMap = (params: { optionIds: number[] }) =>
   pipe(
     TE.Do,

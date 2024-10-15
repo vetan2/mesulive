@@ -8,7 +8,7 @@ export type RawOptionTable = {
 }[][];
 
 export type OptionTable = {
-  optionId: number;
+  name: string;
   probability: number;
   stat?: Potential.PossibleStat;
   figure?: number;

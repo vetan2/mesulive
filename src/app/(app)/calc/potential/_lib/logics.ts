@@ -9,12 +9,7 @@ export const getOptionResults = ({
   optionTableMap,
 }: {
   aimOptionSets: { stat: Potential.PossibleStat; figure: number }[][];
-  optionTableMap: Map<
-    Potential.ResetMethod,
-    (OptionTable[number][number] & {
-      name: string;
-    })[][]
-  >;
+  optionTableMap: Map<Potential.ResetMethod, OptionTable[number][number][][]>;
 }) =>
   new Map(
     [...optionTableMap.entries()].map(([method, optionTable]) => [
@@ -31,10 +26,9 @@ const getOptionResult = ({
   optionTable: (OptionTable[number][number] & {
     name: string;
   })[][];
-}): { options: { name: string; id: number }[]; prob: number }[] => {
+}): { options: { name: string }[]; prob: number }[] => {
   // console.log("optionTable", optionTable);
-  const result: { options: { name: string; id: number }[]; prob: number }[] =
-    [];
+  const result: { options: { name: string }[]; prob: number }[] = [];
   type Option = (typeof optionTable)[number][number];
   const currentOptionSet: [
     Option | undefined,
@@ -100,7 +94,7 @@ const getOptionResult = ({
   const getNextLineOptions = (
     originalOptions: (typeof optionTable)[number],
   ) => {
-    const disableNameRegexes = [
+    const disableNameRegexps = [
       ...Potential.maxOneOptionRegexes.filter(
         (regex) =>
           currentOptionSet.filter((option) => option && regex.test(option.name))
@@ -114,7 +108,7 @@ const getOptionResult = ({
     ];
 
     const disabledOptionsInNextLine = originalOptions.filter(({ name }) =>
-      disableNameRegexes.some((regex) => regex.test(name)),
+      disableNameRegexps.some((regex) => regex.test(name)),
     );
 
     const disabledOptionsTotalProbability = disabledOptionsInNextLine.reduce(
@@ -126,10 +120,8 @@ const getOptionResult = ({
       ? originalOptions
       : originalOptions
           .filter(
-            ({ optionId }) =>
-              !disabledOptionsInNextLine.some(
-                ({ optionId: oi }) => oi === optionId,
-              ),
+            ({ name }) =>
+              !disabledOptionsInNextLine.some(({ name: n }) => n === name),
           )
           .map(({ probability, ...rest }) => ({
             ...rest,
@@ -148,9 +140,8 @@ const getOptionResult = ({
         A.filterMap(O.fromNullable),
         (optionSet) => structuredClone(optionSet),
         (optionSet) => ({
-          options: optionSet.map(({ name, optionId }) => ({
+          options: optionSet.map(({ name }) => ({
             name,
-            id: optionId,
           })),
           prob: optionSet.reduce(
             (acc, { probability }) => acc * probability,

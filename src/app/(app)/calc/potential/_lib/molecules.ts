@@ -390,7 +390,7 @@ const potentialCalcMoleculeConstructor = ((_, scope) => {
     prob: number;
     ceil?: number;
     optionResults?: {
-      options: { name: string; id: number }[];
+      options: { name: string }[];
       prob: number;
     }[];
   }[];

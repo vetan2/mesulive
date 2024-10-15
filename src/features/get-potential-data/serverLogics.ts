@@ -82,7 +82,7 @@ export const resetDatabaseIfGameVersionAhead = pipe(
   ),
 );
 
-export const fetchOptionData = TE.tryCatchK(
+export const fetchOptionDataFromOfficial = TE.tryCatchK(
   async (params: {
     method: Potential.ResetMethod;
     equip: Equip;
@@ -230,10 +230,10 @@ export const createPotentialOptionTable = TE.tryCatchK(
 );
 
 export const getPotentialOptionTable = (
-  params: Parameters<typeof fetchOptionData>[0],
+  params: Parameters<typeof fetchOptionDataFromOfficial>[0],
 ) =>
   pipe(
-    fetchOptionData(params),
+    fetchOptionDataFromOfficial(params),
     TE.chain((table) =>
       createPotentialOptionTable({ ...params, optionTable: table }),
     ),
@@ -253,10 +253,10 @@ const optionTablePayloadToOptionTable = (
       };
     };
   }>,
-) =>
+): OptionTable =>
   payload.optionTable.map(({ records }) =>
-    records.map(({ option: { stat, figure, id }, probability }) => ({
-      optionId: id,
+    records.map(({ option: { stat, figure, name }, probability }) => ({
+      name,
       probability,
       stat: pipe(
         O.fromNullable(stat),
