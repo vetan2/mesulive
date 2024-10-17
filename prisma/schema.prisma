@@ -13,12 +13,6 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model PotentialDataVersion {
-  id          Int @id @default(autoincrement())
-  gameVersion Int
-  appVersion  Int
-}
-
 enum PotentialResetMethod {
   RED
   POTENTIAL
@@ -37,12 +31,29 @@ enum PotentialGrade {
   LEGENDARY
 }
 
+enum PotentialOptionGrade {
+  NORMAL
+  RARE
+  EPIC
+  UNIQUE
+  LEGENDARY
+}
+
 model PotentialGradeUpRecord {
   id           Int                  @id @default(autoincrement())
   method       PotentialResetMethod
   currentGrade PotentialGrade
   probability  Float
   ceil         Int?
+}
+
+model PotentialOptionGradeRecord {
+  id               Int                  @id @default(autoincrement())
+  method           PotentialResetMethod
+  grade            PotentialGrade
+  currentGradeProb Float
+  lowerGradeProb   Float?
+  line             Int
 }
 
 model PotentialOption {
@@ -54,26 +65,19 @@ model PotentialOption {
 }
 
 model PotentialOptionRecord {
-  id                  Int                        @id @default(autoincrement())
-  option              PotentialOption            @relation(fields: [optionId], references: [id])
-  optionId            Int
-  probability         Float
-  optionRecordArray   PotentialOptionRecordList? @relation(fields: [optionRecordArrayId], references: [id])
-  optionRecordArrayId Int?
-}
-
-model PotentialOptionRecordList {
-  id            Int                     @id @default(autoincrement())
-  records       PotentialOptionRecord[]
-  optionTable   PotentialOptionTable?   @relation(fields: [optionTableId], references: [id])
-  optionTableId Int?
+  id                     Int                   @id @default(autoincrement())
+  option                 PotentialOption       @relation(fields: [optionId], references: [id])
+  optionId               Int
+  probability            Float
+  PotentialOptionTable   PotentialOptionTable? @relation(fields: [potentialOptionTableId], references: [id])
+  potentialOptionTableId Int?
 }
 
 model PotentialOptionTable {
-  id          Int                         @id @default(autoincrement())
-  optionTable PotentialOptionRecordList[]
-  method      PotentialResetMethod
-  grade       PotentialGrade
-  level       Int
-  equip       String
+  id            Int                     @id @default(autoincrement())
+  optionRecords PotentialOptionRecord[]
+  method        PotentialResetMethod
+  optionGrade   PotentialOptionGrade
+  level         Int
+  equip         String
 }

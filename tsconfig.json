@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "target": "ES2015",
+    "target": "ES2017",
     "allowJs": true,
     "esModuleInterop": true,
     "incremental": true,
@@ -32,6 +32,7 @@
     ".next/types/**/*.ts",
     ".storybook/**/*.ts",
     ".storybook/**/*.tsx",
-    "types/**/*.d.ts"
+    "types/**/*.d.ts",
+    "scripts/**/*.*ts"
   ]
 }

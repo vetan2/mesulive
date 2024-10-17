@@ -1,4 +1,21 @@
-import { getIsResetMethodEnable } from "./utils";
+import { O } from "~/shared/fp";
+
+import { flattenLevel, getIsResetMethodEnable } from "./utils";
+
+describe("flattenLevel", () => {
+  it("should return valid result", () => {
+    expect(flattenLevel(-1)).toEqual(O.none);
+    expect(flattenLevel(0)).toEqual(O.some(9));
+    expect(flattenLevel(1)).toEqual(O.some(9));
+    expect(flattenLevel(10)).toEqual(O.some(10));
+    expect(flattenLevel(11)).toEqual(O.some(19));
+    expect(flattenLevel(120)).toEqual(O.some(200));
+    expect(flattenLevel(200)).toEqual(O.some(200));
+    expect(flattenLevel(201)).toEqual(O.some(250));
+    expect(flattenLevel(250)).toEqual(O.some(250));
+    expect(flattenLevel(251)).toEqual(O.none);
+  });
+});
 
 describe("getIsResetMethodEnable", () => {
   it("should return valid result if type is ADDI", () => {

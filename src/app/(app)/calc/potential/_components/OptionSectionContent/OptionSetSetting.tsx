@@ -10,6 +10,7 @@ import { useDebounceValue } from "usehooks-ts";
 
 import { PotentialCalcMolecule } from "~/app/(app)/calc/potential/_lib/molecules";
 import { type Potential } from "~/entities/potential";
+import { flattenLevel } from "~/entities/potential/utils";
 import { effectiveStatLabels, effectiveStatOptions } from "~/entities/stat";
 import { PotentialQueries } from "~/features/get-potential-data/queries";
 import { A, E, O } from "~/shared/fp";
@@ -23,6 +24,7 @@ interface Props {
 export const OptionSetSetting = ({ index }: Props) => {
   const {
     optionSetFormAtom,
+    levelAtom,
     equipAtom,
     gradeAtom,
     typeAtom,
@@ -36,6 +38,7 @@ export const OptionSetSetting = ({ index }: Props) => {
     () => atom((get) => get(optionSetFormAtom).at(index)),
     [index, optionSetFormAtom],
   );
+  const level = useAtomValue(levelAtom);
   const optionSet = useAtomValue(optionSetAtom);
   const equip = useAtomValue(equipAtom);
   const grade = useAtomValue(gradeAtom);
@@ -55,15 +58,18 @@ export const OptionSetSetting = ({ index }: Props) => {
       () => ({
         equip,
         grade,
-        type,
-        level: equip === "포스실드, 소울링" ? 100 : 120,
+        level: pipe(
+          O.fromEither(level.value),
+          O.chain(flattenLevel),
+          O.getOrElse(() => 200),
+        ),
         method: match(type)
           .returnType<Potential.ResetMethod>()
           .with("ADDI", () => "ADDI_POTENTIAL")
           .with("COMMON", () => "POTENTIAL")
           .exhaustive(),
       }),
-      [equip, grade, type],
+      [equip, grade, level.value, type],
     ),
     300,
   );
@@ -75,7 +81,9 @@ export const OptionSetSetting = ({ index }: Props) => {
       (data: inferData<typeof PotentialQueries.useOptionTable>) =>
         pipe(
           data,
-          A.flatMap(A.filterMap(({ stat }) => O.fromNullable(stat))),
+          A.flatMap(
+            A.filterMap(({ option: { stat } }) => O.fromNullable(stat)),
+          ),
           (arr) => [...new Set(arr)],
           A.sort(
             ord.fromCompare<Potential.PossibleStat>((statA, statB) =>

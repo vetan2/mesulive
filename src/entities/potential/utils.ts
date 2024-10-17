@@ -1,4 +1,7 @@
+import { pipe } from "fp-ts/lib/function";
 import { P, match } from "ts-pattern";
+
+import { O } from "~/shared/fp";
 
 import {
   gradesEnableToPromote,
@@ -9,10 +12,29 @@ import {
   type Type,
 } from "./constants";
 
-export const flattenLevel = (level: number) => {
-  if (level === 0) return 0;
-  return (Math.floor((level - 1) / 10) + 1) * 10;
-};
+export const flattenLevel = (level: number) =>
+  pipe(
+    level,
+    O.fromPredicate((l) => 0 <= l && l <= 250),
+    O.map((l) => {
+      if (l === 0) {
+        return 9;
+      }
+
+      if (l < 120) {
+        if (l % 10 === 0) {
+          return l;
+        }
+        return Math.floor(l / 10) * 10 + 9;
+      }
+
+      if (l <= 200) {
+        return 200;
+      }
+
+      return 250;
+    }),
+  );
 
 export const getIsResetMethodEnable = (params: {
   aimType: AimType;

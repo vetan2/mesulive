@@ -14,6 +14,7 @@ import { type getOptionResults } from "~/app/(app)/calc/potential/_lib/logics";
 import { PotentialCalcMolecule } from "~/app/(app)/calc/potential/_lib/molecules";
 import { type Potential } from "~/entities/potential";
 import { flattenLevel } from "~/entities/potential/utils";
+import { effectiveStatSchema } from "~/entities/stat";
 import { PotentialQueries } from "~/features/get-potential-data/queries";
 import { type GradeUpRecord } from "~/features/get-potential-data/types";
 import { A, E, O, TO } from "~/shared/fp";
@@ -63,7 +64,7 @@ export const CalculateButton = ({ className }: Props) => {
                 .fetchQuery(
                   PotentialQueries.useGradeUpRecord.getFetchOptions({
                     method,
-                    currentGrade: grade,
+                    grade,
                   }),
                 )
                 .then((result) => ({ method, record: result })),
@@ -86,7 +87,11 @@ export const CalculateButton = ({ className }: Props) => {
           }),
           TO.apS(
             "level",
-            pipe(get(levelAtom).value, TO.fromEither, TO.map(flattenLevel)),
+            pipe(
+              get(levelAtom).value,
+              TO.fromEither,
+              TO.chainOptionK(flattenLevel),
+            ),
           ),
           TO.bind(
             "optionTable",
@@ -102,7 +107,24 @@ export const CalculateButton = ({ className }: Props) => {
                         method,
                       }),
                     )
-                    .then((result) => [method, result] as const),
+                    .then(
+                      (result) =>
+                        [
+                          method,
+                          pipe(
+                            result,
+                            A.map(
+                              A.map(({ probability, option }) => ({
+                                probability,
+                                ...option,
+                                stat: effectiveStatSchema
+                                  .optional()
+                                  .parse(option.stat),
+                              })),
+                            ),
+                          ),
+                        ] as const,
+                    ),
                 ),
               ).then((entries) => new Map(entries)),
             ),

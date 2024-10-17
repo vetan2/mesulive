@@ -1,329 +1,31 @@
-import "server-only";
-
-import { type Prisma } from "@prisma/client";
 import { record } from "fp-ts";
+import { type Either } from "fp-ts/lib/Either";
 import { flow, pipe } from "fp-ts/lib/function";
 import { type Option } from "fp-ts/lib/Option";
 import { JSDOM } from "jsdom";
+import { match } from "ts-pattern";
 
 import { equips, type Equip } from "~/entities/equip";
 import { Potential } from "~/entities/potential";
-import { gradesEnableToPromote } from "~/entities/potential/constants";
-import { E, O, TE } from "~/shared/fp";
-import { taskEitherToPromise } from "~/shared/function";
-import { IntervalQueue } from "~/shared/intervalQueue";
+import { flattenLevel } from "~/entities/potential/utils";
+import { A, E, O, TE } from "~/shared/fp";
 import { convertToNumber, percentStringToNumber } from "~/shared/number";
 import { entries } from "~/shared/object";
 import { prisma } from "~/shared/prisma";
 
 import { cubeItemIds, gradeUrls } from "./constants";
-import {
-  type OptionTable,
-  type GradeUpRecord,
-  type RawOptionTable,
-} from "./types";
+import { type GradeUpRecord } from "./types";
 
-const fetchQueue = new IntervalQueue(100);
-
-export const findNewVersion = TE.tryCatch(
-  () =>
-    prisma.potentialDataVersion.findFirst().then(
-      flow(
-        O.fromNullable,
-        O.chain(({ gameVersion, appVersion }) =>
-          gameVersion !== appVersion ? O.some(gameVersion) : O.none,
-        ),
-      ),
-    ),
+export const fetchGradePage = TE.tryCatchK(
+  (method: Potential.ResetMethod) =>
+    fetch(gradeUrls[method])
+      .then((r) => r.text())
+      .then((html) => new JSDOM(html)),
   E.toError,
 );
 
-export const emptyDB = TE.tryCatch(
-  async () =>
-    prisma.$transaction([
-      prisma.potentialOptionRecord.deleteMany(),
-      prisma.potentialOption.deleteMany(),
-      prisma.potentialOptionRecordList.deleteMany(),
-      prisma.potentialOptionTable.deleteMany(),
-      prisma.potentialGradeUpRecord.deleteMany(),
-    ]),
-  E.toError,
-);
-
-export const updateDataVersion = TE.tryCatchK(
-  (params: { version: number }) =>
-    prisma.$transaction(async (tx) => {
-      await taskEitherToPromise(emptyDB);
-      await tx.potentialDataVersion.deleteMany();
-      await tx.potentialDataVersion.create({
-        data: {
-          gameVersion: params.version,
-          appVersion: params.version,
-        },
-      });
-    }),
-  E.toError,
-);
-
-export const resetDatabaseIfGameVersionAhead = pipe(
-  TE.Do,
-  TE.apS("newVersion", findNewVersion),
-  TE.chain(
-    TE.tryCatchK(async ({ newVersion }) => {
-      if (O.isSome(newVersion)) {
-        return prisma.$transaction(async () => {
-          await taskEitherToPromise(emptyDB);
-          await taskEitherToPromise(
-            updateDataVersion({ version: newVersion.value }),
-          );
-        });
-      }
-    }, E.toError),
-  ),
-);
-
-export const fetchOptionDataFromOfficial = TE.tryCatchK(
-  async (params: {
-    method: Potential.ResetMethod;
-    equip: Equip;
-    level: number;
-    grade: Potential.Grade;
-  }): Promise<RawOptionTable> => {
-    const body = new URLSearchParams(
-      pipe(
-        {
-          nCubeItemID: cubeItemIds[params.method],
-          nGrade: Potential.grades.findIndex((v) => v === params.grade) + 1,
-          nPartsType: equips.findIndex((v) => v === params.equip) + 1,
-          nReqLev: params.level,
-        },
-        record.map(String),
-      ),
-    );
-
-    const html = await // fetchQueue.enqueue(() =>
-    fetch(
-      "https://maplestory.nexon.com/Guide/OtherProbability/cube/GetSearchProbList",
-      {
-        headers: {
-          "content-type": "application/x-www-form-urlencoded; charset=UTF-8",
-          "x-requested-with": "XMLHttpRequest",
-        },
-        body: body.toString(),
-        method: "POST",
-      },
-      // ),
-    )
-      .then((r) => {
-        console.log(
-          "fetchOptionData",
-          params,
-          new Date().toLocaleString("ko-KR", { timeZone: "Asia/Seoul" }),
-          r.status,
-        );
-        return r;
-      })
-      .then((r) => r.text());
-
-    // console.table(body);
-    const dom = new JSDOM(html);
-
-    return [".cube_data._1", ".cube_data._2", ".cube_data._3"].map(
-      (selector) => {
-        const table = dom.window.document.querySelector(selector);
-        const tbody = table?.querySelector("tbody");
-        const trs = tbody?.querySelectorAll("tr");
-
-        return Array.from(trs ?? []).map((tr) => {
-          const tds = tr.querySelectorAll("td");
-          const optionName = tds[0].textContent ?? "";
-
-          let stat: Potential.PossibleStat | undefined;
-          let figure: number | undefined;
-
-          const probability = pipe(
-            tds[1].textContent || "",
-            percentStringToNumber(6),
-            O.getOrElse(() => 0),
-          );
-
-          for (const [_stat, regex] of entries(Potential.possibleStatRegexes)) {
-            const match = optionName.match(regex);
-
-            if (match) {
-              stat = _stat;
-              figure = pipe(
-                O.fromNullable(match[1]),
-                O.chain(convertToNumber),
-                O.toUndefined,
-              );
-              break;
-            }
-          }
-
-          return {
-            optionName,
-            probability,
-            stat,
-            figure,
-          };
-        });
-      },
-    );
-  },
-  E.toError,
-);
-
-export const createPotentialOptionTable = TE.tryCatchK(
-  (params: {
-    equip: Equip;
-    method: Potential.ResetMethod;
-    grade: Potential.Grade;
-    level: number;
-    optionTable: RawOptionTable;
-  }): Promise<OptionTable> =>
-    prisma.potentialOptionTable
-      .create({
-        data: {
-          method: params.method,
-          equip: params.equip,
-          level: params.level,
-          grade: params.grade,
-          optionTable: {
-            create: params.optionTable.map((record) => ({
-              records: {
-                create: record.map(
-                  ({ optionName, probability, stat, figure }) => ({
-                    probability,
-                    option: {
-                      connectOrCreate: {
-                        where: {
-                          name: optionName,
-                        },
-                        create: {
-                          name: optionName,
-                          figure,
-                          stat,
-                        },
-                      },
-                    },
-                  }),
-                ),
-              },
-            })),
-          },
-        },
-        include: {
-          optionTable: {
-            include: {
-              records: {
-                include: {
-                  option: true,
-                },
-              },
-            },
-          },
-        },
-      })
-      .then(optionTablePayloadToOptionTable),
-  E.toError,
-);
-
-export const getPotentialOptionTable = (
-  params: Parameters<typeof fetchOptionDataFromOfficial>[0],
-) =>
-  pipe(
-    fetchOptionDataFromOfficial(params),
-    TE.chain((table) =>
-      createPotentialOptionTable({ ...params, optionTable: table }),
-    ),
-  );
-
-const optionTablePayloadToOptionTable = (
-  payload: Prisma.PotentialOptionTableGetPayload<{
-    include: {
-      optionTable: {
-        include: {
-          records: {
-            include: {
-              option: true;
-            };
-          };
-        };
-      };
-    };
-  }>,
-): OptionTable =>
-  payload.optionTable.map(({ records }) =>
-    records.map(({ option: { stat, figure, name }, probability }) => ({
-      name,
-      probability,
-      stat: pipe(
-        O.fromNullable(stat),
-        O.map(Potential.possibleStatsSchema.parse),
-        O.toUndefined,
-      ),
-      figure: figure ?? undefined,
-    })),
-  );
-
-export const findOptionTable = TE.tryCatchK(
-  (params: {
-    equip: Equip;
-    method: Potential.ResetMethod;
-    grade: Potential.Grade;
-    level: number;
-  }): Promise<Option<OptionTable>> =>
-    prisma.potentialOptionTable
-      .findFirst({
-        where: {
-          method: params.method,
-          equip: params.equip,
-          level: params.level,
-          grade: params.grade,
-        },
-        include: {
-          optionTable: {
-            include: {
-              records: {
-                include: {
-                  option: true,
-                },
-              },
-            },
-          },
-        },
-      })
-      .then((v) => v)
-      .then(flow(O.fromNullable, O.map(optionTablePayloadToOptionTable))),
-  E.toError,
-);
-
-export const fetchOptionIdNameMap = TE.tryCatchK(
-  (params: { optionIds: number[] }) =>
-    prisma.potentialOption.findMany({
-      where: {
-        id: {
-          in: params.optionIds,
-        },
-      },
-      select: {
-        id: true,
-        name: true,
-      },
-    }),
-  E.toError,
-);
-
-export const fetchGradeUpRecords = TE.tryCatchK(
-  async (params: {
-    method: Potential.ResetMethod;
-  }): Promise<Map<Potential.Grade, GradeUpRecord>> => {
-    const html = await fetchQueue.enqueue(() =>
-      fetch(gradeUrls[params.method]).then((r) => r.text()),
-    );
-    const dom = new JSDOM(html);
-
+export const getGradeUpRecordsFromPage =
+  (method: Potential.ResetMethod) => (dom: JSDOM) => {
     const cubeInfoTable = dom.window.document.querySelectorAll(".cube_info");
 
     const probabilityTable = cubeInfoTable?.[0];
@@ -334,38 +36,90 @@ export const fetchGradeUpRecords = TE.tryCatchK(
     const ceilTbody = ceilTable?.querySelector("tbody");
     const ceilTrs = ceilTbody?.querySelectorAll("tr");
 
-    return new Map(
-      gradesEnableToPromote[params.method].map((currentGrade, i) => {
-        const probabilityTr = probabilityTrs?.[i];
-        const probabilityTds = probabilityTr?.querySelectorAll("td");
+    return Potential.gradesEnableToPromote[method].map((currentGrade, i) => {
+      const probabilityTr = probabilityTrs?.[i];
+      const probabilityTds = probabilityTr?.querySelectorAll("td");
 
-        const ceilTr = ceilTrs?.[(params.method === "ADDI" ? 3 : 0) + i];
-        const ceilTds = ceilTr?.querySelectorAll("td");
+      const ceilTr = ceilTrs?.[(method === "ADDI" ? 3 : 0) + i];
+      const ceilTds = ceilTr?.querySelectorAll("td");
 
-        const probability = pipe(
-          probabilityTds?.[probabilityTds.length - 1]?.textContent ?? "",
-          percentStringToNumber(12),
-          O.getOrElse(() => 0),
-        );
+      const probability = pipe(
+        probabilityTds?.[probabilityTds.length - 1]?.textContent ?? "",
+        percentStringToNumber(12),
+        O.getOrElse(() => 0),
+      );
 
-        const ceil = pipe(
-          ceilTds?.[ceilTds.length - 1]?.textContent ?? "",
-          convertToNumber,
-          O.toUndefined,
-        );
+      const ceil = pipe(
+        ceilTds?.[ceilTds.length - 1]?.textContent ?? "",
+        convertToNumber,
+        O.toUndefined,
+      );
 
-        return [
-          currentGrade,
-          {
-            probability,
-            ceil,
+      return {
+        currentGrade,
+        probability,
+        ceil,
+      };
+    });
+  };
+
+export const getOptionGradeRecordsFromPage =
+  (method: Potential.ResetMethod) =>
+  (
+    dom: JSDOM,
+  ): Either<
+    Error,
+    {
+      grade: Potential.Grade;
+      line: number;
+      currentGradeProb: number;
+      lowerGradeProb?: number;
+    }[]
+  > =>
+    E.tryCatch(() => {
+      const table = dom.window.document.querySelectorAll(".cube_grade");
+
+      const probabilityTable = table?.[0];
+      const probabilityTbody = probabilityTable?.querySelector("tbody");
+      const probabilityTrs = probabilityTbody?.querySelectorAll("tr");
+
+      if (!probabilityTable || !probabilityTbody || !probabilityTrs) {
+        throw new Error("getGradeRecordsFromPage: 테이블이 존재하지 않음");
+      }
+
+      return Potential.gradesEnableToReset[method].flatMap((grade, i) =>
+        pipe(
+          pipe(
+            Array.from({ length: probabilityTrs.length }).map(
+              (_, j) =>
+                probabilityTrs[j].querySelectorAll("td")[1 + 2 * i]
+                  ?.textContent,
+            ),
+            A.filterMap(
+              flow(O.fromNullable, O.chain(percentStringToNumber(6))),
+            ),
+          ),
+          (arr) => {
+            if (arr.length !== 5) {
+              throw new Error(
+                "getGradeRecordsFromPage: 옵션 등급 설정 확률의 행 개수가 5개가 아님",
+              );
+            }
+
+            return arr;
           },
-        ] as const;
-      }),
-    );
-  },
-  E.toError,
-);
+          (arr) =>
+            [
+              { line: 1, currentGradeProb: arr[0] },
+              { line: 2, currentGradeProb: arr[1], lowerGradeProb: arr[2] },
+              { line: 3, currentGradeProb: arr[3], lowerGradeProb: arr[4] },
+            ].map((col) => ({
+              grade,
+              ...col,
+            })),
+        ),
+      );
+    }, E.toError);
 
 export const findGradeUpRecord = TE.tryCatchK(
   (params: {
@@ -395,20 +149,208 @@ export const findGradeUpRecord = TE.tryCatchK(
   E.toError,
 );
 
-export const createGradeUpRecords = TE.tryCatchK(
-  (params: {
-    method: Potential.ResetMethod;
-    recordMap: Map<Potential.Grade, GradeUpRecord>;
-  }) =>
-    prisma.potentialGradeUpRecord.createMany({
-      data: Array.from(params.recordMap.entries()).map(
-        ([currentGrade, record]) => ({
-          method: params.method,
-          currentGrade,
-          probability: record.probability,
-          ceil: record.ceil,
-        }),
+export const fetchOptionDataPage = (params: {
+  method: Potential.ResetMethod;
+  equip: Equip;
+  level: number;
+  optionGrade: Potential.OptionGrade;
+}) =>
+  pipe(
+    TE.Do,
+    TE.apS(
+      "flattenedLevel",
+      TE.fromOption(() => new Error(`Invalid level: ${params.level}`))(
+        flattenLevel(params.level),
       ),
+    ),
+    TE.bindW("body", ({ flattenedLevel }) =>
+      TE.of(
+        new URLSearchParams(
+          pipe(
+            {
+              nCubeItemID: cubeItemIds[params.method],
+              nGrade:
+                Potential.grades.findIndex(
+                  (v) =>
+                    v ===
+                    (params.optionGrade === "NORMAL"
+                      ? "RARE"
+                      : params.optionGrade),
+                ) + 1,
+              nPartsType: equips.findIndex((v) => v === params.equip) + 1,
+              nReqLev: flattenedLevel,
+            },
+            record.map(String),
+          ),
+        ),
+      ),
+    ),
+    TE.chainW(
+      TE.tryCatchK(
+        ({ body }) =>
+          fetch(
+            "https://maplestory.nexon.com/Guide/OtherProbability/cube/GetSearchProbList",
+            {
+              headers: {
+                "content-type":
+                  "application/x-www-form-urlencoded; charset=UTF-8",
+                "x-requested-with": "XMLHttpRequest",
+              },
+              body: body.toString(),
+              method: "POST",
+            },
+          )
+            .then((r) => r.text())
+            .then((html) => new JSDOM(html)),
+        E.toError,
+      ),
+    ),
+  );
+
+export const getOptionRecordsFromPage =
+  ({
+    optionGrade,
+    probWeight = 1,
+  }: {
+    optionGrade: Potential.OptionGrade;
+    probWeight?: number;
+  }) =>
+  (dom: JSDOM) => {
+    const firstLineTrs = Array.from(
+      dom.window.document
+        .querySelector(".cube_data._1")
+        ?.querySelector("tbody")
+        ?.querySelectorAll("tr") ?? [],
+    );
+
+    const trs = match(optionGrade)
+      .with("NORMAL", () =>
+        Array.from(
+          dom.window.document
+            .querySelector(".cube_data._2")
+            ?.querySelector("tbody")
+            ?.querySelectorAll("tr") ?? [],
+        ).filter((_, i, arr) => i < arr.length - firstLineTrs.length),
+      )
+      .otherwise(() => firstLineTrs);
+
+    return trs.map((tr) => {
+      const tds = tr.querySelectorAll("td");
+      const optionName = tds[0].textContent ?? "";
+
+      let stat: Potential.PossibleStat | undefined;
+      let figure: number | undefined;
+
+      const probability = pipe(
+        tds[1].textContent || "",
+        percentStringToNumber(6),
+        O.map((v) => v * probWeight),
+        O.getOrElse(() => 0),
+      );
+
+      for (const [_stat, regex] of entries(Potential.possibleStatRegexes)) {
+        const match = optionName.match(regex);
+
+        if (match) {
+          stat = _stat;
+          figure = pipe(
+            O.fromNullable(match[1]),
+            O.chain(convertToNumber),
+            O.toUndefined,
+          );
+          break;
+        }
+      }
+
+      return {
+        optionName,
+        probability,
+        stat,
+        figure,
+      };
+    });
+  };
+
+export const createPotentialOptionTable = TE.tryCatchK(
+  (params: {
+    equip: Equip;
+    method: Potential.ResetMethod;
+    optionGrade: Potential.OptionGrade;
+    level: number;
+    optionRecords: ReturnType<ReturnType<typeof getOptionRecordsFromPage>>;
+  }) =>
+    prisma.potentialOptionTable.create({
+      data: {
+        method: params.method,
+        equip: params.equip,
+        level: params.level,
+        optionGrade: params.optionGrade,
+        optionRecords: {
+          create: params.optionRecords.map(
+            ({ figure, optionName, probability, stat }) => ({
+              probability,
+              option: {
+                connectOrCreate: {
+                  where: {
+                    name: optionName,
+                  },
+                  create: {
+                    name: optionName,
+                    figure,
+                    stat,
+                  },
+                },
+              },
+            }),
+          ),
+        },
+      },
+      include: {
+        optionRecords: true,
+      },
     }),
   E.toError,
+);
+
+export const findPotentialOptionTable = flow(
+  TE.tryCatchK(
+    (params: {
+      equip: Equip;
+      method: Potential.ResetMethod;
+      optionGrade: Potential.OptionGrade;
+      level: number;
+    }) =>
+      prisma.potentialOptionTable.findFirstOrThrow({
+        where: {
+          equip: params.equip,
+          level: params.level,
+          optionGrade: params.optionGrade,
+          method: params.method,
+        },
+        select: {
+          optionRecords: {
+            select: {
+              option: {
+                select: { name: true, figure: true, stat: true, id: true },
+              },
+              probability: true,
+            },
+          },
+        },
+      }),
+    E.toError,
+  ),
+  TE.map(({ optionRecords }) => optionRecords),
+  TE.chainEitherK(
+    E.tryCatchK(
+      A.map(({ option, ...others }) => ({
+        ...others,
+        option: {
+          ...option,
+          stat: Potential.possibleStatsSchema.nullish().parse(option.stat),
+        },
+      })),
+      E.toError,
+    ),
+  ),
 );

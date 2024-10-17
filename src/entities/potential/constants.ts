@@ -78,6 +78,16 @@ export const resetMethodColorClassNames: Record<
   },
 };
 
+export type OptionGrade = $Enums.PotentialOptionGrade;
+export const optionGradeSchema = z.enum([
+  "NORMAL",
+  "RARE",
+  "EPIC",
+  "UNIQUE",
+  "LEGENDARY",
+] as const satisfies OptionGrade[]);
+export const optionGrades = optionGradeSchema.options;
+
 export type Grade = $Enums.PotentialGrade;
 export const gradeSchema = z.enum([
   "RARE",

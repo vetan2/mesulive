@@ -1,5 +1,5 @@
 import { option } from "fp-ts";
-import { pipe } from "fp-ts/function";
+import { pipe } from "fp-ts/lib/function";
 import { P, match } from "ts-pattern";
 
 import { O } from "~/shared/fp";

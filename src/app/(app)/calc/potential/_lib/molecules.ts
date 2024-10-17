@@ -237,6 +237,7 @@ const potentialCalcMoleculeConstructor = ((_, scope) => {
               : O.none,
           ),
         ),
+        A.filter((set) => set.length > 0),
       ),
     (get, set, reset: typeof RESET) => {
       set(_optionSetsAtom, reset);

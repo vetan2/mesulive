@@ -1,24 +1,41 @@
 "use server";
 
-import { pipe } from "fp-ts/lib/function";
-import { type Option } from "fp-ts/lib/Option";
-import { type TaskEither } from "fp-ts/lib/TaskEither";
+import { flow, pipe } from "fp-ts/lib/function";
 
 import { type Equip } from "~/entities/equip";
 import { Potential } from "~/entities/potential";
-import { O, TE } from "~/shared/fp";
-import { taskEitherToPromise } from "~/shared/function";
-
+import { E, TE } from "~/shared/fp";
 import {
-  resetDatabaseIfGameVersionAhead,
-  findOptionTable,
-  fetchGradeUpRecords,
-  findGradeUpRecord,
-  createGradeUpRecords,
-  fetchOptionIdNameMap,
-  getPotentialOptionTable as _getPotentialOptionTable,
-} from "./serverLogics";
-import { type OptionIdNameRecord, type GradeUpRecord } from "./types";
+  convertAllNullToUndefined,
+  taskEitherToPromise,
+} from "~/shared/function";
+import { prisma } from "~/shared/prisma";
+
+import { findPotentialOptionTable } from "./serverLogics";
+
+export const getPotentialGradeUpRecord = (params: {
+  method: Potential.ResetMethod;
+  grade: Potential.Grade;
+}) =>
+  pipe(
+    TE.tryCatch(
+      () =>
+        prisma.potentialGradeUpRecord
+          .findFirstOrThrow({
+            where: {
+              method: params.method,
+              currentGrade: params.grade,
+            },
+            select: {
+              ceil: true,
+              probability: true,
+            },
+          })
+          .then(convertAllNullToUndefined),
+      E.toError,
+    ),
+    taskEitherToPromise,
+  );
 
 export const getPotentialOptionTable = (params: {
   method: Potential.ResetMethod;
@@ -28,81 +45,92 @@ export const getPotentialOptionTable = (params: {
 }) =>
   pipe(
     TE.Do,
-    TE.chainFirstW(() => resetDatabaseIfGameVersionAhead),
     TE.apS(
       "params",
-      TE.right({
-        ...params,
-        level: Potential.flattenLevel(params.level),
-        method:
-          params.method === "ADDI"
-            ? ("ADDI_POTENTIAL" satisfies Potential.ResetMethod)
-            : params.method,
-      }),
-    ),
-    TE.bind("fetchedTable", ({ params }) => findOptionTable(params)),
-    TE.chain(({ fetchedTable, params }) =>
       pipe(
-        fetchedTable,
-        O.match(
-          () => _getPotentialOptionTable(params),
-          (v) => TE.right(v),
-        ),
-      ),
-    ),
-    taskEitherToPromise,
-  );
-
-/**
- * @deprecated
- */
-export const getPotentialOptionIdNameMap = (params: { optionIds: number[] }) =>
-  pipe(
-    TE.Do,
-    TE.chainFirstW(() => resetDatabaseIfGameVersionAhead),
-    TE.chain(() => fetchOptionIdNameMap(params)),
-    TE.map((arr) =>
-      arr.reduce(
-        (acc, { id, name }) => ({
-          ...acc,
-          [id]: name satisfies OptionIdNameRecord[number],
-        }),
-        {} as OptionIdNameRecord,
-      ),
-    ),
-    taskEitherToPromise,
-  );
-
-export const getPotentialGradeUpRecord = (params: {
-  method: Potential.ResetMethod;
-  currentGrade: Potential.Grade;
-}) =>
-  pipe(
-    TE.Do,
-    TE.chainFirstW(() => resetDatabaseIfGameVersionAhead),
-    TE.bind(
-      "fetchedRecord",
-      (): TaskEither<Error, Option<GradeUpRecord | undefined>> =>
-        Potential.gradesEnableToPromote[params.method].includes(
-          params.currentGrade,
-        )
-          ? findGradeUpRecord(params)
-          : TE.right(O.some(undefined)),
-    ),
-    TE.chainW(({ fetchedRecord }) =>
-      pipe(
-        fetchedRecord,
-        TE.fromOption(() => undefined),
-        TE.orElse(() =>
-          pipe(
-            fetchGradeUpRecords(params),
-            TE.chainFirst((recordMap) =>
-              createGradeUpRecords({ method: params.method, recordMap }),
-            ),
-            TE.map((recordMap) => recordMap.get(params.currentGrade)),
+        TE.Do,
+        TE.apS(
+          "level",
+          TE.fromOption(() => new Error("invalid level"))(
+            Potential.flattenLevel(params.level),
           ),
         ),
+        TE.map(({ level }) => ({
+          equip: params.equip,
+          level,
+          method:
+            params.method === "ADDI"
+              ? ("ADDI_POTENTIAL" satisfies Potential.ResetMethod)
+              : params.method,
+          grade: params.grade,
+        })),
       ),
     ),
+    TE.bind(
+      "optionGrade",
+      flow(
+        TE.tryCatchK(
+          ({ params }) =>
+            prisma.potentialOptionGradeRecord
+              .findMany({
+                where: { grade: params.grade, method: params.method },
+                select: {
+                  currentGradeProb: true,
+                  lowerGradeProb: true,
+                  line: true,
+                },
+              })
+              .then((records) =>
+                records
+                  .toSorted((a, b) => a.line - b.line)
+                  .map((record) => record),
+              ),
+          E.toError,
+        ),
+        TE.filterOrElse(
+          (record) =>
+            record.length === 3 &&
+            [1, 2, 3].every((l) => record.some((r) => r.line === l)),
+          () =>
+            new Error(
+              "getPotentialOptionTable: 옵션 등급 설정 확률의 행 개수가 3개가 아님",
+            ),
+        ),
+      ),
+    ),
+    TE.bind("currentGradeOptions", ({ params }) =>
+      findPotentialOptionTable({
+        equip: params.equip,
+        level: params.level,
+        optionGrade: params.grade,
+        method: params.method,
+      }),
+    ),
+    TE.bind("lowerGradeOptions", ({ params }) =>
+      findPotentialOptionTable({
+        equip: params.equip,
+        level: params.level,
+        optionGrade:
+          Potential.optionGrades[
+            Potential.optionGrades.indexOf(params.grade) - 1
+          ],
+        method: params.method,
+      }),
+    ),
+    TE.map(({ currentGradeOptions, lowerGradeOptions, optionGrade }) =>
+      optionGrade.map(({ currentGradeProb, lowerGradeProb }) => [
+        ...(lowerGradeProb
+          ? lowerGradeOptions.map((option) => ({
+              ...option,
+              probability: option.probability * lowerGradeProb,
+            }))
+          : []),
+        ...currentGradeOptions.map((option) => ({
+          ...option,
+          probability: option.probability * currentGradeProb,
+        })),
+      ]),
+    ),
+    TE.map(convertAllNullToUndefined),
     taskEitherToPromise,
   );

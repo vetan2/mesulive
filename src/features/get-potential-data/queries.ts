@@ -10,12 +10,6 @@ export const useOptionTable = createQuery({
     getPotentialOptionTable(variables),
 });
 
-// export const useOptionIdNameMap = createQuery({
-//   queryKey: ["potential", "optionIdNameMap"],
-//   fetcher: (variables: Parameters<typeof getPotentialOptionIdNameMap>[0]) =>
-//     getPotentialOptionIdNameMap(variables),
-// });
-
 export const useGradeUpRecord = createQuery({
   queryKey: ["potential", "gradeUpRecord"],
   fetcher: (variables: Parameters<typeof getPotentialGradeUpRecord>[0]) =>
