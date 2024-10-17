@@ -81,9 +81,7 @@ export const OptionSetSetting = ({ index }: Props) => {
       (data: inferData<typeof PotentialQueries.useOptionTable>) =>
         pipe(
           data,
-          A.flatMap(
-            A.filterMap(({ option: { stat } }) => O.fromNullable(stat)),
-          ),
+          A.flatMap(A.filterMap(({ stat }) => O.fromNullable(stat))),
           (arr) => [...new Set(arr)],
           A.sort(
             ord.fromCompare<Potential.PossibleStat>((statA, statB) =>

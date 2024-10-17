@@ -114,12 +114,12 @@ export const CalculateButton = ({ className }: Props) => {
                           pipe(
                             result,
                             A.map(
-                              A.map(({ probability, option }) => ({
+                              A.map(({ probability, stat, id, ...others }) => ({
                                 probability,
-                                ...option,
+                                ...others,
                                 stat: effectiveStatSchema
                                   .optional()
-                                  .parse(option.stat),
+                                  .parse(stat),
                               })),
                             ),
                           ),

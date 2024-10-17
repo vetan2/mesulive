@@ -1,9 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -11,6 +5,42 @@ generator client {
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
+}
+
+model PotentialGradeUpRecord {
+  id           Int                  @id @default(autoincrement())
+  method       PotentialResetMethod
+  currentGrade PotentialGrade
+  probability  Float
+  ceil         Int?
+}
+
+model PotentialOptionGradeRecord {
+  id               Int                  @id @default(autoincrement())
+  method           PotentialResetMethod
+  grade            PotentialGrade
+  currentGradeProb Float
+  lowerGradeProb   Float?
+  line             Int
+}
+
+model PotentialOptionRecord {
+  id                     Int                   @id @default(autoincrement())
+  probability            Float
+  potentialOptionTableId Int?
+  figure                 Float?
+  name                   String                @default("")
+  stat                   String?
+  PotentialOptionTable   PotentialOptionTable? @relation(fields: [potentialOptionTableId], references: [id])
+}
+
+model PotentialOptionTable {
+  id            Int                     @id @default(autoincrement())
+  method        PotentialResetMethod
+  optionGrade   PotentialOptionGrade
+  level         Int
+  equip         String
+  optionRecords PotentialOptionRecord[]
 }
 
 enum PotentialResetMethod {
@@ -37,47 +67,4 @@ enum PotentialOptionGrade {
   EPIC
   UNIQUE
   LEGENDARY
-}
-
-model PotentialGradeUpRecord {
-  id           Int                  @id @default(autoincrement())
-  method       PotentialResetMethod
-  currentGrade PotentialGrade
-  probability  Float
-  ceil         Int?
-}
-
-model PotentialOptionGradeRecord {
-  id               Int                  @id @default(autoincrement())
-  method           PotentialResetMethod
-  grade            PotentialGrade
-  currentGradeProb Float
-  lowerGradeProb   Float?
-  line             Int
-}
-
-model PotentialOption {
-  id            Int                     @id @default(autoincrement())
-  name          String                  @unique
-  stat          String?
-  figure        Float?
-  optionRecords PotentialOptionRecord[]
-}
-
-model PotentialOptionRecord {
-  id                     Int                   @id @default(autoincrement())
-  option                 PotentialOption       @relation(fields: [optionId], references: [id])
-  optionId               Int
-  probability            Float
-  PotentialOptionTable   PotentialOptionTable? @relation(fields: [potentialOptionTableId], references: [id])
-  potentialOptionTableId Int?
-}
-
-model PotentialOptionTable {
-  id            Int                     @id @default(autoincrement())
-  optionRecords PotentialOptionRecord[]
-  method        PotentialResetMethod
-  optionGrade   PotentialOptionGrade
-  level         Int
-  equip         String
 }

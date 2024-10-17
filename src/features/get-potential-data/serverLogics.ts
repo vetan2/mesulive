@@ -330,9 +330,10 @@ export const findPotentialOptionTable = flow(
         select: {
           optionRecords: {
             select: {
-              option: {
-                select: { name: true, figure: true, stat: true, id: true },
-              },
+              name: true,
+              figure: true,
+              stat: true,
+              id: true,
               probability: true,
             },
           },
@@ -343,12 +344,9 @@ export const findPotentialOptionTable = flow(
   TE.map(({ optionRecords }) => optionRecords),
   TE.chainEitherK(
     E.tryCatchK(
-      A.map(({ option, ...others }) => ({
+      A.map(({ stat, ...others }) => ({
         ...others,
-        option: {
-          ...option,
-          stat: Potential.possibleStatsSchema.nullish().parse(option.stat),
-        },
+        stat: Potential.possibleStatsSchema.nullish().parse(stat),
       })),
       E.toError,
     ),
