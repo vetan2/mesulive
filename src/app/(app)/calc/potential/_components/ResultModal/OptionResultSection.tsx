@@ -58,9 +58,17 @@ export const OptionResultSection = ({ result, className }: Props) => {
       </div>
       {resultOptions.current?.map(({ options, prob }, i) => (
         <div key={i}>
-          {options.map((option, j) => (
-            <div key={j} className="flex items-center gap-1">
-              {option.name}
+          {[0, 1, 2].map((optionIndex) => (
+            <div
+              key={optionIndex}
+              className={cx(
+                "flex items-center gap-1",
+                options.length <= optionIndex && "italic text-gray-400",
+              )}
+            >
+              {options.length <= optionIndex
+                ? `아무 ${optionIndex + 1}번째 옵션`
+                : options[optionIndex].name}
             </div>
           ))}
           <p className="text-sm font-semibold text-default-500">
