@@ -1,8 +1,10 @@
-import { pipe } from "fp-ts/lib/function";
+import { flow, pipe } from "fp-ts/lib/function";
+import { match } from "ts-pattern";
 
 import { Potential } from "~/entities/potential";
 import { type OptionTable } from "~/features/get-potential-data/types";
 import { A, O } from "~/shared/fp";
+import { entries } from "~/shared/object";
 
 export const getOptionResults = ({
   aimOptionSets,
@@ -19,7 +21,7 @@ export const getOptionResults = ({
   );
 
 const getOptionResult = ({
-  aimOptionSets,
+  aimOptionSets: _aimOptionSets,
   optionTable,
 }: {
   aimOptionSets: { stat: Potential.PossibleStat; figure: number }[][];
@@ -41,7 +43,66 @@ const getOptionResult = ({
     {},
   ];
 
-  // TODO 옵션 입력할때도 누적돼야해서 따로 함수로 빼야됨
+  // TODO 리팩토링: concatStatFigureRecord와 하나로 통합
+  const aimOptionSets = _aimOptionSets.map(
+    flow(
+      A.reduce(
+        {} as Partial<Record<Potential.PossibleStat, number>>,
+        (acc, cur) => ({
+          ...acc,
+          ...match(cur)
+            .returnType<Partial<Record<Potential.PossibleStat, number>>>()
+            .with({ stat: "IGNORE_DEFENSE" }, ({ figure }) => ({
+              IGNORE_DEFENSE:
+                ((acc["IGNORE_DEFENSE"] ?? 0) / 100 +
+                  (1 - (acc["IGNORE_DEFENSE"] ?? 0) / 100) * (figure / 100)) *
+                100,
+            }))
+            .with({ stat: "ALL" }, ({ figure }) =>
+              Object.fromEntries(
+                (
+                  [
+                    "STR",
+                    "DEX",
+                    "INT",
+                    "LUK",
+                  ] satisfies Potential.PossibleStat[]
+                ).map((additionalStat) => [
+                  additionalStat,
+                  (acc[additionalStat] ?? 0) + figure,
+                ]),
+              ),
+            )
+            .with({ stat: "ALL %" }, ({ figure }) =>
+              Object.fromEntries(
+                (
+                  [
+                    "STR %",
+                    "DEX %",
+                    "INT %",
+                    "LUK %",
+                  ] satisfies Potential.PossibleStat[]
+                ).map((additionalStat) => [
+                  additionalStat,
+                  (acc[additionalStat] ?? 0) + figure,
+                ]),
+              ),
+            )
+            .otherwise(({ stat, figure }) => ({
+              [stat]: (acc[stat] ?? 0) + figure,
+            })),
+        }),
+      ),
+      entries,
+      A.filterMap(([stat, figure]) =>
+        pipe(
+          O.fromNullable(figure),
+          O.map((figure) => ({ stat, figure })),
+        ),
+      ),
+    ),
+  );
+
   const concatStatFigureRecord = (
     statFigureRecord: StatFigureRecord,
     option: Option,
