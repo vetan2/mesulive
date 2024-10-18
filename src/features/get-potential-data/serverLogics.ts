@@ -26,7 +26,9 @@ export const fetchGradePage = TE.tryCatchK(
 
 export const getGradeUpRecordsFromPage =
   (method: Potential.ResetMethod) => (dom: JSDOM) => {
-    const cubeInfoTable = dom.window.document.querySelectorAll(".cube_info");
+    const cubeInfoTable = (dom.window.document as Document).querySelectorAll(
+      ".cube_info",
+    );
 
     const probabilityTable = cubeInfoTable?.[0];
     const probabilityTbody = probabilityTable?.querySelector("tbody");
@@ -77,7 +79,9 @@ export const getOptionGradeRecordsFromPage =
     }[]
   > =>
     E.tryCatch(() => {
-      const table = dom.window.document.querySelectorAll(".cube_grade");
+      const table = (dom.window.document as Document).querySelectorAll(
+        ".cube_grade",
+      );
 
       const probabilityTable = table?.[0];
       const probabilityTbody = probabilityTable?.querySelector("tbody");
@@ -217,7 +221,7 @@ export const getOptionRecordsFromPage =
   }) =>
   (dom: JSDOM) => {
     const firstLineTrs = Array.from(
-      dom.window.document
+      (dom.window.document as Document)
         .querySelector(".cube_data._1")
         ?.querySelector("tbody")
         ?.querySelectorAll("tr") ?? [],
@@ -226,7 +230,7 @@ export const getOptionRecordsFromPage =
     const trs = match(optionGrade)
       .with("NORMAL", () =>
         Array.from(
-          dom.window.document
+          (dom.window.document as Document)
             .querySelector(".cube_data._2")
             ?.querySelector("tbody")
             ?.querySelectorAll("tr") ?? [],
