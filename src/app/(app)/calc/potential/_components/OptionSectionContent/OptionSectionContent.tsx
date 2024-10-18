@@ -2,8 +2,7 @@
 
 import { useMolecule } from "bunshi/react";
 import { atom, useAtomValue, useSetAtom } from "jotai";
-import { RESET } from "jotai/utils";
-import { Plus, RefreshCcw } from "lucide-react";
+import { Plus } from "lucide-react";
 import { useMemo } from "react";
 
 import { PotentialCalcMolecule } from "~/app/(app)/calc/potential/_lib/molecules";
@@ -19,7 +18,6 @@ export const OptionSectionContent = ({ className }: Props) => {
   const { optionSetFormAtom, addOptionSetAtom } = useMolecule(
     PotentialCalcMolecule,
   );
-  const setOptionSets = useSetAtom(optionSetFormAtom);
   const optionSetsLengthAtom = useMemo(
     () => atom((get) => get(optionSetFormAtom).length),
     [optionSetFormAtom],
@@ -29,31 +27,20 @@ export const OptionSectionContent = ({ className }: Props) => {
 
   return (
     <div className={className}>
-      <S.Button
-        size="sm"
-        onClick={() => {
-          addOptionSet();
-        }}
-        color="primary"
-        className="w-20"
-      >
-        <Plus className="size-4" /> 추가
-      </S.Button>
-      <S.Button
-        size="sm"
-        onClick={() => {
-          setOptionSets(RESET);
-        }}
-        className="ml-2 w-20"
-        variant="flat"
-        color="primary"
-      >
-        <RefreshCcw className="size-4" /> 초기화
-      </S.Button>
       <div className="mt-3 flex flex-col gap-3">
         {Array.from({ length: optionSetsLength }).map((_, i) => (
           <OptionSetSetting key={i} index={i} />
         ))}
+        <S.Button
+          size="md"
+          onClick={() => {
+            addOptionSet();
+          }}
+          color="primary"
+          className="w-full"
+        >
+          <Plus className="size-4" /> 추가
+        </S.Button>
       </div>
     </div>
   );

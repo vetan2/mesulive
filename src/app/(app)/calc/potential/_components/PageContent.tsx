@@ -1,18 +1,22 @@
 "use client";
 
 import { useMolecule } from "bunshi/react";
-import { useAtomValue } from "jotai";
+import { useAtomValue, useSetAtom } from "jotai";
+import { RESET } from "jotai/utils";
+import { RefreshCcw } from "lucide-react";
 
 import { PotentialCalcMolecule } from "~/app/(app)/calc/potential/_lib/molecules";
-import { PageTitle, SectionContainer } from "~/shared/ui";
+import { PageTitle, S, SectionContainer } from "~/shared/ui";
 
 import { CalculateButton } from "./CalculateButton";
 import { OptionSectionContent } from "./OptionSectionContent";
 import { SettingSectionContent } from "./SettingSectionContent";
 
 export const PageContent = () => {
-  const { aimTypeAtom } = useMolecule(PotentialCalcMolecule);
+  const { aimTypeAtom, optionSetFormAtom } = useMolecule(PotentialCalcMolecule);
   const aimType = useAtomValue(aimTypeAtom);
+
+  const setOptionSets = useSetAtom(optionSetFormAtom);
 
   return (
     <div className="mx-auto max-w-screen-xl">
@@ -29,7 +33,25 @@ export const PageContent = () => {
         </div>
         {aimType === "OPTIONS" && (
           <div className="flex w-full flex-col gap-4 lg:min-h-full lg:flex-1">
-            <SectionContainer title="옵션 설정" className="lg:h-full">
+            <SectionContainer
+              title={
+                <>
+                  옵션 설정
+                  <S.Button
+                    size="sm"
+                    onClick={() => {
+                      setOptionSets(RESET);
+                    }}
+                    className="ml-2 w-20"
+                    variant="flat"
+                    color="primary"
+                  >
+                    <RefreshCcw className="size-4" /> 초기화
+                  </S.Button>
+                </>
+              }
+              className="lg:h-full"
+            >
               <OptionSectionContent className="h-full" />
             </SectionContainer>
           </div>

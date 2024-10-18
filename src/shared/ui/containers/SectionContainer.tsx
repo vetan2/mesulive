@@ -4,7 +4,7 @@ import { cx } from "~/shared/style";
 
 export const SectionContainer = forwardRef<
   HTMLDivElement,
-  HTMLAttributes<HTMLDivElement> & {
+  Omit<HTMLAttributes<HTMLDivElement>, "title"> & {
     title?: ReactNode;
   }
 >(({ className, title, children, ...props }, ref) => {
