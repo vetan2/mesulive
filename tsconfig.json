@@ -22,7 +22,7 @@
     "skipLibCheck": true,
     "strict": true,
     "strictNullChecks": true,
-    "types": ["vitest/globals"]
+    "types": ["vitest/globals", "@types/gtag.js"]
   },
   "exclude": ["node_modules"],
   "include": [

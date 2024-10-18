@@ -1,3 +1,4 @@
+import { GoogleAnalytics } from "@next/third-parties/google";
 import type { Metadata, Viewport } from "next";
 
 import { cx } from "~/shared/style";
@@ -46,6 +47,7 @@ export default function RootLayout({
       <head>
         <link rel="icon" href="/favicon.ico" />
       </head>
+      <GoogleAnalytics gaId={process.env.GA4_ID!} />
       <body>
         <MotionProvider>
           <JotaiProvider>
