@@ -2,10 +2,10 @@ import { z } from "zod";
 
 // 유효 스탯
 export const effectiveStatSchema = z.enum([
-  "STR",
   "STR %",
-  "DEX",
   "DEX %",
+  "STR",
+  "DEX",
   "INT",
   "INT %",
   "LUK",
@@ -29,6 +29,7 @@ export const effectiveStatSchema = z.enum([
   "LUK_PER_9LEV",
   "ITEM_DROP",
   "MESO_OBTAIN",
+  "AUTO_STEAL",
 ]);
 export type EffectiveStat = z.infer<typeof effectiveStatSchema>;
 export const effectiveStatOptions = effectiveStatSchema.options;
@@ -60,4 +61,5 @@ export const effectiveStatLabels: Record<EffectiveStat, string> = {
   LUK_PER_9LEV: "캐릭터 기준 9레벨 당 LUK",
   ITEM_DROP: "아이템 드롭률",
   MESO_OBTAIN: "메소 획득량",
+  AUTO_STEAL: "공격 시 오토스틸",
 };

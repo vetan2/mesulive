@@ -1,6 +1,7 @@
 import { useMolecule } from "bunshi/react";
 import { ord } from "fp-ts";
 import { identity, pipe } from "fp-ts/lib/function";
+import { sign } from "fp-ts/lib/Ordering";
 import { atom, useAtomValue, useSetAtom } from "jotai";
 import { X } from "lucide-react";
 import { useCallback, useEffect, useMemo } from "react";
@@ -9,9 +10,9 @@ import { P, match } from "ts-pattern";
 import { useDebounceValue } from "usehooks-ts";
 
 import { PotentialCalcMolecule } from "~/app/(app)/calc/potential/_lib/molecules";
-import { type Potential } from "~/entities/potential";
+import { Potential } from "~/entities/potential";
 import { flattenLevel } from "~/entities/potential/utils";
-import { effectiveStatLabels, effectiveStatOptions } from "~/entities/stat";
+import { effectiveStatLabels } from "~/entities/stat";
 import { PotentialQueries } from "~/features/get-potential-data/queries";
 import { A, E, O } from "~/shared/fp";
 import { cx } from "~/shared/style";
@@ -52,7 +53,7 @@ export const OptionSetSetting = ({ index }: Props) => {
   );
 
   const [variables] = useDebounceValue<
-    inferVariables<typeof PotentialQueries.useOptionTable>
+    inferVariables<typeof PotentialQueries.useOptionTables>
   >(
     useMemo(
       () => ({
@@ -66,7 +67,7 @@ export const OptionSetSetting = ({ index }: Props) => {
         method: match(type)
           .returnType<Potential.ResetMethod>()
           .with("ADDI", () => "ADDI_POTENTIAL")
-          .with("COMMON", () => "POTENTIAL")
+          .with("COMMON", () => "ARTISAN")
           .exhaustive(),
       }),
       [equip, grade, level.value, type],
@@ -74,21 +75,21 @@ export const OptionSetSetting = ({ index }: Props) => {
     300,
   );
 
-  const possibleOptionIds = PotentialQueries.useOptionTable({
+  const possibleOptionIds = PotentialQueries.useOptionTables({
     variables,
     enabled: aimType === "OPTIONS",
     select: useCallback(
-      (data: inferData<typeof PotentialQueries.useOptionTable>) =>
+      (data: inferData<typeof PotentialQueries.useOptionTables>) =>
         pipe(
           data,
           A.flatMap(A.filterMap(({ stat }) => O.fromNullable(stat))),
           (arr) => [...new Set(arr)],
           A.sort(
             ord.fromCompare<Potential.PossibleStat>((statA, statB) =>
-              effectiveStatOptions.indexOf(statA) >
-              effectiveStatOptions.indexOf(statB)
-                ? 1
-                : -1,
+              sign(
+                Potential.possibleStats.indexOf(statA) -
+                  Potential.possibleStats.indexOf(statB),
+              ),
             ),
           ),
         ),
@@ -197,6 +198,7 @@ export const OptionSetSetting = ({ index }: Props) => {
                         "MAGIC_ATTACK %",
                         "MESO_OBTAIN",
                         "STR %",
+                        "AUTO_STEAL",
                       ),
                     ),
                     () => "%",

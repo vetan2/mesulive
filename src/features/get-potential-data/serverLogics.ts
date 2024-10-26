@@ -10,7 +10,6 @@ import { Potential } from "~/entities/potential";
 import { flattenLevel } from "~/entities/potential/utils";
 import { A, E, O, TE } from "~/shared/fp";
 import { convertToNumber, percentStringToNumber } from "~/shared/number";
-import { entries } from "~/shared/object";
 import { prisma } from "~/shared/prisma";
 
 import { cubeItemIds, gradeUrls } from "./constants";
@@ -242,9 +241,6 @@ export const getOptionRecordsFromPage =
       const tds = tr.querySelectorAll("td");
       const optionName = tds[0].textContent ?? "";
 
-      let stat: Potential.PossibleStat | undefined;
-      let figure: number | undefined;
-
       const probability = pipe(
         tds[1].textContent || "",
         percentStringToNumber(6),
@@ -252,25 +248,9 @@ export const getOptionRecordsFromPage =
         O.getOrElse(() => 0),
       );
 
-      for (const [_stat, regex] of entries(Potential.possibleStatRegexes)) {
-        const match = optionName.match(regex);
-
-        if (match) {
-          stat = _stat;
-          figure = pipe(
-            O.fromNullable(match[1]),
-            O.chain(convertToNumber),
-            O.toUndefined,
-          );
-          break;
-        }
-      }
-
       return {
         optionName,
         probability,
-        stat,
-        figure,
       };
     });
   };
@@ -290,23 +270,19 @@ export const createPotentialOptionTable = TE.tryCatchK(
         level: params.level,
         optionGrade: params.optionGrade,
         optionRecords: {
-          create: params.optionRecords.map(
-            ({ figure, optionName, probability, stat }) => ({
-              probability,
-              option: {
-                connectOrCreate: {
-                  where: {
-                    name: optionName,
-                  },
-                  create: {
-                    name: optionName,
-                    figure,
-                    stat,
-                  },
+          create: params.optionRecords.map(({ optionName, probability }) => ({
+            probability,
+            option: {
+              connectOrCreate: {
+                where: {
+                  name: optionName,
+                },
+                create: {
+                  name: optionName,
                 },
               },
-            }),
-          ),
+            },
+          })),
         },
       },
       include: {
@@ -335,8 +311,6 @@ export const findPotentialOptionTable = flow(
           optionRecords: {
             select: {
               name: true,
-              figure: true,
-              stat: true,
               id: true,
               probability: true,
             },
@@ -346,13 +320,4 @@ export const findPotentialOptionTable = flow(
     E.toError,
   ),
   TE.map(({ optionRecords }) => optionRecords),
-  TE.chainEitherK(
-    E.tryCatchK(
-      A.map(({ stat, ...others }) => ({
-        ...others,
-        stat: Potential.possibleStatsSchema.nullish().parse(stat),
-      })),
-      E.toError,
-    ),
-  ),
 );

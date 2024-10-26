@@ -156,12 +156,12 @@ const getOptionResult = ({
     originalOptions: (typeof optionTable)[number],
   ) => {
     const disableNameRegexps = [
-      ...Potential.maxOneOptionRegexes.filter(
+      ...Potential.maxOneOptionRegexList.filter(
         (regex) =>
           currentOptionSet.filter((option) => option && regex.test(option.name))
             .length >= 1,
       ),
-      ...Potential.maxTwoOptionRegexes.filter(
+      ...Potential.maxTwoOptionRegexList.filter(
         (regex) =>
           currentOptionSet.filter((option) => option && regex.test(option.name))
             .length >= 2,

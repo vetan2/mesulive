@@ -98,7 +98,9 @@ export const ResultSection = ({ result, grade, level, className }: Props) => {
           평균 (상위 {maxFractionDigits(2)(topPctCost.current.meanTopPct ?? 0)}
           %)
         </b>
-        <p>{maxFractionDigits(2)(topPctCost.current.meanCost ?? 0)}회</p>
+        <p>
+          {putUnit(maxFractionDigits(0)(topPctCost.current.meanCost ?? 0))}회
+        </p>
         <p>
           감정비용:{" "}
           {putUnit(

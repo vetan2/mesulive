@@ -9,6 +9,10 @@ export const isNumeric = (value: unknown): value is `${number}` => {
   return !isNaN(value as any) && !isNaN(parseFloat(String(value)));
 };
 
+/**
+ * 정수 또는 소수점 숫자를 숫자로 변환합니다.
+ * @param value 정수
+ */
 export const convertToNumber = (value: unknown) =>
   pipe(value, O.fromPredicate(isNumeric), O.map(parseFloat));
 

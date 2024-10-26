@@ -62,7 +62,7 @@ export const CalculateButton = ({ className }: Props) => {
             methods.map((method) =>
               queryClient
                 .fetchQuery(
-                  PotentialQueries.useGradeUpRecord.getFetchOptions({
+                  PotentialQueries.useGradeUpRecord.getOptions({
                     method,
                     grade,
                   }),
@@ -100,7 +100,7 @@ export const CalculateButton = ({ className }: Props) => {
                 methods.map((method) =>
                   queryClient
                     .fetchQuery(
-                      PotentialQueries.useOptionTable.getFetchOptions({
+                      PotentialQueries.useOptionTables.getOptions({
                         equip,
                         grade,
                         level,

@@ -1,11 +1,17 @@
 import { pipe } from "fp-ts/lib/function";
+import { type Option } from "fp-ts/lib/Option";
 import { P, match } from "ts-pattern";
 
 import { O } from "~/shared/fp";
+import { convertToNumber } from "~/shared/number";
+import { entries } from "~/shared/object";
 
+import { Potential } from ".";
 import {
+  type PossibleStat,
   gradesEnableToPromote,
   gradesEnableToReset,
+  possibleStatRegexRecord,
   type AimType,
   type Grade,
   type ResetMethod,
@@ -125,3 +131,21 @@ export const getResetCost = (params: {
       if (level <= 120) return 2.5 * level ** 2;
       return 20 * level ** 2;
     });
+
+export const parseStat = (
+  str: string,
+): Option<{ stat: PossibleStat; figure: number }> =>
+  pipe(
+    entries(possibleStatRegexRecord).find(([, regex]) => regex.test(str)),
+    O.fromNullable,
+    O.chain(([stat, regex]) =>
+      pipe(
+        O.Do,
+        O.apS(
+          "stat",
+          O.tryCatch(() => Potential.possibleStatsSchema.parse(stat)),
+        ),
+        O.apS("figure", convertToNumber(regex.exec(str)?.[1])),
+      ),
+    ),
+  );
