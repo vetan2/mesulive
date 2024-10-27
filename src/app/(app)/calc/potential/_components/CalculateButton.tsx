@@ -2,7 +2,9 @@
 
 import { useQueryClient } from "@tanstack/react-query";
 import { useMolecule } from "bunshi/react";
-import { identity, pipe } from "fp-ts/lib/function";
+import { sequenceS } from "fp-ts/lib/Apply";
+import { flow, identity, pipe } from "fp-ts/lib/function";
+import { concatAll } from "fp-ts/lib/Monoid";
 import { type Option } from "fp-ts/lib/Option";
 import { useAtomValue } from "jotai";
 import { useAtomCallback } from "jotai/utils";
@@ -13,11 +15,12 @@ import { P, match } from "ts-pattern";
 import { type getOptionResults } from "~/app/(app)/calc/potential/_lib/logics";
 import { PotentialCalcMolecule } from "~/app/(app)/calc/potential/_lib/molecules";
 import { type Potential } from "~/entities/potential";
-import { flattenLevel } from "~/entities/potential/utils";
+import { flattenLevel, optionSetMonoid } from "~/entities/potential/utils";
 import { effectiveStatSchema } from "~/entities/stat";
 import { PotentialQueries } from "~/features/get-potential-data/queries";
 import { type GradeUpRecord } from "~/features/get-potential-data/types";
-import { A, E, O, TO } from "~/shared/fp";
+import { trpc } from "~/features/trpc/client";
+import { A, E, O, T, TO } from "~/shared/fp";
 import { type AtomValue } from "~/shared/jotai";
 import { cx } from "~/shared/style";
 import { S } from "~/shared/ui";
@@ -31,6 +34,9 @@ interface Props {
 export const CalculateButton = ({ className }: Props) => {
   const queryClient = useQueryClient();
   const worker = useRef<Worker>();
+  const mergedOptionSets = useRef<
+    Partial<Record<Potential.PossibleStat, number>>[]
+  >([]);
 
   const {
     inputStatusAtom,
@@ -53,11 +59,36 @@ export const CalculateButton = ({ className }: Props) => {
 
   const fetchGradeUpRecord = useAtomCallback(
     useCallback(
-      (get) => {
+      async (get) => {
         const methods = get(resetMethodsAtom);
         const grade = get(gradeAtom);
 
-        return TO.tryCatch(() =>
+        const logging = pipe(
+          methods.map((method) =>
+            pipe(
+              queryClient.getQueryData(
+                PotentialQueries.useGradeUpRecord.getFetchOptions({
+                  method,
+                  grade,
+                }).queryKey,
+              ),
+              O.fromPredicate((v) => v == null),
+            ),
+          ),
+          O.sequenceArray,
+          TO.fromOption,
+          TO.chainTaskK(
+            () => () =>
+              trpc.log.mutate({
+                name: "Potential-Calc",
+                aimType: "GRADE_UP",
+                methods,
+                grade,
+              }),
+          ),
+        );
+
+        const result = TO.tryCatch(() =>
           Promise.all(
             methods.map((method) =>
               queryClient
@@ -70,6 +101,14 @@ export const CalculateButton = ({ className }: Props) => {
                 .then((result) => ({ method, record: result })),
             ),
           ),
+        );
+
+        return pipe(
+          sequenceS(T.ApplyPar)({
+            logging,
+            result,
+          }),
+          T.map(({ result }) => result),
         )();
       },
       [gradeAtom, queryClient, resetMethodsAtom],
@@ -79,23 +118,38 @@ export const CalculateButton = ({ className }: Props) => {
   const fetchPotentialData = useAtomCallback(
     useCallback(
       (get) => {
-        return pipe(
-          TO.of({
-            methods: get(resetMethodsAtom),
-            grade: get(gradeAtom),
-            equip: get(equipAtom),
-          }),
-          TO.apS(
-            "level",
-            pipe(
-              get(levelAtom).value,
-              TO.fromEither,
-              TO.chainOptionK(flattenLevel),
+        const methods = get(resetMethodsAtom);
+        const grade = get(gradeAtom);
+        const equip = get(equipAtom);
+        const level = pipe(
+          get(levelAtom).value,
+          O.fromEither,
+          O.chain(flattenLevel),
+        );
+
+        const logging = pipe(
+          pipe(
+            TO.fromOption(level),
+            TO.chainTaskK(
+              () => () =>
+                trpc.log.mutate({
+                  name: "Potential-Calc",
+                  aimType: "OPTIONS",
+                  methods,
+                  grade,
+                  equip,
+                  optionSet: mergedOptionSets.current,
+                }),
             ),
           ),
+        );
+
+        const result = pipe(
+          TO.Do,
+          TO.apS("level", TO.fromOption(level)),
           TO.bind(
             "optionTable",
-            TO.tryCatchK(({ methods, grade, equip, level }) =>
+            TO.tryCatchK(({ level }) =>
               Promise.all(
                 methods.map((method) =>
                   queryClient
@@ -129,9 +183,31 @@ export const CalculateButton = ({ className }: Props) => {
               ).then((entries) => new Map(entries)),
             ),
           ),
+        );
+
+        return pipe(
+          sequenceS(T.ApplyPar)({
+            logging,
+            result,
+          }),
+          T.map(({ result }) => result),
         )();
       },
       [equipAtom, gradeAtom, levelAtom, queryClient, resetMethodsAtom],
+    ),
+  );
+
+  const updateMergedOptionSets = useAtomCallback(
+    useCallback(
+      (get) => {
+        mergedOptionSets.current = get(optionSetsAtom).map(
+          flow(
+            A.map(({ stat, figure }) => ({ [stat]: figure })),
+            concatAll(optionSetMonoid),
+          ),
+        );
+      },
+      [optionSetsAtom],
     ),
   );
 
@@ -206,7 +282,6 @@ export const CalculateButton = ({ className }: Props) => {
           typeof getOptionResults
         >[0]["optionTableMap"],
       ) => {
-        const aimOptionSets = get(optionSetsAtom);
         if (!worker.current) {
           return;
         }
@@ -224,9 +299,13 @@ export const CalculateButton = ({ className }: Props) => {
           setIsLoading(false);
           openResultModal();
         };
-        worker.current.postMessage({ aimOptionSets, optionTableMap });
+        worker.current.postMessage(
+          ...([
+            { aimOptionSets: mergedOptionSets.current, optionTableMap },
+          ] satisfies Parameters<typeof getOptionResults>),
+        );
       },
-      [openResultModal, optionSetsAtom, resultAtom],
+      [openResultModal, resultAtom],
     ),
   );
 
@@ -245,6 +324,7 @@ export const CalculateButton = ({ className }: Props) => {
             });
             break;
           case "OPTIONS":
+            updateMergedOptionSets();
             fetchPotentialData().then((result) => {
               if (O.isSome(result)) {
                 startOptionCalc(result.value.optionTable);
@@ -259,6 +339,7 @@ export const CalculateButton = ({ className }: Props) => {
         fetchGradeUpRecord,
         fetchPotentialData,
         startOptionCalc,
+        updateMergedOptionSets,
       ],
     ),
   );

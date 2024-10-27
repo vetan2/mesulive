@@ -3,6 +3,7 @@
 import { molecule, type MoleculeConstructor } from "bunshi";
 import { flow, pipe } from "fp-ts/lib/function";
 import { type Option } from "fp-ts/lib/Option";
+import { sign } from "fp-ts/lib/Ordering";
 import { produce } from "immer";
 import { type Getter, type Setter, atom } from "jotai";
 import { atomWithReset, type RESET } from "jotai/utils";
@@ -118,7 +119,13 @@ const potentialCalcMoleculeConstructor = ((_, scope) => {
   );
 
   const _resetMethodsAtom = atom<Potential.ResetMethod[]>([]);
-  const resetMethodsAtom = atom((get) => get(_resetMethodsAtom));
+  const resetMethodsAtom = atom((get) =>
+    get(_resetMethodsAtom).toSorted((a, b) =>
+      sign(
+        Potential.resetMethods.indexOf(a) - Potential.resetMethods.indexOf(b),
+      ),
+    ),
+  );
   const addResetMethodAtom = atom(null, (get, set, input: string) => {
     set(_resetMethodsAtom, (prev) =>
       pipe(

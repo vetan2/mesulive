@@ -1,8 +1,9 @@
-import { pipe } from "fp-ts/lib/function";
+import { flow, pipe } from "fp-ts/lib/function";
+import { type Monoid } from "fp-ts/lib/Monoid";
 import { type Option } from "fp-ts/lib/Option";
 import { P, match } from "ts-pattern";
 
-import { O } from "~/shared/fp";
+import { A, O } from "~/shared/fp";
 import { convertToNumber } from "~/shared/number";
 import { entries } from "~/shared/object";
 
@@ -149,3 +150,64 @@ export const parseStat = (
       ),
     ),
   );
+
+export const optionSetMonoid: Monoid<
+  Partial<Record<Potential.PossibleStat, number>>
+> = {
+  concat: flow(
+    (a, b) =>
+      [a, b].flatMap(
+        flow(
+          entries,
+          A.filter(
+            (e): e is [(typeof e)[0], NonNullable<(typeof e)[1]>] =>
+              e[0] != null,
+          ),
+          A.map(([stat, figure]) => ({ stat, figure })),
+        ),
+      ),
+    A.reduce(
+      {} as Partial<Record<Potential.PossibleStat, number>>,
+      (acc, cur) => ({
+        ...acc,
+        ...match(cur)
+          .returnType<Partial<Record<Potential.PossibleStat, number>>>()
+          .with({ stat: "IGNORE_DEFENSE" }, ({ figure }) => ({
+            IGNORE_DEFENSE:
+              ((acc["IGNORE_DEFENSE"] ?? 0) / 100 +
+                (1 - (acc["IGNORE_DEFENSE"] ?? 0) / 100) * (figure / 100)) *
+              100,
+          }))
+          .with({ stat: "ALL" }, ({ figure }) =>
+            Object.fromEntries(
+              (
+                ["STR", "DEX", "INT", "LUK"] satisfies Potential.PossibleStat[]
+              ).map((additionalStat) => [
+                additionalStat,
+                (acc[additionalStat] ?? 0) + figure,
+              ]),
+            ),
+          )
+          .with({ stat: "ALL %" }, ({ figure }) =>
+            Object.fromEntries(
+              (
+                [
+                  "STR %",
+                  "DEX %",
+                  "INT %",
+                  "LUK %",
+                ] satisfies Potential.PossibleStat[]
+              ).map((additionalStat) => [
+                additionalStat,
+                (acc[additionalStat] ?? 0) + figure,
+              ]),
+            ),
+          )
+          .otherwise(({ stat, figure }) => ({
+            [stat]: (acc[stat] ?? 0) + figure,
+          })),
+      }),
+    ),
+  ),
+  empty: {},
+};

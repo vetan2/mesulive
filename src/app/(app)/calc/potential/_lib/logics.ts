@@ -1,7 +1,8 @@
 import { flow, pipe } from "fp-ts/lib/function";
-import { match } from "ts-pattern";
+import { concatAll } from "fp-ts/lib/Monoid";
 
 import { Potential } from "~/entities/potential";
+import { optionSetMonoid } from "~/entities/potential/utils";
 import { type OptionTable } from "~/features/get-potential-data/types";
 import { A, O } from "~/shared/fp";
 import { entries } from "~/shared/object";
@@ -10,7 +11,7 @@ export const getOptionResults = ({
   aimOptionSets,
   optionTableMap,
 }: {
-  aimOptionSets: { stat: Potential.PossibleStat; figure: number }[][];
+  aimOptionSets: Partial<Record<Potential.PossibleStat, number>>[];
   optionTableMap: Map<Potential.ResetMethod, OptionTable[number][number][][]>;
 }) =>
   new Map(
@@ -24,7 +25,7 @@ const getOptionResult = ({
   aimOptionSets: _aimOptionSets,
   optionTable,
 }: {
-  aimOptionSets: { stat: Potential.PossibleStat; figure: number }[][];
+  aimOptionSets: Partial<Record<Potential.PossibleStat, number>>[];
   optionTable: (OptionTable[number][number] & {
     name: string;
   })[][];
@@ -46,57 +47,10 @@ const getOptionResult = ({
   // TODO 리팩토링: concatStatFigureRecord와 하나로 통합
   const aimOptionSets = _aimOptionSets.map(
     flow(
-      A.reduce(
-        {} as Partial<Record<Potential.PossibleStat, number>>,
-        (acc, cur) => ({
-          ...acc,
-          ...match(cur)
-            .returnType<Partial<Record<Potential.PossibleStat, number>>>()
-            .with({ stat: "IGNORE_DEFENSE" }, ({ figure }) => ({
-              IGNORE_DEFENSE:
-                ((acc["IGNORE_DEFENSE"] ?? 0) / 100 +
-                  (1 - (acc["IGNORE_DEFENSE"] ?? 0) / 100) * (figure / 100)) *
-                100,
-            }))
-            .with({ stat: "ALL" }, ({ figure }) =>
-              Object.fromEntries(
-                (
-                  [
-                    "STR",
-                    "DEX",
-                    "INT",
-                    "LUK",
-                  ] satisfies Potential.PossibleStat[]
-                ).map((additionalStat) => [
-                  additionalStat,
-                  (acc[additionalStat] ?? 0) + figure,
-                ]),
-              ),
-            )
-            .with({ stat: "ALL %" }, ({ figure }) =>
-              Object.fromEntries(
-                (
-                  [
-                    "STR %",
-                    "DEX %",
-                    "INT %",
-                    "LUK %",
-                  ] satisfies Potential.PossibleStat[]
-                ).map((additionalStat) => [
-                  additionalStat,
-                  (acc[additionalStat] ?? 0) + figure,
-                ]),
-              ),
-            )
-            .otherwise(({ stat, figure }) => ({
-              [stat]: (acc[stat] ?? 0) + figure,
-            })),
-        }),
-      ),
       entries,
-      A.filterMap(([stat, figure]) =>
+      A.filterMap(([stat, _figure]) =>
         pipe(
-          O.fromNullable(figure),
+          O.fromNullable(_figure),
           O.map((figure) => ({ stat, figure })),
         ),
       ),
@@ -111,37 +65,10 @@ const getOptionResult = ({
       return statFigureRecord;
     }
 
-    const newStatFigureRecord = { ...statFigureRecord };
-
-    const prevFigure = newStatFigureRecord[option.stat] ?? 0;
-
-    if (option.stat === "IGNORE_DEFENSE") {
-      newStatFigureRecord[option.stat] =
-        (prevFigure / 100 + (1 - prevFigure / 100) * (option.figure / 100)) *
-        100;
-    }
-
-    newStatFigureRecord[option.stat] = prevFigure + option.figure;
-
-    if (option.stat === "ALL") {
-      (["STR", "DEX", "INT", "LUK"] satisfies Potential.PossibleStat[]).forEach(
-        (additionalStat) => {
-          newStatFigureRecord[additionalStat] =
-            (statFigureRecord[additionalStat] ?? 0) + option.figure!;
-        },
-      );
-    }
-
-    if (option.stat === "ALL %") {
-      (
-        ["STR %", "DEX %", "INT %", "LUK %"] satisfies Potential.PossibleStat[]
-      ).forEach((additionalStat) => {
-        newStatFigureRecord[additionalStat] =
-          (statFigureRecord[additionalStat] ?? 0) + option.figure!;
-      });
-    }
-
-    return newStatFigureRecord;
+    return concatAll(optionSetMonoid)([
+      statFigureRecord,
+      { [option.stat]: option.figure },
+    ]);
   };
 
   const isAimAchieved = (statFigureRecord: StatFigureRecord) => {
