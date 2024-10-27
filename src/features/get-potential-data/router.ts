@@ -4,13 +4,13 @@ import { z } from "zod";
 import { equipSchema } from "~/entities/equip";
 import { Potential } from "~/entities/potential";
 import { publicProcedure, router } from "~/features/trpc/init";
-import { A, E, O, TE } from "~/shared/fp";
+import { A, E, TE } from "~/shared/fp";
 import {
   convertAllNullToUndefined,
   taskEitherToPromise,
 } from "~/shared/function";
 import { lokiLogger } from "~/shared/loki";
-import { entries } from "~/shared/object";
+import { keys } from "~/shared/object";
 import { prisma } from "~/shared/prisma";
 
 import { findPotentialOptionTable } from "./serverLogics";
@@ -138,20 +138,7 @@ export const potentialRouter = router({
                 {
                   message: {
                     ...resetInput,
-                    optionSets: optionSets
-                      .map(
-                        flow(
-                          entries,
-                          A.filterMap(([k, _v]) =>
-                            pipe(
-                              O.fromNullable(_v),
-                              O.map((v) => `${k}: ${v}`),
-                            ),
-                          ),
-                          (arr) => arr.join(", "),
-                        ),
-                      )
-                      .join(" / "),
+                    optionSets,
                     equipLevel: level,
                   },
                   labels: {
@@ -166,6 +153,20 @@ export const potentialRouter = router({
                     key: "Potential-Calc-Option-Method",
                   },
                 })),
+                ...optionSets.flatMap((optionSet, i) =>
+                  pipe(
+                    keys(optionSet),
+                    A.map((key) => ({
+                      message: {
+                        stat: key,
+                        temp: i,
+                      },
+                      labels: {
+                        key: "Potential-Calc-Option-Stat",
+                      },
+                    })),
+                  ),
+                ),
               ),
             );
           },

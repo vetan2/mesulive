@@ -64,7 +64,7 @@ const getOptionResult = ({
       return statFigureRecord;
     }
 
-    return concatAll(optionSetMonoid)([
+    return concatAll(optionSetMonoid())([
       statFigureRecord,
       { [option.stat]: option.figure },
     ]);

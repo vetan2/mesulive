@@ -117,15 +117,12 @@ export const CalculateButton = ({ className }: Props) => {
         const methods = get(resetMethodsAtom);
         const grade = get(gradeAtom);
         const equip = get(equipAtom);
-        const level = pipe(
-          get(levelAtom).value,
-          O.fromEither,
-          O.chain(flattenLevel),
-        );
+        const rawLevel = pipe(get(levelAtom).value, O.fromEither);
+        const level = pipe(rawLevel, O.chain(flattenLevel));
 
         const logging = pipe(
           pipe(
-            TO.fromOption(level),
+            TO.fromOption(rawLevel),
             TO.chainTaskK(
               (level) => () =>
                 trpc.potential.log.calc.option.mutate({
@@ -133,7 +130,12 @@ export const CalculateButton = ({ className }: Props) => {
                   grade,
                   equip,
                   level,
-                  optionSets: mergedOptionSets.current,
+                  optionSets: get(optionSetsAtom).map(
+                    flow(
+                      A.map(({ stat, figure }) => ({ [stat]: figure })),
+                      concatAll(optionSetMonoid({ concatALL: false })),
+                    ),
+                  ),
                 }),
             ),
           ),
@@ -188,7 +190,14 @@ export const CalculateButton = ({ className }: Props) => {
           T.map(({ result }) => result),
         )();
       },
-      [equipAtom, gradeAtom, levelAtom, queryClient, resetMethodsAtom],
+      [
+        equipAtom,
+        gradeAtom,
+        levelAtom,
+        optionSetsAtom,
+        queryClient,
+        resetMethodsAtom,
+      ],
     ),
   );
 
@@ -198,7 +207,7 @@ export const CalculateButton = ({ className }: Props) => {
         mergedOptionSets.current = get(optionSetsAtom).map(
           flow(
             A.map(({ stat, figure }) => ({ [stat]: figure })),
-            concatAll(optionSetMonoid),
+            concatAll(optionSetMonoid()),
           ),
         );
       },

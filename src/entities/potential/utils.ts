@@ -152,7 +152,11 @@ export const parseStat = (
     ),
   );
 
-export const optionSetMonoid: Monoid<OptionSet> = {
+export const optionSetMonoid = (
+  options: {
+    concatALL?: boolean;
+  } = { concatALL: true },
+): Monoid<OptionSet> => ({
   concat: flow(
     (a, b) =>
       [a, b].flatMap(
@@ -169,7 +173,7 @@ export const optionSetMonoid: Monoid<OptionSet> = {
       {} as Partial<Record<Potential.PossibleStat, number>>,
       (acc, cur) => ({
         ...acc,
-        ...match(cur)
+        ...match({ ...cur, ...options })
           .returnType<Partial<Record<Potential.PossibleStat, number>>>()
           .with({ stat: "IGNORE_DEFENSE" }, ({ figure }) => ({
             IGNORE_DEFENSE:
@@ -177,7 +181,7 @@ export const optionSetMonoid: Monoid<OptionSet> = {
                 (1 - (acc["IGNORE_DEFENSE"] ?? 0) / 100) * (figure / 100)) *
               100,
           }))
-          .with({ stat: "ALL" }, ({ figure }) =>
+          .with({ stat: "ALL", concatALL: true }, ({ figure }) =>
             Object.fromEntries(
               (
                 ["STR", "DEX", "INT", "LUK"] satisfies Potential.PossibleStat[]
@@ -187,7 +191,7 @@ export const optionSetMonoid: Monoid<OptionSet> = {
               ]),
             ),
           )
-          .with({ stat: "ALL %" }, ({ figure }) =>
+          .with({ stat: "ALL %", concatALL: true }, ({ figure }) =>
             Object.fromEntries(
               (
                 [
@@ -209,4 +213,4 @@ export const optionSetMonoid: Monoid<OptionSet> = {
     ),
   ),
   empty: {},
-};
+});
