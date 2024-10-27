@@ -179,10 +179,12 @@ export const potentialRouter = router({
         )
         .mutation(async ({ input: { methods, grade } }) => {
           await taskEitherToPromise(
-            lokiLogger.info({
-              message: { grade },
-              labels: {
-                key: "Potential-Calc-GradeUp",
+            lokiLogger.info(
+              {
+                message: { grade },
+                labels: {
+                  key: "Potential-Calc-GradeUp",
+                },
               },
               ...methods.map((method) => ({
                 message: { method },
@@ -190,7 +192,7 @@ export const potentialRouter = router({
                   key: "Potential-Calc-GradeUp-Method",
                 },
               })),
-            }),
+            ),
           );
         }),
     },
