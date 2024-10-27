@@ -34,9 +34,7 @@ interface Props {
 export const CalculateButton = ({ className }: Props) => {
   const queryClient = useQueryClient();
   const worker = useRef<Worker>();
-  const mergedOptionSets = useRef<
-    Partial<Record<Potential.PossibleStat, number>>[]
-  >([]);
+  const mergedOptionSets = useRef<Potential.OptionSet[]>([]);
 
   const {
     inputStatusAtom,
@@ -79,9 +77,7 @@ export const CalculateButton = ({ className }: Props) => {
           TO.fromOption,
           TO.chainTaskK(
             () => () =>
-              trpc.log.mutate({
-                name: "Potential-Calc",
-                aimType: "GRADE_UP",
+              trpc.potential.log.calc.gradeUp.mutate({
                 methods,
                 grade,
               }),
@@ -131,14 +127,13 @@ export const CalculateButton = ({ className }: Props) => {
           pipe(
             TO.fromOption(level),
             TO.chainTaskK(
-              () => () =>
-                trpc.log.mutate({
-                  name: "Potential-Calc",
-                  aimType: "OPTIONS",
+              (level) => () =>
+                trpc.potential.log.calc.option.mutate({
                   methods,
                   grade,
                   equip,
-                  optionSet: mergedOptionSets.current,
+                  level,
+                  optionSets: mergedOptionSets.current,
                 }),
             ),
           ),

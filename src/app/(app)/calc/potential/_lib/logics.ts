@@ -11,7 +11,7 @@ export const getOptionResults = ({
   aimOptionSets,
   optionTableMap,
 }: {
-  aimOptionSets: Partial<Record<Potential.PossibleStat, number>>[];
+  aimOptionSets: Potential.OptionSet[];
   optionTableMap: Map<Potential.ResetMethod, OptionTable[number][number][][]>;
 }) =>
   new Map(
@@ -22,10 +22,10 @@ export const getOptionResults = ({
   );
 
 const getOptionResult = ({
-  aimOptionSets: _aimOptionSets,
+  aimOptionSets,
   optionTable,
 }: {
-  aimOptionSets: Partial<Record<Potential.PossibleStat, number>>[];
+  aimOptionSets: Potential.OptionSet[];
   optionTable: (OptionTable[number][number] & {
     name: string;
   })[][];
@@ -38,14 +38,13 @@ const getOptionResult = ({
     Option | undefined,
     Option | undefined,
   ] = [undefined, undefined, undefined];
-  type StatFigureRecord = Partial<Record<Potential.PossibleStat, number>>;
+  type StatFigureRecord = Potential.OptionSet;
   const accumulatedStatFigureMap: [StatFigureRecord, StatFigureRecord] = [
     {},
     {},
   ];
 
-  // TODO 리팩토링: concatStatFigureRecord와 하나로 통합
-  const aimOptionSets = _aimOptionSets.map(
+  const decomposedAimOptionSets = aimOptionSets.map(
     flow(
       entries,
       A.filterMap(([stat, _figure]) =>
@@ -72,7 +71,7 @@ const getOptionResult = ({
   };
 
   const isAimAchieved = (statFigureRecord: StatFigureRecord) => {
-    return aimOptionSets.some((aimOptionSet) =>
+    return decomposedAimOptionSets.some((aimOptionSet) =>
       aimOptionSet.every(
         ({ stat, figure }) => (statFigureRecord[stat] ?? -Infinity) >= figure,
       ),

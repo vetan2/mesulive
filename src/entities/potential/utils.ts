@@ -18,6 +18,7 @@ import {
   type ResetMethod,
   type Type,
 } from "./constants";
+import { type OptionSet } from "./types";
 
 export const flattenLevel = (level: number) =>
   pipe(
@@ -151,9 +152,7 @@ export const parseStat = (
     ),
   );
 
-export const optionSetMonoid: Monoid<
-  Partial<Record<Potential.PossibleStat, number>>
-> = {
+export const optionSetMonoid: Monoid<OptionSet> = {
   concat: flow(
     (a, b) =>
       [a, b].flatMap(

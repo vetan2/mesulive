@@ -4,11 +4,13 @@ import { z } from "zod";
 import { equipSchema } from "~/entities/equip";
 import { Potential } from "~/entities/potential";
 import { publicProcedure, router } from "~/features/trpc/init";
-import { E, TE } from "~/shared/fp";
+import { A, E, O, TE } from "~/shared/fp";
 import {
   convertAllNullToUndefined,
   taskEitherToPromise,
 } from "~/shared/function";
+import { lokiLogger } from "~/shared/loki";
+import { entries } from "~/shared/object";
 import { prisma } from "~/shared/prisma";
 
 import { findPotentialOptionTable } from "./serverLogics";
@@ -117,4 +119,69 @@ export const potentialRouter = router({
         taskEitherToPromise,
       ),
     ),
+  log: {
+    calc: {
+      option: publicProcedure
+        .input(
+          z.object({
+            methods: z.array(Potential.resetMethodSchema),
+            grade: Potential.gradeSchema,
+            equip: equipSchema,
+            optionSets: z.array(Potential.optionSetSchema),
+            level: z.number(),
+          }),
+        )
+        .mutation(
+          async ({ input: { level, methods, optionSets, ...resetInput } }) => {
+            await taskEitherToPromise(
+              lokiLogger.info(
+                methods.map((method) => ({
+                  message: {
+                    method,
+                    ...resetInput,
+                    optionSets: optionSets
+                      .map(
+                        flow(
+                          entries,
+                          A.filterMap(([k, _v]) =>
+                            pipe(
+                              O.fromNullable(_v),
+                              O.map((v) => `${k}: ${v}`),
+                            ),
+                          ),
+                          (arr) => arr.join(", "),
+                        ),
+                      )
+                      .join(" / "),
+                    equipLevel: level,
+                  },
+                  labels: {
+                    key: "Potential-Calc-Option",
+                  },
+                })),
+              ),
+            );
+          },
+        ),
+      gradeUp: publicProcedure
+        .input(
+          z.object({
+            methods: z.array(Potential.resetMethodSchema),
+            grade: Potential.gradeSchema,
+          }),
+        )
+        .mutation(async ({ input: { methods, grade } }) => {
+          await taskEitherToPromise(
+            lokiLogger.info(
+              methods.map((method) => ({
+                message: { method, grade },
+                labels: {
+                  key: "Potential-Calc-GradeUp",
+                },
+              })),
+            ),
+          );
+        }),
+    },
+  },
 });
