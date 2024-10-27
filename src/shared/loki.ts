@@ -14,10 +14,10 @@ type LokiLabels = {
 const createLogger = (logLevel: string) =>
   TE.tryCatchK(
     async (
-      streams: {
+      ...streams: {
         message: object;
         labels: LokiLabels;
-      }[],
+      }[]
     ) => {
       await fetch(`https://${process.env.LOKI_HOST}/loki/api/v1/push`, {
         method: "POST",

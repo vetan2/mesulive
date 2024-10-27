@@ -135,9 +135,8 @@ export const potentialRouter = router({
           async ({ input: { level, methods, optionSets, ...resetInput } }) => {
             await taskEitherToPromise(
               lokiLogger.info(
-                methods.map((method) => ({
+                {
                   message: {
-                    method,
                     ...resetInput,
                     optionSets: optionSets
                       .map(
@@ -158,6 +157,14 @@ export const potentialRouter = router({
                   labels: {
                     key: "Potential-Calc-Option",
                   },
+                },
+                ...methods.map((method) => ({
+                  message: {
+                    method,
+                  },
+                  labels: {
+                    key: "Potential-Calc-Option-Method",
+                  },
                 })),
               ),
             );
@@ -172,14 +179,18 @@ export const potentialRouter = router({
         )
         .mutation(async ({ input: { methods, grade } }) => {
           await taskEitherToPromise(
-            lokiLogger.info(
-              methods.map((method) => ({
-                message: { method, grade },
+            lokiLogger.info({
+              message: { grade },
+              labels: {
+                key: "Potential-Calc-GradeUp",
+              },
+              ...methods.map((method) => ({
+                message: { method },
                 labels: {
-                  key: "Potential-Calc-GradeUp",
+                  key: "Potential-Calc-GradeUp-Method",
                 },
               })),
-            ),
+            }),
           );
         }),
     },
