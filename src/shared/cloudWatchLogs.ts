@@ -31,8 +31,6 @@ if (process.env.NODE_ENV !== "production") {
 export const sendLog = flow(
   TE.tryCatchK(async <T = unknown>(message: T) => {
     const logGroupName = "mesulive";
-    const logStreamName =
-      process.env.NODE_ENV === "production" ? "prod" : "dev";
 
     // 로그 이벤트 전송
     await cloudWatchLogs.send(
@@ -44,7 +42,7 @@ export const sendLog = flow(
           },
         ],
         logGroupName,
-        logStreamName,
+        logStreamName: process.env.AWS_CLOUDWATCH_LOGS_STREAM,
       }),
     );
   }, E.toError),
