@@ -138,6 +138,7 @@ export const potentialRouter = router({
                 {
                   message: {
                     ...resetInput,
+                    methods,
                     optionSets,
                     equipLevel: level,
                   },
@@ -182,7 +183,7 @@ export const potentialRouter = router({
           await taskEitherToPromise(
             lokiLogger.info(
               {
-                message: { grade },
+                message: { grade, methods },
                 labels: {
                   key: "Potential-Calc-GradeUp",
                 },
