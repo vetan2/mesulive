@@ -16,7 +16,7 @@ import { prisma } from "~/shared/prisma";
 
 import { findPotentialOptionTable } from "./serverLogics";
 
-const LOG_VERSION = "v2";
+const LOG_VERSION = "v3";
 
 export const potentialRouter = router({
   getOptionTable: publicProcedure
@@ -159,14 +159,13 @@ export const potentialRouter = router({
                     key: "Potential-Calc-Option-Method",
                   },
                 })),
-                ...optionSets.flatMap((optionSet, i) =>
+                ...optionSets.flatMap((optionSet) =>
                   pipe(
                     keys(optionSet),
                     A.uniq(string.Eq),
                     A.map((key) => ({
                       message: {
                         stat: key,
-                        temp: i,
                       },
                       labels: {
                         logVersion: LOG_VERSION,
