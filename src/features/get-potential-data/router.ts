@@ -1,3 +1,4 @@
+import { string } from "fp-ts";
 import { flow, pipe } from "fp-ts/lib/function";
 import { z } from "zod";
 
@@ -14,6 +15,8 @@ import { keys } from "~/shared/object";
 import { prisma } from "~/shared/prisma";
 
 import { findPotentialOptionTable } from "./serverLogics";
+
+const LOG_VERSION = "v2";
 
 export const potentialRouter = router({
   getOptionTable: publicProcedure
@@ -143,6 +146,7 @@ export const potentialRouter = router({
                     equipLevel: level,
                   },
                   labels: {
+                    logVersion: LOG_VERSION,
                     key: "Potential-Calc-Option",
                   },
                 },
@@ -151,18 +155,21 @@ export const potentialRouter = router({
                     method,
                   },
                   labels: {
+                    logVersion: LOG_VERSION,
                     key: "Potential-Calc-Option-Method",
                   },
                 })),
                 ...optionSets.flatMap((optionSet, i) =>
                   pipe(
                     keys(optionSet),
+                    A.uniq(string.Eq),
                     A.map((key) => ({
                       message: {
                         stat: key,
                         temp: i,
                       },
                       labels: {
+                        logVersion: LOG_VERSION,
                         key: "Potential-Calc-Option-Stat",
                       },
                     })),
@@ -185,12 +192,14 @@ export const potentialRouter = router({
               {
                 message: { grade, methods },
                 labels: {
+                  logVersion: LOG_VERSION,
                   key: "Potential-Calc-GradeUp",
                 },
               },
               ...methods.map((method) => ({
                 message: { method },
                 labels: {
+                  logVersion: LOG_VERSION,
                   key: "Potential-Calc-GradeUp-Method",
                 },
               })),
