@@ -17,7 +17,7 @@ const config: Config = {
   theme: {
     extend: {
       fontFamily: {
-        pretendard: ["var(--font-pretendard)"],
+        pretendard: "Pretendard Variable",
       },
       transitionTimingFunction: {
         vaul: "cubic-bezier(0.32, 0.72, 0, 1)",

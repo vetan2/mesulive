@@ -6,7 +6,6 @@ import {
 import type { Preview } from "@storybook/react";
 
 import { cx } from "~/shared/style";
-import { pretendard } from "~/shared/style/fonts";
 
 import "~/shared/style/globals.css";
 
@@ -27,7 +26,7 @@ const preview: Preview = {
     withThemeFromJSXProvider({ Provider: NextUIProvider }),
     withThemeByClassName({
       themes: {
-        default: cx(pretendard.variable, pretendard.className),
+        default: cx("font-pretendard", "font-medium"),
       },
       defaultTheme: "default",
     }),

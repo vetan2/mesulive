@@ -2,7 +2,6 @@ import { GoogleAnalytics } from "@next/third-parties/google";
 import type { Metadata, Viewport } from "next";
 
 import { cx } from "~/shared/style";
-import { pretendard } from "~/shared/style/fonts";
 
 import {
   JotaiProvider,
@@ -40,10 +39,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html
-      lang="ko"
-      className={cx(pretendard.variable, pretendard.className, "font-medium")}
-    >
+    <html lang="ko" className={cx("font-pretendard", "font-medium")}>
       <head>
         <link rel="icon" href="/favicon.ico" />
       </head>
