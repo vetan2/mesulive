@@ -23,6 +23,7 @@
     "@tanstack/react-query-devtools": "^5.52.2",
     "@trpc/client": "11.0.0-rc.593",
     "@trpc/server": "11.0.0-rc.593",
+    "@vercel/speed-insights": "^1.1.0",
     "bunshi": "^2.1.5",
     "chalk": "^5.3.0",
     "client-only": "^0.0.1",

@@ -1,4 +1,5 @@
 import { GoogleAnalytics } from "@next/third-parties/google";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 import type { Metadata, Viewport } from "next";
 
 import { cx } from "~/shared/style";
@@ -54,6 +55,7 @@ export default function RootLayout({
             </NextUIProvider>
           </JotaiProvider>
         </MotionProvider>
+        <SpeedInsights />
       </body>
     </html>
   );
