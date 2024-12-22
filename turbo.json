@@ -1,9 +1,6 @@
 {
   "$schema": "https://turbo.build/schema.json",
   "tasks": {
-    "build": {
-      "outputs": [".next/**", "!.next/cache/**"]
-    },
     "lint": {},
     "test": {},
     "type-check": {
