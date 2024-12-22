@@ -22,3 +22,4 @@ pnpm install
   - 코드에서 업데이트 범위를 지정해야 합니다.
   - 실행 전 `package.json`에 `"type": "module"`을 추가해야 합니다.
     - tsx의 `--experimental-default-type=module` [issue](https://github.com/privatenumber/tsx/issues/687)로 인해 필요.
+- [Turborepo](https://turbo.build/repo/docs)를 사용할 수 있습니다.
