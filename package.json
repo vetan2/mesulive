@@ -13,7 +13,7 @@
     "test": "vitest run",
     "prefetchPotentialData": "tsx --import \"./scripts/register.mjs\" --env-file=.env scripts/prefetchPotentialData.mts"
   },
-  "packageManager": "pnpm@9.6.0",
+  "packageManager": "pnpm@9.15.1",
   "dependencies": {
     "@next/third-parties": "^14.2.15",
     "@nextui-org/react": "^2.4.0",

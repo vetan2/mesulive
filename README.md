@@ -9,3 +9,16 @@
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-06B6D4.svg?&style=for-the-badge&logo=Tailwind-CSS&logoColor=FFF)](https://nextui.org/)
 [![Prisma](https://img.shields.io/badge/Prisma-2D3748.svg?&style=for-the-badge&logo=Prisma&logoColor=white)](https://www.prisma.io/)
 
+## 개발 환경
+- Node.js 22
+- pnpm 9.15.1
+
+## 설치
+```bash
+pnpm install
+```
+## 기타
+- 잠재능력 DB 업데이트는 `pnpm prefetchPotentialData` command로 이루어집니다.
+  - 코드에서 업데이트 범위를 지정해야 합니다.
+  - 실행 전 `package.json`에 `"type": "module"`을 추가해야 합니다.
+    - tsx의 `--experimental-default-type=module` [issue](https://github.com/privatenumber/tsx/issues/687)로 인해 필요.
