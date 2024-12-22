@@ -18,13 +18,6 @@ const config: StorybookConfig = {
   docs: {
     autodocs: "tag",
   },
-  staticDirs: [
-    "../public",
-    {
-      from: "../src/shared/style/fonts",
-      to: "src/shared/style/fonts",
-    },
-  ],
   webpackFinal: async (config) => {
     // eslint-disable-next-line no-param-reassign
     config.module = config.module || {};
