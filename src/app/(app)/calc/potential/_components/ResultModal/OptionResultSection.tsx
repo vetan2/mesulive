@@ -18,7 +18,7 @@ const MAX_DISPLAY_OPTIONS = 50;
 
 export const OptionResultSection = ({ result, className }: Props) => {
   const resultOptions = useRef(
-    result.optionResults?.length ?? 0 > MAX_DISPLAY_OPTIONS
+    (result.optionResults?.length ?? 0 > MAX_DISPLAY_OPTIONS)
       ? getRandomElements(MAX_DISPLAY_OPTIONS)(result.optionResults ?? [])
       : result.optionResults,
   );
