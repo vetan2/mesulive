@@ -15,7 +15,7 @@ export const MenuButton = () => {
       size="sm"
       variant="light"
       color="primary"
-      onClick={() => {
+      onPress={() => {
         setIsSidebarOpen((prev) => !prev);
       }}
       className="xl:hidden"

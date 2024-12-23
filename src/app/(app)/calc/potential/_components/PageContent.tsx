@@ -39,7 +39,7 @@ export const PageContent = () => {
                   옵션 설정
                   <S.Button
                     size="sm"
-                    onClick={() => {
+                    onPress={() => {
                       setOptionSets(RESET);
                     }}
                     className="ml-2 w-20"

@@ -45,7 +45,7 @@ export const ResetMethodCheckboxGroup = ({ className }: Props) => {
               color="primary"
               className="block h-6 md:ml-2 md:inline"
               variant="flat"
-              onClick={() => {
+              onPress={() => {
                 setCubePriceSettingModalOpen(true);
               }}
             >

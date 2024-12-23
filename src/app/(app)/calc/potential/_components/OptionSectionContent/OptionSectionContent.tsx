@@ -33,7 +33,7 @@ export const OptionSectionContent = ({ className }: Props) => {
         ))}
         <S.Button
           size="md"
-          onClick={() => {
+          onPress={() => {
             addOptionSet();
           }}
           color="primary"

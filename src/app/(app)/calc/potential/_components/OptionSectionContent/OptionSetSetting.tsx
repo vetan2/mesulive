@@ -217,7 +217,7 @@ export const OptionSetSetting = ({ index }: Props) => {
         isIconOnly
         color="danger"
         variant="flat"
-        onClick={() => {
+        onPress={() => {
           removeOptionSet(index);
         }}
       >

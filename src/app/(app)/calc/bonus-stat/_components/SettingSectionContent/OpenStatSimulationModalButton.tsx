@@ -14,7 +14,7 @@ export const OpenStatSimulationModalButton = () => {
     <S.Button
       className="w-full lg:hidden"
       color="secondary"
-      onClick={() => {
+      onPress={() => {
         setIsStatSimulationModalOpen(true);
       }}
     >

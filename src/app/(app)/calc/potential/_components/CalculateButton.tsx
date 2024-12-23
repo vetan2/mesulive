@@ -371,7 +371,7 @@ export const CalculateButton = ({ className }: Props) => {
         className={cx("flex justify-center font-bold", className)}
         isDisabled={isDisabled || isLoading}
         isLoading={isLoading}
-        onClick={() => {
+        onPress={() => {
           handleClick();
         }}
       >

@@ -18,7 +18,7 @@ export const OpenStatEfficiencyModalButton = () => {
       <S.Button
         color={isStatEfficiencyValid ? "primary" : "danger"}
         className="mt-4 w-full"
-        onClick={() => {
+        onPress={() => {
           setIsStatEfficiencyModalOpen(true);
         }}
       >
