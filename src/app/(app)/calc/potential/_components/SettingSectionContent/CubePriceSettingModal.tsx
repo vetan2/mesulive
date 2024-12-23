@@ -12,11 +12,10 @@ import { entries } from "~/shared/object";
 import { cx } from "~/shared/style";
 import { S } from "~/shared/ui";
 
-interface Props
-  extends Omit<
-    ComponentProps<typeof S.Modal>,
-    "children" | "isOpen" | "onClose" | "onExit"
-  > {}
+type Props = Omit<
+  ComponentProps<typeof S.Modal>,
+  "children" | "isOpen" | "onClose" | "onExit"
+>;
 
 export const CubePriceSettingModal = ({ ...props }: Props) => {
   const { cubePricesAtom, setCubePriceAtom, cubePriceSettingModalOpen } =

@@ -1,3 +1,5 @@
+/* eslint-disable no-constant-binary-expression */
+/* eslint-disable @typescript-eslint/no-unused-expressions */
 import chalk from "chalk";
 import { readonlyArray } from "fp-ts";
 import { log } from "fp-ts/lib/Console";

@@ -20,3 +20,5 @@ declare module "next/image" {
   export { StaticImageData };
   export default NextImage;
 }
+
+declare module "jotai-devtools/styles.css";

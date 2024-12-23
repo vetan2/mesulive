@@ -10,7 +10,7 @@ import { convertToNumber } from "~/shared/number";
 import { S } from "~/shared/ui";
 import { getFirstZodErrorMessage } from "~/shared/zod";
 
-interface Props extends Pick<InputProps, "classNames"> {}
+type Props = Pick<InputProps, "classNames">;
 
 export const AimStatInput = ({ classNames }: Props) => {
   const [aimStat, setAimStat] = useAtom(bonusStatCalcAtoms.aimStat);
