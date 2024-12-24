@@ -59,7 +59,7 @@ export const effectiveStatLabels: Record<EffectiveStat, string> = {
   DEX_PER_9LEV: "캐릭터 기준 9레벨 당 DEX",
   INT_PER_9LEV: "캐릭터 기준 9레벨 당 INT",
   LUK_PER_9LEV: "캐릭터 기준 9레벨 당 LUK",
-  ITEM_DROP: "아이템 드롭률",
-  MESO_OBTAIN: "메소 획득량",
+  ITEM_DROP: "아이템 드롭률 %",
+  MESO_OBTAIN: "메소 획득량 %",
   AUTO_STEAL: "공격 시 오토스틸",
 };
