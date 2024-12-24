@@ -3,6 +3,7 @@
 import { type AlertProps } from "@nextui-org/react";
 import { omit } from "lodash-es";
 import { CirclePlus } from "lucide-react";
+import NextLink from "next/link";
 import { useRef } from "react";
 
 import { getKSTDate } from "~/shared/date";
@@ -25,7 +26,19 @@ const noticeContents: (Optional<
     variant: "solid",
     color: "primary",
     description: (
-      <>2024.12.24 잠재능력 계산기에 미라클 타임 기능이 추가되었습니다.</>
+      <>
+        2024.12.24{" "}
+        <S.Link
+          as={NextLink}
+          href="/calc/potential"
+          className="text-sm text-white"
+          underline="always"
+          showAnchorIcon
+        >
+          잠재능력 계산기
+        </S.Link>
+        에 미라클 타임 기능이 추가되었습니다.
+      </>
     ),
     date: getKSTDate("2024-12-24"),
     classNames: {
