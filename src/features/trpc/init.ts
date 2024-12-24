@@ -1,6 +1,7 @@
 import "server-only";
 import { initTRPC } from "@trpc/server";
 import superJSON from "superjson";
+import { z } from "zod";
 
 export const createTRPCContext = () => {
   return {};
@@ -20,4 +21,7 @@ const t = initTRPC.create({
  */
 export const router = t.router;
 export const publicProcedure = t.procedure;
+export const loggingProcedure = t.procedure.input(
+  z.object({ logVersion: z.string().default("v3") }),
+);
 export const createCallerFactory = t.createCallerFactory;

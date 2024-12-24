@@ -61,6 +61,7 @@ export const CalculateButton = ({ className }: Props) => {
       async (get) => {
         const methods = get(resetMethodsAtom);
         const grade = get(gradeAtom);
+        const isMiracleTime = get(isMiracleTimeAtom);
 
         const logging = pipe(
           methods.map((method) =>
@@ -81,6 +82,8 @@ export const CalculateButton = ({ className }: Props) => {
               trpc.potential.log.calc.gradeUp.mutate({
                 methods,
                 grade,
+                miracleTime: isMiracleTime,
+                logVersion: process.env.NEXT_PUBLIC_LOG_VERSION,
               }),
           ),
         );
@@ -108,7 +111,7 @@ export const CalculateButton = ({ className }: Props) => {
           T.map(({ result }) => result),
         )();
       },
-      [gradeAtom, queryClient, resetMethodsAtom],
+      [gradeAtom, isMiracleTimeAtom, queryClient, resetMethodsAtom],
     ),
   );
 
@@ -137,6 +140,7 @@ export const CalculateButton = ({ className }: Props) => {
                       concatAll(optionSetMonoid({ concatALL: false })),
                     ),
                   ),
+                  logVersion: process.env.NEXT_PUBLIC_LOG_VERSION,
                 }),
             ),
           ),

@@ -4,7 +4,11 @@ import { z } from "zod";
 
 import { equipSchema } from "~/entities/equip";
 import { Potential } from "~/entities/potential";
-import { publicProcedure, router } from "~/features/trpc/init";
+import {
+  loggingProcedure,
+  publicProcedure,
+  router,
+} from "~/features/trpc/init";
 import { A, E, TE } from "~/shared/fp";
 import {
   convertAllNullToUndefined,
@@ -15,8 +19,6 @@ import { keys } from "~/shared/object";
 import { prisma } from "~/shared/prisma";
 
 import { findPotentialOptionTable } from "./serverLogics";
-
-const LOG_VERSION = "v3";
 
 export const potentialRouter = router({
   getOptionTable: publicProcedure
@@ -124,7 +126,7 @@ export const potentialRouter = router({
     ),
   log: {
     calc: {
-      option: publicProcedure
+      option: loggingProcedure
         .input(
           z.object({
             methods: z.array(Potential.resetMethodSchema),
@@ -135,7 +137,9 @@ export const potentialRouter = router({
           }),
         )
         .mutation(
-          async ({ input: { level, methods, optionSets, ...resetInput } }) => {
+          async ({
+            input: { level, methods, optionSets, logVersion, ...resetInput },
+          }) => {
             await taskEitherToPromise(
               lokiLogger.info(
                 {
@@ -146,7 +150,7 @@ export const potentialRouter = router({
                     equipLevel: level,
                   },
                   labels: {
-                    logVersion: LOG_VERSION,
+                    logVersion,
                     key: "Potential-Calc-Option",
                   },
                 },
@@ -155,7 +159,7 @@ export const potentialRouter = router({
                     method,
                   },
                   labels: {
-                    logVersion: LOG_VERSION,
+                    logVersion,
                     key: "Potential-Calc-Option-Method",
                   },
                 })),
@@ -168,7 +172,7 @@ export const potentialRouter = router({
                         stat: key,
                       },
                       labels: {
-                        logVersion: LOG_VERSION,
+                        logVersion,
                         key: "Potential-Calc-Option-Stat",
                       },
                     })),
@@ -178,33 +182,36 @@ export const potentialRouter = router({
             );
           },
         ),
-      gradeUp: publicProcedure
+      gradeUp: loggingProcedure
         .input(
           z.object({
             methods: z.array(Potential.resetMethodSchema),
             grade: Potential.gradeSchema,
+            miracleTime: z.boolean().default(false),
           }),
         )
-        .mutation(async ({ input: { methods, grade } }) => {
-          await taskEitherToPromise(
-            lokiLogger.info(
-              {
-                message: { grade, methods },
-                labels: {
-                  logVersion: LOG_VERSION,
-                  key: "Potential-Calc-GradeUp",
+        .mutation(
+          async ({ input: { methods, grade, miracleTime, logVersion } }) => {
+            await taskEitherToPromise(
+              lokiLogger.info(
+                {
+                  message: { grade, methods, miracleTime },
+                  labels: {
+                    logVersion,
+                    key: "Potential-Calc-GradeUp",
+                  },
                 },
-              },
-              ...methods.map((method) => ({
-                message: { method },
-                labels: {
-                  logVersion: LOG_VERSION,
-                  key: "Potential-Calc-GradeUp-Method",
-                },
-              })),
-            ),
-          );
-        }),
+                ...methods.map((method) => ({
+                  message: { method },
+                  labels: {
+                    logVersion,
+                    key: "Potential-Calc-GradeUp-Method",
+                  },
+                })),
+              ),
+            );
+          },
+        ),
     },
   },
 });
