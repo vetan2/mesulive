@@ -25,24 +25,25 @@ export const MainLinkButton = ({
   classNames,
 }: Props) => {
   return (
-    <NextLink href={href} className={cx("w-full", classNames?.link)}>
-      <S.Button
-        size="lg"
+    <S.Button
+      size="lg"
+      className={cx(
+        "h-32 w-full flex-col gap-0 rounded-[32px] px-4 py-2.5 text-white",
+        classNames?.link,
+        classNames?.button,
+      )}
+      as={NextLink}
+      href={href}
+    >
+      <Icon
         className={cx(
-          "h-32 w-full flex-col gap-0 rounded-[32px] px-4 py-2.5 text-white",
-          classNames?.button,
+          `absolute inset-0 ml-[-24px] mt-[-32px] h-40 w-40 !max-w-none fill-white
+          opacity-50`,
+          classNames?.icon,
         )}
-      >
-        <Icon
-          className={cx(
-            `absolute inset-0 ml-[-24px] mt-[-32px] h-40 w-40 !max-w-none fill-white
-            opacity-50`,
-            classNames?.icon,
-          )}
-        />
-        <p className="text-2xl font-bold">{title}</p>
-        {subtitle && <p>{subtitle}</p>}
-      </S.Button>
-    </NextLink>
+      />
+      <p className="text-2xl font-bold">{title}</p>
+      {subtitle && <p>{subtitle}</p>}
+    </S.Button>
   );
 };
