@@ -47,6 +47,31 @@ const noticeContents: (Optional<
     },
     icon: <CirclePlus />,
   },
+  {
+    variant: "solid",
+    color: "secondary",
+    description: (
+      <>
+        2024.12.25{" "}
+        <S.Link
+          as={NextLink}
+          href="/calc/potential"
+          className="text-sm text-white"
+          underline="always"
+          showAnchorIcon
+        >
+          잠재능력 계산기
+        </S.Link>
+        에 <b>옵션 세트 프리셋</b> 기능이 추가되었습니다.
+      </>
+    ),
+    date: getKSTDate("2024-12-25"),
+    classNames: {
+      base: cx("bg-secondary-500"),
+      alertIcon: cx("fill-white text-secondary-500"),
+    },
+    icon: <CirclePlus />,
+  },
 ];
 
 export const Notices = ({ classNames }: Props) => {
@@ -54,7 +79,7 @@ export const Notices = ({ classNames }: Props) => {
   const contents = noticeContents.filter(
     ({ date }) =>
       Math.abs(now.current.getTime() - date.getTime()) <=
-      14 * 24 * 60 * 60 * 1000,
+      10 * 24 * 60 * 60 * 1000,
   );
 
   return contents.length > 0 ? (
