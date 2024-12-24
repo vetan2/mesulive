@@ -235,26 +235,15 @@ const potentialCalcMoleculeConstructor = ((_, scope) => {
     },
   );
 
-  const optionSetsAtom = atom(
-    (get) =>
-      pipe(
-        get(_optionSetsAtom),
-        A.map(
-          A.filterMap(({ stat, figure: { value } }) =>
-            O.isSome(stat) && E.isRight(value) && value.right > 0
-              ? O.some({ stat: stat.value, figure: value.right })
-              : O.none,
-          ),
-        ),
-        A.filter((set) => set.length > 0),
-      ),
+  const refinedOptionSetFormAtom = atom(
+    (get) => Potential.refineOptionSetForm(get(_optionSetsAtom)),
     (get, set, reset: typeof RESET) => {
       set(_optionSetsAtom, reset);
     },
   );
 
   const isOptionSetFormValidAtom = atom(
-    (get) => get(optionSetsAtom).length > 0,
+    (get) => get(refinedOptionSetFormAtom).length > 0,
   );
 
   const addOptionSetAtom = atom(null, (get, set) => {
@@ -365,16 +354,24 @@ const potentialCalcMoleculeConstructor = ((_, scope) => {
     });
   });
 
-  const editOptionPresetAtom = atom(null, (get, set, preset: OptionPreset) => {
-    set(optionPresetsAtom, (prev) => {
-      const index = prev.findIndex((p) => p.name === preset.name);
-      if (index === -1) return prev;
+  const editOptionPresetAtom = atom(
+    null,
+    (get, set, name: string, preset: OptionPreset) => {
+      set(optionPresetsAtom, (prev) => {
+        const index = prev.findIndex((p) => p.name === name);
+        if (index === -1) return prev;
 
-      return produce(prev, (draft) => {
-        draft[index] = preset;
+        return produce(prev, (draft) => {
+          draft[index] = preset;
+        });
       });
-    });
-  });
+
+      const currentOptionPreset = get(currentOptionPresetAtom);
+      if (currentOptionPreset?.name === name) {
+        set(currentOptionPresetAtom, preset);
+      }
+    },
+  );
 
   const removeOptionPresetAtom = atom(null, (get, set, name: string) => {
     set(optionPresetsAtom, (prev) =>
@@ -387,6 +384,7 @@ const potentialCalcMoleculeConstructor = ((_, scope) => {
     if (!preset) return;
 
     set(_optionSetsAtom, preset.optionSets);
+    set(currentOptionPresetAtom, preset);
   });
 
   const _isPendingForPossibleOptionIdsAtom = atom(false);
@@ -466,7 +464,7 @@ const potentialCalcMoleculeConstructor = ((_, scope) => {
     cubePriceSettingModalOpen,
     setCubePriceAtom,
     optionSetFormAtom,
-    optionSetsAtom,
+    refinedOptionSetFormAtom,
     isOptionSetFormValidAtom,
     addOptionSetAtom,
     editOptionAtom,

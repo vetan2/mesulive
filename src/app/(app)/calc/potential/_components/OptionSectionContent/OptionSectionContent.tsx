@@ -67,7 +67,7 @@ export const OptionSectionContent = ({ className }: Props) => {
                 </S.Button>
                 <S.Button
                   onPress={() => {
-                    set(editOptionPresetAtom, {
+                    set(editOptionPresetAtom, currentOptionPreset.name, {
                       optionSets: get(optionSetFormAtom),
                       name: currentOptionPreset.name,
                     });
@@ -75,7 +75,7 @@ export const OptionSectionContent = ({ className }: Props) => {
                   }}
                   color="secondary"
                 >
-                  수정
+                  확인
                 </S.Button>
               </div>
             </DefaultModal>

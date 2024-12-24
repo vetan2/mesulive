@@ -1,6 +1,9 @@
 import {
+  Accordion,
+  AccordionItem,
   Alert,
   Card,
+  CardBody,
   Chip,
   CircularProgress,
   Input,
@@ -23,8 +26,11 @@ import { RadioGroup } from "./RadioGroup";
 import { Select } from "./Select";
 
 export const S = {
+  Accordion,
+  AccordionItem,
   Alert,
   Card,
+  CardBody,
   Chip,
   CircularProgress,
   Input,

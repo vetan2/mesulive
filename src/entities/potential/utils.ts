@@ -1,5 +1,5 @@
 import { flow, pipe } from "fp-ts/lib/function";
-import { type Monoid } from "fp-ts/lib/Monoid";
+import { concatAll, type Monoid } from "fp-ts/lib/Monoid";
 import { type Option } from "fp-ts/lib/Option";
 import { P, match } from "ts-pattern";
 
@@ -18,7 +18,11 @@ import {
   type ResetMethod,
   type Type,
 } from "./constants";
-import { type OptionSetForm, type OptionSet } from "./types";
+import {
+  type OptionSetForm,
+  type OptionSet,
+  type RefinedOptionSetForm,
+} from "./types";
 
 export const flattenLevel = (level: number) =>
   pipe(
@@ -223,3 +227,31 @@ export const isOptionSetFormValid = (form: OptionSetForm) =>
         O.isNone(stat) || E.isLeft(figure.value) || figure.value.right === 0,
     ),
   );
+
+export const refineOptionSetForm = (
+  form: OptionSetForm,
+): RefinedOptionSetForm =>
+  pipe(
+    form,
+    A.map(
+      A.filterMap(({ stat, figure: { value } }) =>
+        O.isSome(stat) && E.isRight(value) && value.right > 0
+          ? O.some({ stat: stat.value, figure: value.right })
+          : O.none,
+      ),
+    ),
+    A.filter((set) => set.length > 0),
+  );
+
+export const convertRefinedOptionSetFormToOptionSets =
+  (...monoidArgs: Parameters<typeof optionSetMonoid>) =>
+  (form: RefinedOptionSetForm): OptionSet[] =>
+    pipe(
+      form,
+      A.map(
+        flow(
+          A.map(({ stat, figure }) => ({ [stat]: figure })),
+          concatAll(optionSetMonoid(...monoidArgs)),
+        ),
+      ),
+    );

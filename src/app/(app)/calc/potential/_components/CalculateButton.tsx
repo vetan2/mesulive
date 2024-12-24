@@ -14,7 +14,7 @@ import { P, match } from "ts-pattern";
 
 import { type getOptionResults } from "~/app/(app)/calc/potential/_lib/logics";
 import { PotentialCalcMolecule } from "~/app/(app)/calc/potential/_lib/molecules";
-import { type Potential } from "~/entities/potential";
+import { Potential } from "~/entities/potential";
 import { flattenLevel, optionSetMonoid } from "~/entities/potential/utils";
 import { effectiveStatSchema } from "~/entities/stat";
 import { PotentialQueries } from "~/features/get-potential-data/queries";
@@ -44,7 +44,7 @@ export const CalculateButton = ({ className }: Props) => {
     gradeAtom,
     equipAtom,
     levelAtom,
-    optionSetsAtom,
+    refinedOptionSetFormAtom,
     resultAtom,
     isMiracleTimeAtom,
   } = useMolecule(PotentialCalcMolecule);
@@ -134,7 +134,7 @@ export const CalculateButton = ({ className }: Props) => {
                   grade,
                   equip,
                   level,
-                  optionSets: get(optionSetsAtom).map(
+                  optionSets: get(refinedOptionSetFormAtom).map(
                     flow(
                       A.map(({ stat, figure }) => ({ [stat]: figure })),
                       concatAll(optionSetMonoid({ concatALL: false })),
@@ -199,7 +199,7 @@ export const CalculateButton = ({ className }: Props) => {
         equipAtom,
         gradeAtom,
         levelAtom,
-        optionSetsAtom,
+        refinedOptionSetFormAtom,
         queryClient,
         resetMethodsAtom,
       ],
@@ -209,14 +209,12 @@ export const CalculateButton = ({ className }: Props) => {
   const updateMergedOptionSets = useAtomCallback(
     useCallback(
       (get) => {
-        mergedOptionSets.current = get(optionSetsAtom).map(
-          flow(
-            A.map(({ stat, figure }) => ({ [stat]: figure })),
-            concatAll(optionSetMonoid()),
-          ),
-        );
+        mergedOptionSets.current =
+          Potential.convertRefinedOptionSetFormToOptionSets()(
+            get(refinedOptionSetFormAtom),
+          );
       },
-      [optionSetsAtom],
+      [refinedOptionSetFormAtom],
     ),
   );
 

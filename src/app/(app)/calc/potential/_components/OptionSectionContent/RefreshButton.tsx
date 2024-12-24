@@ -9,8 +9,10 @@ import { PotentialCalcMolecule } from "~/app/(app)/calc/potential/_lib/molecules
 import { S } from "~/shared/ui";
 
 export const RefreshButton = () => {
-  const { optionSetsAtom } = useMolecule(PotentialCalcMolecule);
-  const setOptionSets = useSetAtom(optionSetsAtom);
+  const { refinedOptionSetFormAtom: refinedOptionSetsAtom } = useMolecule(
+    PotentialCalcMolecule,
+  );
+  const setOptionSets = useSetAtom(refinedOptionSetsAtom);
 
   return (
     <S.Button

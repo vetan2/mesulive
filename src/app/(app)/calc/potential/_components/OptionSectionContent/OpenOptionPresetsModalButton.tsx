@@ -10,9 +10,7 @@ import { S } from "~/shared/ui";
 import { OptionPresetsModal } from "./OptionPresetsModal";
 
 export const OpenOptionPresetsModalButton = () => {
-  const { optionPresetsAtom, removeOptionPresetAtom } = useMolecule(
-    PotentialCalcMolecule,
-  );
+  const molecule = useMolecule(PotentialCalcMolecule);
 
   return (
     <S.Button
@@ -23,8 +21,7 @@ export const OpenOptionPresetsModalButton = () => {
             isOpen={isOpen}
             onClose={close}
             onExit={unmount}
-            optionPresetsAtom={optionPresetsAtom}
-            removeOptionPresetAtom={removeOptionPresetAtom}
+            molecule={molecule}
           />
         ));
       }}

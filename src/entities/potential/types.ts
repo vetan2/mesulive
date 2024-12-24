@@ -12,3 +12,8 @@ export type OptionSetForm = {
   stat: Option<PossibleStat>;
   figure: FormPayload<number>;
 }[][];
+
+export type RefinedOptionSetForm = {
+  stat: PossibleStat;
+  figure: number;
+}[][];
