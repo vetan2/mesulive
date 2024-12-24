@@ -88,13 +88,15 @@ const potentialCalcMoleculeConstructor = ((_, scope) => {
   const aimTypeAtom = atom(
     (get) => get(_aimTypeAtom),
     (get, set, input: string) => {
-      set(_aimTypeAtom, (prev) =>
-        pipe(
-          input,
-          parseZod(Potential.aimTypeSchema),
-          E.getOrElse(() => prev),
-        ),
+      const nextValue = pipe(
+        input,
+        parseZod(Potential.aimTypeSchema),
+        E.getOrElse(() => get(_aimTypeAtom)),
       );
+      set(_aimTypeAtom, nextValue);
+      if (nextValue !== "GRADE_UP") {
+        set(isMiracleTimeAtom, false);
+      }
 
       adjustResetMethods(get, set);
       loadPossibleOptionIds(get, set);
@@ -159,6 +161,8 @@ const potentialCalcMoleculeConstructor = ((_, scope) => {
       ),
     );
   };
+
+  const isMiracleTimeAtom = atom(false);
 
   type CubePriceRecord = Record<
     Potential.Cube,
@@ -416,6 +420,7 @@ const potentialCalcMoleculeConstructor = ((_, scope) => {
     resetMethodsAtom,
     addResetMethodAtom,
     removeResetMethodAtom,
+    isMiracleTimeAtom,
     cubePricesAtom,
     cubePriceSettingModalOpen,
     setCubePriceAtom,

@@ -2,6 +2,7 @@ import { AimTypeRadioGroup } from "./AimTypeRadioGroup";
 import { EquipLevelInput } from "./EquipLevelInput";
 import { EquipSelect } from "./EquipSelect";
 import { GradeSelect } from "./GradeSelect";
+import { OtherSettings } from "./OtherSettings";
 import { ResetMethodCheckboxGroup } from "./ResetMethodCheckboxGroup";
 import { TypeRadioGroup } from "./TypeRadioGroup";
 
@@ -17,6 +18,7 @@ export const SettingSectionContent = () => {
         <AimTypeRadioGroup className="flex-1" />
         <TypeRadioGroup className="flex-1" />
       </div>
+      <OtherSettings />
       <ResetMethodCheckboxGroup />
     </div>
   );

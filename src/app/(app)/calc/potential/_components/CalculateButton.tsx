@@ -46,6 +46,7 @@ export const CalculateButton = ({ className }: Props) => {
     levelAtom,
     optionSetsAtom,
     resultAtom,
+    isMiracleTimeAtom,
   } = useMolecule(PotentialCalcMolecule);
   const inputStatus = useAtomValue(inputStatusAtom);
   const isPendingForPossibleOptionIds = useAtomValue(
@@ -252,6 +253,7 @@ export const CalculateButton = ({ className }: Props) => {
           record?: GradeUpRecord;
         }[],
       ) => {
+        const isMiracleTime = get(isMiracleTimeAtom);
         set(
           resultAtom,
           pipe(
@@ -262,7 +264,7 @@ export const CalculateButton = ({ className }: Props) => {
                 .with({ record: P.nonNullable }, ({ method, record }) =>
                   O.some({
                     method,
-                    prob: record.probability,
+                    prob: record.probability * (isMiracleTime ? 2 : 1),
                     ceil: record.ceil,
                   }),
                 )
@@ -273,7 +275,7 @@ export const CalculateButton = ({ className }: Props) => {
         setIsLoading(false);
         openResultModal();
       },
-      [openResultModal, resultAtom],
+      [isMiracleTimeAtom, openResultModal, resultAtom],
     ),
   );
 
