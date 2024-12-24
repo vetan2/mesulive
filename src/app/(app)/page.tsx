@@ -28,7 +28,7 @@ export const metadata: Metadata = {
 export default function Home() {
   return (
     <div className="mx-auto max-w-screen-xl">
-      <Notices classNames={{ container: "mt-0" }} />
+      <Notices classNames={{ container: "mt-0 mb-4" }} />
       <SectionContainer className="flex flex-col items-center">
         <Logo className="h-8 lg:h-12" />
         <p className="mt-1 text-center text-sm text-default-500">
