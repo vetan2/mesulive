@@ -37,7 +37,7 @@ const noticeContents: (Optional<
         >
           잠재능력 계산기
         </S.Link>
-        에 미라클 타임 기능이 추가되었습니다.
+        에 <b>미라클 타임</b> 기능이 추가되었습니다.
       </>
     ),
     date: getKSTDate("2024-12-24"),
