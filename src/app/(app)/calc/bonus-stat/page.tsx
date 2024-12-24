@@ -1,5 +1,6 @@
 import { type Metadata } from "next";
 
+import { Notices } from "~/app/_components/Notices";
 import { PageTitle, SectionContainer } from "~/shared/ui";
 
 import {
@@ -28,6 +29,7 @@ export default function Page() {
         <PageTitle endColorVar="var(--mesulive-secondary-500)">
           추가옵션 기댓값 계산기
         </PageTitle>
+        <Notices />
 
         <div className="mt-4 flex flex-col gap-4 lg:flex-row">
           <div className="flex w-full flex-col gap-4 lg:flex-1">

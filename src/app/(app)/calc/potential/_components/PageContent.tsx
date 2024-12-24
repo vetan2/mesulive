@@ -6,6 +6,7 @@ import { RESET } from "jotai/utils";
 import { RefreshCcw } from "lucide-react";
 
 import { PotentialCalcMolecule } from "~/app/(app)/calc/potential/_lib/molecules";
+import { Notice } from "~/app/_components";
 import { PageTitle, S, SectionContainer } from "~/shared/ui";
 
 import { CalculateButton } from "./CalculateButton";
@@ -23,7 +24,7 @@ export const PageContent = () => {
       <PageTitle endColorVar="var(--mesulive-warning-500)">
         잠재능력 기댓값 계산기
       </PageTitle>
-
+      <Notice />
       <div className="mt-4 flex flex-col gap-4 lg:flex-row">
         <div className="flex w-full flex-col gap-4 lg:flex-1">
           <SectionContainer title="설정">

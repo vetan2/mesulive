@@ -1,4 +1,5 @@
 import {
+  Alert,
   Card,
   CircularProgress,
   Input,
@@ -21,6 +22,7 @@ import { RadioGroup } from "./RadioGroup";
 import { Select } from "./Select";
 
 export const S = {
+  Alert,
   Card,
   CircularProgress,
   Input,

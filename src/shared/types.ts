@@ -8,3 +8,5 @@ export type ArrayElement<T extends any[]> = T[number];
 export type DeepWriteable<T> = {
   -readonly [P in keyof T]: DeepWriteable<T[P]>;
 };
+
+export type Optional<T, K extends keyof T> = Omit<T, K> & Partial<T>;
