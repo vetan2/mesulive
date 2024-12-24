@@ -1,20 +1,13 @@
 import { useMolecule } from "bunshi/react";
-import { ord } from "fp-ts";
 import { identity, pipe } from "fp-ts/lib/function";
-import { sign } from "fp-ts/lib/Ordering";
 import { atom, useAtomValue, useSetAtom } from "jotai";
 import { X } from "lucide-react";
-import { useCallback, useEffect, useMemo } from "react";
-import { type inferData, type inferVariables } from "react-query-kit";
+import { useMemo } from "react";
 import { P, match } from "ts-pattern";
-import { useDebounceValue } from "usehooks-ts";
 
 import { PotentialCalcMolecule } from "~/app/(app)/calc/potential/_lib/molecules";
-import { Potential } from "~/entities/potential";
-import { flattenLevel } from "~/entities/potential/utils";
 import { effectiveStatLabels } from "~/entities/stat";
-import { PotentialQueries } from "~/features/get-potential-data/queries";
-import { A, E, O } from "~/shared/fp";
+import { E, O } from "~/shared/fp";
 import { cx } from "~/shared/style";
 import { S } from "~/shared/ui";
 
@@ -25,89 +18,24 @@ interface Props {
 export const OptionSetSetting = ({ index }: Props) => {
   const {
     optionSetFormAtom,
-    levelAtom,
-    equipAtom,
-    gradeAtom,
-    typeAtom,
-    aimTypeAtom,
     editOptionAtom,
     removeOptionSetAtom,
-    adjustOptionSetsAtom,
-    completeLoadingPossibleOptionIdsAtom,
+    possibleOptionIdsAtom,
+    isPendingForPossibleOptionIdsAtom,
   } = useMolecule(PotentialCalcMolecule);
   const optionSetAtom = useMemo(
     () => atom((get) => get(optionSetFormAtom).at(index)),
     [index, optionSetFormAtom],
   );
-  const level = useAtomValue(levelAtom);
+
   const optionSet = useAtomValue(optionSetAtom);
-  const equip = useAtomValue(equipAtom);
-  const grade = useAtomValue(gradeAtom);
-  const type = useAtomValue(typeAtom);
-  const aimType = useAtomValue(aimTypeAtom);
+  const possibleOptionIds = useAtomValue(possibleOptionIdsAtom);
+  const isPendingForPossibleOptionIds = useAtomValue(
+    isPendingForPossibleOptionIdsAtom,
+  );
+
   const editOption = useSetAtom(editOptionAtom);
   const removeOptionSet = useSetAtom(removeOptionSetAtom);
-  const adjustOptionSets = useSetAtom(adjustOptionSetsAtom);
-  const completeLoadingPossibleOptionIds = useSetAtom(
-    completeLoadingPossibleOptionIdsAtom,
-  );
-
-  const [variables] = useDebounceValue<
-    inferVariables<typeof PotentialQueries.useOptionTables>
-  >(
-    useMemo(
-      () => ({
-        equip,
-        grade,
-        level: pipe(
-          O.fromEither(level.value),
-          O.chain(flattenLevel),
-          O.getOrElse(() => 200),
-        ),
-        method: match(type)
-          .returnType<Potential.ResetMethod>()
-          .with("ADDI", () => "ADDI_POTENTIAL")
-          .with("COMMON", () => "ARTISAN")
-          .exhaustive(),
-      }),
-      [equip, grade, level.value, type],
-    ),
-    300,
-  );
-
-  const possibleOptionIds = PotentialQueries.useOptionTables({
-    variables,
-    enabled: aimType === "OPTIONS",
-    select: useCallback(
-      (data: inferData<typeof PotentialQueries.useOptionTables>) =>
-        pipe(
-          data,
-          A.flatMap(A.filterMap(({ stat }) => O.fromNullable(stat))),
-          (arr) => [...new Set(arr)],
-          A.sort(
-            ord.fromCompare<Potential.PossibleStat>((statA, statB) =>
-              sign(
-                Potential.possibleStats.indexOf(statA) -
-                  Potential.possibleStats.indexOf(statB),
-              ),
-            ),
-          ),
-        ),
-      [],
-    ),
-  });
-
-  useEffect(() => {
-    if (possibleOptionIds.isSuccess) {
-      adjustOptionSets(possibleOptionIds.data);
-      completeLoadingPossibleOptionIds();
-    }
-  }, [
-    adjustOptionSets,
-    possibleOptionIds.data,
-    possibleOptionIds.isSuccess,
-    completeLoadingPossibleOptionIds,
-  ]);
 
   if (!optionSet) {
     return null;
@@ -118,8 +46,8 @@ export const OptionSetSetting = ({ index }: Props) => {
       {optionSet.map((record, recordIndex) => (
         <div key={recordIndex} className="flex items-start gap-3">
           <S.Select
-            isLoading={possibleOptionIds.isLoading}
-            isDisabled={possibleOptionIds.isLoading}
+            isLoading={isPendingForPossibleOptionIds}
+            isDisabled={isPendingForPossibleOptionIds}
             size="sm"
             className="flex-[3]"
             placeholder="옵션 선택"
@@ -141,7 +69,7 @@ export const OptionSetSetting = ({ index }: Props) => {
           >
             {[
               ["NONE", "없음"],
-              ...(possibleOptionIds.data ?? []).map((stat) => [
+              ...(possibleOptionIds ?? []).map((stat) => [
                 stat,
                 effectiveStatLabels[stat],
               ]),

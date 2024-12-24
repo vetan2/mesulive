@@ -1,6 +1,7 @@
 import {
   Alert,
   Card,
+  Chip,
   CircularProgress,
   Input,
   Link,
@@ -24,6 +25,7 @@ import { Select } from "./Select";
 export const S = {
   Alert,
   Card,
+  Chip,
   CircularProgress,
   Input,
   Link,
@@ -47,3 +49,4 @@ export const S = {
 
 export * from "./containers";
 export * from "./typographies";
+export * from "./modals";

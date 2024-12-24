@@ -1,6 +1,14 @@
+import { type Option } from "fp-ts/lib/Option";
 import { z } from "zod";
 
-import { possibleStatsSchema } from "./constants";
+import { type FormPayload } from "~/shared/react";
+
+import { type PossibleStat, possibleStatsSchema } from "./constants";
 
 export const optionSetSchema = z.record(possibleStatsSchema, z.number());
 export type OptionSet = z.infer<typeof optionSetSchema>;
+
+export type OptionSetForm = {
+  stat: Option<PossibleStat>;
+  figure: FormPayload<number>;
+}[][];

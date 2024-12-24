@@ -5,6 +5,7 @@ import {
 } from "@storybook/addon-themes";
 import type { Preview } from "@storybook/react";
 
+import { OverlayProvider } from "~/app/_components/providers";
 import { cx } from "~/shared/style";
 
 import "~/shared/style/globals.css";
@@ -30,6 +31,11 @@ const preview: Preview = {
       },
       defaultTheme: "default",
     }),
+    (Story) => (
+      <OverlayProvider>
+        <Story />
+      </OverlayProvider>
+    ),
   ],
 };
 

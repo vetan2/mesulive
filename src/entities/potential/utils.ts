@@ -3,7 +3,7 @@ import { type Monoid } from "fp-ts/lib/Monoid";
 import { type Option } from "fp-ts/lib/Option";
 import { P, match } from "ts-pattern";
 
-import { A, O } from "~/shared/fp";
+import { A, E, O } from "~/shared/fp";
 import { convertToNumber } from "~/shared/number";
 import { entries } from "~/shared/object";
 
@@ -18,7 +18,7 @@ import {
   type ResetMethod,
   type Type,
 } from "./constants";
-import { type OptionSet } from "./types";
+import { type OptionSetForm, type OptionSet } from "./types";
 
 export const flattenLevel = (level: number) =>
   pipe(
@@ -214,3 +214,12 @@ export const optionSetMonoid = (
   ),
   empty: {},
 });
+
+export const isOptionSetFormValid = (form: OptionSetForm) =>
+  !form.every(
+    A.every(
+      ({ stat, figure }) =>
+        // 입력값이 비정상인 경우
+        O.isNone(stat) || E.isLeft(figure.value) || figure.value.right === 0,
+    ),
+  );

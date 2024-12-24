@@ -10,7 +10,10 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
     return (
       <ButtonOrig
         ref={ref}
-        className={cx("data-[disabled=true]:pointer-events-auto", className)}
+        className={cx(
+          "font-semibold data-[disabled=true]:pointer-events-auto",
+          className,
+        )}
         {...props}
       />
     );

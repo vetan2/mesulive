@@ -2,11 +2,10 @@
 
 import { molecule, type MoleculeConstructor } from "bunshi";
 import { flow, pipe } from "fp-ts/lib/function";
-import { type Option } from "fp-ts/lib/Option";
 import { sign } from "fp-ts/lib/Ordering";
 import { produce } from "immer";
 import { type Getter, type Setter, atom } from "jotai";
-import { atomWithReset, type RESET } from "jotai/utils";
+import { atomWithReset, atomWithStorage, type RESET } from "jotai/utils";
 import { z } from "zod";
 
 import { equipSchema, equips, type Equip } from "~/entities/equip";
@@ -221,22 +220,21 @@ const potentialCalcMoleculeConstructor = ((_, scope) => {
 
   const cubePriceSettingModalOpen = atom(false);
 
-  type OptionSets = {
-    stat: Option<Potential.PossibleStat>;
-    figure: FormPayload<number>;
-  }[][];
-  const createNewOptionSet = (): OptionSets[number] =>
+  const createNewOptionSet = (): Potential.OptionSetForm[number] =>
     Array.from({ length: 3 }).map(() => ({
       stat: O.none,
       figure: { input: "", value: E.right(0) },
     }));
-  const _optionSetsAtom = atomWithReset<OptionSets>([createNewOptionSet()]);
+  const _optionSetsAtom = atomWithReset<Potential.OptionSetForm>([
+    createNewOptionSet(),
+  ]);
   const optionSetFormAtom = atom(
     (get) => get(_optionSetsAtom),
     (get, set, reset: typeof RESET) => {
       set(_optionSetsAtom, reset);
     },
   );
+
   const optionSetsAtom = atom(
     (get) =>
       pipe(
@@ -253,6 +251,10 @@ const potentialCalcMoleculeConstructor = ((_, scope) => {
     (get, set, reset: typeof RESET) => {
       set(_optionSetsAtom, reset);
     },
+  );
+
+  const isOptionSetFormValidAtom = atom(
+    (get) => get(optionSetsAtom).length > 0,
   );
 
   const addOptionSetAtom = atom(null, (get, set) => {
@@ -339,6 +341,54 @@ const potentialCalcMoleculeConstructor = ((_, scope) => {
     },
   );
 
+  const possibleOptionIdsAtom = atom<Potential.PossibleStat[]>([]);
+
+  type OptionPreset = {
+    optionSets: Potential.OptionSetForm;
+    name: string; // KEY
+  };
+  const optionPresetsAtom = atomWithStorage<OptionPreset[]>(
+    "optionPresets",
+    [],
+    undefined,
+    { getOnInit: true },
+  );
+
+  const currentOptionPresetAtom = atom<OptionPreset | undefined>(undefined);
+
+  const addOptionPresetAtom = atom(null, (get, set, preset: OptionPreset) => {
+    set(optionPresetsAtom, (prev) => {
+      const index = prev.findIndex((p) => p.name === preset.name);
+      if (index !== -1) return prev;
+
+      return [...prev, preset];
+    });
+  });
+
+  const editOptionPresetAtom = atom(null, (get, set, preset: OptionPreset) => {
+    set(optionPresetsAtom, (prev) => {
+      const index = prev.findIndex((p) => p.name === preset.name);
+      if (index === -1) return prev;
+
+      return produce(prev, (draft) => {
+        draft[index] = preset;
+      });
+    });
+  });
+
+  const removeOptionPresetAtom = atom(null, (get, set, name: string) => {
+    set(optionPresetsAtom, (prev) =>
+      prev.filter((preset) => preset.name !== name),
+    );
+  });
+
+  const applyOptionPresetAtom = atom(null, (get, set, name: string) => {
+    const preset = get(optionPresetsAtom).find((p) => p.name === name);
+    if (!preset) return;
+
+    set(_optionSetsAtom, preset.optionSets);
+  });
+
   const _isPendingForPossibleOptionIdsAtom = atom(false);
   const isPendingForPossibleOptionIdsAtom = atom(
     (get) =>
@@ -382,16 +432,7 @@ const potentialCalcMoleculeConstructor = ((_, scope) => {
       ),
       E.filterOrElse(
         () =>
-          aimType === "GRADE_UP" ||
-          !optionSets.every(
-            A.every(
-              ({ stat, figure }) =>
-                // 입력값이 비정상인 경우
-                O.isNone(stat) ||
-                E.isLeft(figure.value) ||
-                figure.value.right === 0,
-            ),
-          ),
+          aimType === "GRADE_UP" || Potential.isOptionSetFormValid(optionSets),
         () => "옵션 세트를 정확히 입력해주세요.",
       ),
     );
@@ -426,10 +467,18 @@ const potentialCalcMoleculeConstructor = ((_, scope) => {
     setCubePriceAtom,
     optionSetFormAtom,
     optionSetsAtom,
+    isOptionSetFormValidAtom,
     addOptionSetAtom,
     editOptionAtom,
     removeOptionSetAtom,
     adjustOptionSetsAtom,
+    possibleOptionIdsAtom,
+    optionPresetsAtom,
+    currentOptionPresetAtom,
+    addOptionPresetAtom,
+    editOptionPresetAtom,
+    removeOptionPresetAtom,
+    applyOptionPresetAtom,
     isPendingForPossibleOptionIdsAtom,
     completeLoadingPossibleOptionIdsAtom,
     inputStatusAtom,

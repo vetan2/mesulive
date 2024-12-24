@@ -1,23 +1,23 @@
 "use client";
 
 import { useMolecule } from "bunshi/react";
-import { useAtomValue, useSetAtom } from "jotai";
-import { RESET } from "jotai/utils";
-import { RefreshCcw } from "lucide-react";
+import { useAtomValue } from "jotai";
 
 import { PotentialCalcMolecule } from "~/app/(app)/calc/potential/_lib/molecules";
 import { Notice } from "~/app/_components";
-import { PageTitle, S, SectionContainer } from "~/shared/ui";
+import { PageTitle, SectionContainer } from "~/shared/ui";
 
 import { CalculateButton } from "./CalculateButton";
-import { OptionSectionContent } from "./OptionSectionContent";
+import {
+  OpenOptionPresetsModalButton,
+  OptionSectionContent,
+  RefreshButton,
+} from "./OptionSectionContent";
 import { SettingSectionContent } from "./SettingSectionContent";
 
 export const PageContent = () => {
-  const { aimTypeAtom, optionSetFormAtom } = useMolecule(PotentialCalcMolecule);
+  const { aimTypeAtom } = useMolecule(PotentialCalcMolecule);
   const aimType = useAtomValue(aimTypeAtom);
-
-  const setOptionSets = useSetAtom(optionSetFormAtom);
 
   return (
     <div className="mx-auto max-w-screen-xl">
@@ -38,17 +38,8 @@ export const PageContent = () => {
               title={
                 <>
                   옵션 설정
-                  <S.Button
-                    size="sm"
-                    onPress={() => {
-                      setOptionSets(RESET);
-                    }}
-                    className="ml-2 w-20"
-                    variant="flat"
-                    color="primary"
-                  >
-                    <RefreshCcw className="size-4" /> 초기화
-                  </S.Button>
+                  <RefreshButton />
+                  <OpenOptionPresetsModalButton />
                 </>
               }
               className="lg:h-full"
