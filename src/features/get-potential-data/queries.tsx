@@ -61,7 +61,8 @@ export const useOptionTable = createQuery({
           })),
         ),
       ),
-  staleTime: Infinity,
+  staleTime: 0,
+  gcTime: 0,
   use: [
     (useQueryNext) => (options) => {
       const result = useQueryNext(options);
@@ -99,7 +100,8 @@ export const useGradeUpRecord = createQuery({
       ...variables,
       v: process.env.NEXT_PUBLIC_POTENTIAL_DATA_VERSION,
     }),
-  staleTime: Infinity,
+  staleTime: 0,
+  gcTime: 0,
   use: [
     (useQueryNext) => (options) => {
       const result = useQueryNext(options);
@@ -143,7 +145,8 @@ export const useOptionGrade = createQuery({
           .toSorted((a, b) => a.line - b.line)
           .map(convertAllNullToUndefined),
       ),
-  staleTime: Infinity,
+  staleTime: 0,
+  gcTime: 0,
 });
 
 export const useOptionTables = createQuery({
@@ -214,8 +217,8 @@ export const useOptionTables = createQuery({
       TE.map(convertAllNullToUndefined),
       taskEitherToPromise,
     ),
+  staleTime: 0,
   gcTime: 0,
-  staleTime: Infinity,
 });
 
 export const PotentialQueries = {
