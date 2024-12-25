@@ -13,10 +13,8 @@ const handler = (req: Request) =>
       if (errors.length === 0 && type === "query") {
         return {
           headers: new Headers([
-            [
-              "cache-control",
-              `public, max-age=${14 * 60 * 60 * 24} s-maxage=1, stale-while-revalidate=${60 * 60 * 24}`,
-            ],
+            ["Cache-control", `max-age=${14 * 60 * 60 * 24}`],
+            ["CDN-Cache-Control", `public, max-age=${14 * 60 * 60 * 24}`],
           ]),
         };
       }
