@@ -9,6 +9,20 @@ const handler = (req: Request) =>
     req,
     router: appRouter,
     createContext: createTRPCContext,
+    responseMeta: ({ errors, type }) => {
+      if (errors.length === 0 && type === "query") {
+        return {
+          headers: new Headers([
+            [
+              "cache-control",
+              `public, max-age=${14 * 60 * 60 * 24} s-maxage=1, stale-while-revalidate=${60 * 60 * 24}`,
+            ],
+          ]),
+        };
+      }
+
+      return {};
+    },
   });
 
 export { handler as GET, handler as POST };

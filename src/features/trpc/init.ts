@@ -1,6 +1,5 @@
 import "server-only";
 import { initTRPC } from "@trpc/server";
-import superJSON from "superjson";
 import { z } from "zod";
 
 export const createTRPCContext = () => {
@@ -12,7 +11,7 @@ export const createTRPCContext = () => {
  * Should be done only once per backend!
  */
 const t = initTRPC.create({
-  transformer: superJSON,
+  // transformer: superJSON,
 });
 
 /**
@@ -21,7 +20,16 @@ const t = initTRPC.create({
  */
 export const router = t.router;
 export const publicProcedure = t.procedure;
+export const potentialProcedure = t.procedure.input(
+  z.object({
+    v: z
+      .string()
+      .default(process.env.NEXT_PUBLIC_POTENTIAL_DATA_VERSION ?? "1"),
+  }),
+);
 export const loggingProcedure = t.procedure.input(
-  z.object({ logVersion: z.string().default("v3") }),
+  z.object({
+    logVersion: z.string().default(process.env.NEXT_PUBLIC_LOG_VERSION ?? "v3"),
+  }),
 );
 export const createCallerFactory = t.createCallerFactory;

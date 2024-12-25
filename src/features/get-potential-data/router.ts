@@ -6,7 +6,7 @@ import { equipSchema } from "~/entities/equip";
 import { Potential } from "~/entities/potential";
 import {
   loggingProcedure,
-  publicProcedure,
+  potentialProcedure,
   router,
 } from "~/features/trpc/init";
 import { A, E, TE } from "~/shared/fp";
@@ -21,7 +21,7 @@ import { prisma } from "~/shared/prisma";
 import { findPotentialOptionTable } from "./serverLogics";
 
 export const potentialRouter = router({
-  getOptionTable: publicProcedure
+  getOptionTable: potentialProcedure
     .input(
       z.object({
         method: Potential.resetMethodSchema,
@@ -65,7 +65,7 @@ export const potentialRouter = router({
         taskEitherToPromise,
       ),
     ),
-  getOptionGrade: publicProcedure
+  getOptionGrade: potentialProcedure
     .input(
       z.object({
         grade: Potential.gradeSchema,
@@ -95,7 +95,7 @@ export const potentialRouter = router({
           );
         }),
     ),
-  getGradeUpData: publicProcedure
+  getGradeUpData: potentialProcedure
     .input(
       z.object({
         method: Potential.resetMethodSchema,

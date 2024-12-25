@@ -16,6 +16,7 @@ import {
 import { Potential } from "~/entities/potential";
 import { parseStat } from "~/entities/potential/utils";
 import { trpc } from "~/features/trpc/client";
+import { type RouterInput } from "~/features/trpc/router";
 import { A, E, O, TE } from "~/shared/fp";
 import {
   convertAllNullToUndefined,
@@ -27,36 +28,39 @@ import { S } from "~/shared/ui";
 
 export const useOptionTable = createQuery({
   queryKey: ["potential", "optionTable"],
-  fetcher: (
-    variables: Parameters<typeof trpc.potential.getOptionTable.query>[0],
-  ) =>
-    trpc.potential.getOptionTable.query(variables).then(
-      flow(
-        A.sort(
-          fromCompare<{ name: string }>((a, b) => {
-            const getIndex = (name: string) => {
-              const regexEntries = entries(Potential.possibleStatRegexRecord);
+  fetcher: (variables: Omit<RouterInput["potential"]["getOptionTable"], "v">) =>
+    trpc.potential.getOptionTable
+      .query({
+        ...variables,
+        v: process.env.NEXT_PUBLIC_POTENTIAL_DATA_VERSION,
+      })
+      .then(
+        flow(
+          A.sort(
+            fromCompare<{ name: string }>((a, b) => {
+              const getIndex = (name: string) => {
+                const regexEntries = entries(Potential.possibleStatRegexRecord);
 
-              const index = regexEntries.findIndex(([_, regex]) =>
-                regex.test(name),
-              );
+                const index = regexEntries.findIndex(([_, regex]) =>
+                  regex.test(name),
+                );
 
-              return index === -1 ? regexEntries.length : index;
-            };
+                return index === -1 ? regexEntries.length : index;
+              };
 
-            const indexA = getIndex(a.name);
-            const indexB = getIndex(b.name);
+              const indexA = getIndex(a.name);
+              const indexB = getIndex(b.name);
 
-            return sign(indexA - indexB);
-          }),
+              return sign(indexA - indexB);
+            }),
+          ),
+          A.map(({ name, ...others }) => ({
+            name,
+            ...O.toUndefined(parseStat(name)),
+            ...others,
+          })),
         ),
-        A.map(({ name, ...others }) => ({
-          name,
-          ...O.toUndefined(parseStat(name)),
-          ...others,
-        })),
       ),
-    ),
   staleTime: Infinity,
   use: [
     (useQueryNext) => (options) => {
@@ -90,9 +94,11 @@ export const useOptionTable = createQuery({
 
 export const useGradeUpRecord = createQuery({
   queryKey: ["potential", "gradeUpRecord"],
-  fetcher: (
-    variables: Parameters<typeof trpc.potential.getGradeUpData.query>[0],
-  ) => trpc.potential.getGradeUpData.query(variables),
+  fetcher: (variables: Omit<RouterInput["potential"]["getGradeUpData"], "v">) =>
+    trpc.potential.getGradeUpData.query({
+      ...variables,
+      v: process.env.NEXT_PUBLIC_POTENTIAL_DATA_VERSION,
+    }),
   staleTime: Infinity,
   use: [
     (useQueryNext) => (options) => {
@@ -126,11 +132,12 @@ export const useGradeUpRecord = createQuery({
 
 export const useOptionGrade = createQuery({
   queryKey: ["potential", "optionGrade"],
-  fetcher: (
-    variables: Parameters<typeof trpc.potential.getOptionGrade.query>[0],
-  ) =>
+  fetcher: (variables: Omit<RouterInput["potential"]["getOptionGrade"], "v">) =>
     trpc.potential.getOptionGrade
-      .query(variables)
+      .query({
+        ...variables,
+        v: process.env.NEXT_PUBLIC_POTENTIAL_DATA_VERSION,
+      })
       .then((records) =>
         records
           .toSorted((a, b) => a.line - b.line)
