@@ -4,6 +4,7 @@ import type { Metadata, Viewport } from "next";
 
 import { cx } from "~/shared/style";
 
+import { MainLayout } from "./_components";
 import {
   JotaiProvider,
   MotionProvider,
@@ -50,7 +51,9 @@ export default function RootLayout({
           <JotaiProvider>
             <NextUIProvider>
               <QueryProvider>
-                <OverlayProvider>{children}</OverlayProvider>
+                <OverlayProvider>
+                  <MainLayout>{children}</MainLayout>
+                </OverlayProvider>
               </QueryProvider>
             </NextUIProvider>
           </JotaiProvider>
