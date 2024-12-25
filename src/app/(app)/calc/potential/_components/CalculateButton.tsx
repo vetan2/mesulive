@@ -2,7 +2,6 @@
 
 import { useQueryClient } from "@tanstack/react-query";
 import { useMolecule } from "bunshi/react";
-import { sequenceS } from "fp-ts/lib/Apply";
 import { flow, identity, pipe } from "fp-ts/lib/function";
 import { concatAll } from "fp-ts/lib/Monoid";
 import { type Option } from "fp-ts/lib/Option";
@@ -86,6 +85,9 @@ export const CalculateButton = ({ className }: Props) => {
                 logVersion: process.env.NEXT_PUBLIC_LOG_VERSION,
               }),
           ),
+          (task) => () => {
+            task();
+          },
         );
 
         const result = TO.tryCatch(() =>
@@ -104,11 +106,9 @@ export const CalculateButton = ({ className }: Props) => {
         );
 
         return pipe(
-          sequenceS(T.ApplyPar)({
-            logging,
-            result,
-          }),
-          T.map(({ result }) => result),
+          result,
+          T.chainFirstIOK(() => logging),
+          T.map((result) => result),
         )();
       },
       [gradeAtom, isMiracleTimeAtom, queryClient, resetMethodsAtom],
@@ -143,6 +143,9 @@ export const CalculateButton = ({ className }: Props) => {
                   logVersion: process.env.NEXT_PUBLIC_LOG_VERSION,
                 }),
             ),
+            (task) => () => {
+              task();
+            },
           ),
         );
 
@@ -188,11 +191,9 @@ export const CalculateButton = ({ className }: Props) => {
         );
 
         return pipe(
-          sequenceS(T.ApplyPar)({
-            logging,
-            result,
-          }),
-          T.map(({ result }) => result),
+          result,
+          T.chainFirstIOK(() => logging),
+          T.map((result) => result),
         )();
       },
       [
