@@ -13,8 +13,8 @@ export const PageTitle = forwardRef<
       children,
       className,
       style,
-      startColorVar = "var(--mesulive-primary-500)",
-      endColorVar = "var(--mesulive-primary-500)",
+      startColorVar = "var(--mesulive-primary)",
+      endColorVar = "var(--mesulive-primary-600)",
       ...restProps
     },
     ref,

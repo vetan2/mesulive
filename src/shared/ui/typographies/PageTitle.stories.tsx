@@ -14,7 +14,7 @@ type Story = StoryObj<typeof meta>;
 export const Default: Story = {
   args: {
     children: "타이틀입니다",
-    startColorVar: "var(--mesulive-primary-500)",
-    endColorVar: "var(--mesulive-secondary-500)",
+    startColorVar: "var(--mesulive-primary)",
+    endColorVar: "var(--mesulive-secondary-600)",
   },
 };

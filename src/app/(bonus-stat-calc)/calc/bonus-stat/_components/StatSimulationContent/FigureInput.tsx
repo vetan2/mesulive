@@ -31,7 +31,10 @@ export const FigureInput = ({ stat }: Props) => {
         setFigure(pipe(convertToNumber(v), O.toUndefined));
       }}
       color={efficiency != null ? "primary" : undefined}
-      classNames={{ label: cx(efficiency != null && "font-bold") }}
+      classNames={{
+        label: cx(efficiency != null && "font-bold"),
+        input: cx(efficiency != null && "font-bold"),
+      }}
     />
   );
 };

@@ -57,7 +57,7 @@ export default function Home() {
             Icon={Star}
             classNames={{
               link: cx("md:last:col-span-full"),
-              button: cx("bg-primary-500"),
+              button: cx("bg-primary"),
             }}
           />
         </div>

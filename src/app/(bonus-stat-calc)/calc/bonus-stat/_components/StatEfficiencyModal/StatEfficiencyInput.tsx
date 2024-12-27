@@ -61,7 +61,10 @@ export const StatEfficiencyInput = ({ stat }: Props) => {
       isInvalid={isTouched && E.isLeft(efficiencyParseResult)}
       errorMessage={isTouched && efficiencyErrorMessage}
       color={isTouched ? "primary" : undefined}
-      classNames={{ label: cx(isTouched && "font-bold") }}
+      classNames={{
+        label: cx(isTouched && "font-bold"),
+        input: cx(isTouched && "font-bold"),
+      }}
     />
   );
 };
