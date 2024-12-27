@@ -69,16 +69,15 @@ const weaponGrade = atom<"none" | number>("none");
 weaponGrade.debugLabel = "bonusStatCalc/weaponGrade";
 
 const statEfficiency = atomFamily((stat: BonusStat.PossibleStat) => {
-  const _atom = atomWithStorage<number | undefined>(
+  const _atom = atomWithStorage<number | null>(
     `bonusStatCalc/statEfficiency-${stat}`,
     match(stat)
       .with("STR", () => 1)
       .with("DEX", () => 0.1)
       .with("ATTACK", () => 4)
       .with("ALL %", () => 10)
-      .otherwise(() => undefined),
+      .otherwise(() => null),
     undefined,
-    { getOnInit: true },
   );
   _atom.debugLabel = `bonusStatCalc/statEfficiency-${stat}`;
   return _atom;
@@ -93,7 +92,8 @@ const statEfficiencyParseResult = atomFamily((stat: BonusStat.PossibleStat) => {
           .number()
           .positive({ message: "0 이상의 수치를 입력해주세요." })
           .max(9999, { message: "9999 이하의 수치를 입력해주세요." })
-          .optional(),
+          .nullable()
+          .transform((v) => v ?? undefined),
       ),
     ),
   );

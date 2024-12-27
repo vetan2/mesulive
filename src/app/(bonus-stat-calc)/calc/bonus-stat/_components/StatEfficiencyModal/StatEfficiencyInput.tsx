@@ -55,7 +55,7 @@ export const StatEfficiencyInput = ({ stat }: Props) => {
       value={inputValue}
       onValueChange={(v) => {
         setInputValue(v);
-        setEfficiency(pipe(convertToNumber(v), O.toUndefined));
+        setEfficiency(pipe(convertToNumber(v), O.toNullable));
       }}
       type="number"
       isInvalid={isTouched && E.isLeft(efficiencyParseResult)}
