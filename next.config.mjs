@@ -33,6 +33,9 @@ const nextConfig = {
 
     return config;
   },
+  images: {
+    remotePatterns: [{ protocol: "https", hostname: "*.nexon.com" }],
+  },
 
   experimental: {
     swcPlugins: [["@swc-jotai/debug-label", {}]],
