@@ -1,3 +1,5 @@
+import withBundleAnalyzer from "@next/bundle-analyzer";
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   eslint: {
@@ -37,4 +39,7 @@ const nextConfig = {
   },
 };
 
-export default nextConfig;
+export default withBundleAnalyzer({
+  enable: process.env.ANALYZE === "true",
+  openAnalyzer: true,
+})(nextConfig);
