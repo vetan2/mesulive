@@ -71,8 +71,14 @@ weaponGrade.debugLabel = "bonusStatCalc/weaponGrade";
 const statEfficiency = atomFamily((stat: BonusStat.PossibleStat) => {
   const _atom = atomWithStorage<number | undefined>(
     `bonusStatCalc/statEfficiency-${stat}`,
+    match(stat)
+      .with("STR", () => 1)
+      .with("DEX", () => 0.1)
+      .with("ATTACK", () => 4)
+      .with("ALL %", () => 10)
+      .otherwise(() => undefined),
     undefined,
-    undefined,
+    { getOnInit: true },
   );
   _atom.debugLabel = `bonusStatCalc/statEfficiency-${stat}`;
   return _atom;
