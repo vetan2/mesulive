@@ -1,3 +1,4 @@
+import { Link } from "@nextui-org/react";
 import { type Metadata } from "next";
 
 import { Flame, Logo, PotentialSVG, Star } from "~/shared/assets/images";
@@ -28,7 +29,16 @@ export default function Home() {
           메이플스토리의 각종 확률형 시스템에 대한 기댓값 계산기와 시뮬레이션
           웹서비스입니다.
           <br />
-          문의는 help@mesu.live로 부탁드립니다.
+          문의와 후원은{" "}
+          <Link
+            href="https://open.kakao.com/me/kurate"
+            className="text-sm"
+            color="foreground"
+            showAnchorIcon
+          >
+            오픈채팅
+          </Link>
+          으로 부탁드립니다.
         </p>
         <div className="mt-4 flex w-full flex-col gap-4 md:grid md:grid-cols-2 md:grid-rows-2">
           <MainLinkButton
