@@ -1,7 +1,9 @@
+import { Image } from "@nextui-org/react";
 import NextImage from "next/image";
 import { z } from "zod";
 
 import { Reboot } from "~/shared/assets/images";
+import { cx } from "~/shared/style";
 import { S } from "~/shared/ui";
 
 const idResponseSchema = z.object({
@@ -54,12 +56,10 @@ export const DeveloperProfile = async () => {
       className="flex-col text-sm"
       color="foreground"
     >
-      <NextImage
+      <Image
         src={imageSrc}
         alt="제작자"
-        width={96}
-        height={96}
-        className="pixelated"
+        classNames={{ img: cx("pixelated") }}
       />
       <div className="flex items-center">
         <p>제작자: 쿠라테</p>
