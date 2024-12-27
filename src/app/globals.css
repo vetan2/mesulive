@@ -21,3 +21,9 @@
     -moz-osx-font-smoothing: grayscale;
   }
 }
+
+@layer utilities {
+  .pixelated {
+    image-rendering: pixelated;
+  }
+}

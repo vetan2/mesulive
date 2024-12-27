@@ -13,7 +13,7 @@ import {
   QueryProvider,
 } from "./_components/providers";
 
-import "~/shared/style/globals.css";
+import "./globals.css";
 
 export const metadata: Metadata = {
   title: "메수라이브 - 메이플 시뮬레이터, 계산기",

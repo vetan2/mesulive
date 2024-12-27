@@ -1,19 +1,11 @@
-import { Link } from "@nextui-org/react";
 import { type Metadata } from "next";
-import NextImage from "next/image";
 
-import {
-  Flame,
-  Logo,
-  PotentialSVG,
-  Reboot,
-  Star,
-  DeveloperCharacter,
-} from "~/shared/assets/images";
+import { Flame, Logo, PotentialSVG, Star } from "~/shared/assets/images";
 import { cx } from "~/shared/style";
 import { SectionContainer } from "~/shared/ui";
 
 import { MainLinkButton } from "./_components";
+import { DeveloperProfile } from "./_components/DeveloperProfile";
 import { Notices } from "./_components/Notices";
 
 export const metadata: Metadata = {
@@ -62,19 +54,7 @@ export default function Home() {
           />
         </div>
         <div className="mt-4">
-          <Link
-            href="https://maple.gg/u/%EC%BF%A0%EB%9D%BC%ED%85%8C"
-            target="_blank"
-            rel="noreferrer"
-            className="flex-col text-sm"
-            color="foreground"
-          >
-            <NextImage src={DeveloperCharacter} alt="제작자" />
-            <div className="flex items-center">
-              <p>제작자: 쿠라테</p>
-              <NextImage src={Reboot} alt="리부트" className="ml-1 mt-0.5" />
-            </div>
-          </Link>
+          <DeveloperProfile />
         </div>
       </SectionContainer>
     </div>
