@@ -2,7 +2,6 @@ import NextImage from "next/image";
 import { z } from "zod";
 
 import { Reboot } from "~/shared/assets/images";
-import { loggingIdentity } from "~/shared/function";
 import { S } from "~/shared/ui";
 
 const idResponseSchema = z.object({
@@ -27,7 +26,6 @@ export const DeveloperProfile = async () => {
     },
   )
     .then((res) => res.json())
-    .then(loggingIdentity("ocid"))
     .then(idResponseSchema.parse)
     .then(({ ocid }) =>
       fetch(
