@@ -2,10 +2,9 @@
 
 import { pipe } from "fp-ts/lib/function";
 import { useAtomValue, useSetAtom } from "jotai";
-import { useAtomCallback } from "jotai/utils";
 import { Pencil, X } from "lucide-react";
 import { overlay } from "overlay-kit";
-import { Fragment, useCallback, useState, type ComponentProps } from "react";
+import { Fragment, useState, type ComponentProps } from "react";
 
 import { type PotentialCalcMoleculeStructure } from "~/app/(potential-calc)/calc/potential/_lib/molecules";
 import { Potential } from "~/entities/potential";
@@ -24,14 +23,6 @@ export const OptionPresetsModal = ({ molecule, ...props }: Props) => {
   const editOptionPreset = useSetAtom(molecule.editOptionPresetAtom);
   const applyOptionPreset = useSetAtom(molecule.applyOptionPresetAtom);
   const removeOptionPreset = useSetAtom(molecule.removeOptionPresetAtom);
-  const adjustOptionSets = useAtomCallback(
-    useCallback(
-      (get, set) => {
-        set(molecule.adjustOptionSetsAtom, get(molecule.possibleOptionIdsAtom));
-      },
-      [molecule.adjustOptionSetsAtom, molecule.possibleOptionIdsAtom],
-    ),
-  );
 
   return (
     <S.Modal size="xl" className="max-h-[80%] min-h-[40%]" {...props}>
@@ -102,7 +93,6 @@ export const OptionPresetsModal = ({ molecule, ...props }: Props) => {
                             <S.Button
                               onPress={() => {
                                 applyOptionPreset(preset.name);
-                                adjustOptionSets();
                                 close();
                                 props.onClose?.();
                               }}

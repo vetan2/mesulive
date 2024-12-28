@@ -23,7 +23,6 @@ export const useRegisterPossibleOptionIdsUpdate = () => {
     gradeAtom,
     typeAtom,
     aimTypeAtom,
-    adjustOptionSetsAtom,
     completeLoadingPossibleOptionIdsAtom,
     possibleOptionIdsAtom,
   } = molecule;
@@ -34,7 +33,6 @@ export const useRegisterPossibleOptionIdsUpdate = () => {
   const type = useAtomValue(typeAtom);
   const aimType = useAtomValue(aimTypeAtom);
 
-  const adjustOptionSets = useSetAtom(adjustOptionSetsAtom);
   const completeLoadingPossibleOptionIds = useSetAtom(
     completeLoadingPossibleOptionIdsAtom,
   );
@@ -100,11 +98,9 @@ export const useRegisterPossibleOptionIdsUpdate = () => {
 
   useEffect(() => {
     if (possibleOptionIds.isSuccess) {
-      adjustOptionSets(possibleOptionIds.data);
       completeLoadingPossibleOptionIds();
     }
   }, [
-    adjustOptionSets,
     possibleOptionIds.data,
     possibleOptionIds.isSuccess,
     completeLoadingPossibleOptionIds,

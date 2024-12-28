@@ -1,7 +1,7 @@
 "use client";
 
 import { molecule, type MoleculeConstructor } from "bunshi";
-import { flow, pipe } from "fp-ts/lib/function";
+import { pipe } from "fp-ts/lib/function";
 import { sign } from "fp-ts/lib/Ordering";
 import { produce } from "immer";
 import { type Getter, type Setter, atom } from "jotai";
@@ -11,7 +11,7 @@ import { z } from "zod";
 import { equipSchema, equips, type Equip } from "~/entities/equip";
 import { currencyUnitSchema, type CurrencyUnit } from "~/entities/game";
 import { Potential } from "~/entities/potential";
-import { A, E, O } from "~/shared/fp";
+import { E, O } from "~/shared/fp";
 import { convertToNumber } from "~/shared/number";
 import { values } from "~/shared/object";
 import { type FormPayload } from "~/shared/react";
@@ -310,25 +310,6 @@ const potentialCalcMoleculeConstructor = ((_, scope) => {
       prev.filter((_, index) => index !== setIndex),
     );
   });
-  const adjustOptionSetsAtom = atom(
-    null,
-    (get, set, statOptions: Potential.PossibleStat[]) => {
-      set(
-        _optionSetsAtom,
-        flow(
-          A.map(
-            A.map(({ stat, figure }) => ({
-              stat: pipe(
-                stat,
-                O.filter((s) => statOptions.includes(s)),
-              ),
-              figure,
-            })),
-          ),
-        ),
-      );
-    },
-  );
 
   const possibleOptionIdsAtom = atom<Potential.PossibleStat[]>([]);
 
@@ -430,7 +411,10 @@ const potentialCalcMoleculeConstructor = ((_, scope) => {
       ),
       E.filterOrElse(
         () =>
-          aimType === "GRADE_UP" || Potential.isOptionSetFormValid(optionSets),
+          aimType === "GRADE_UP" ||
+          Potential.isOptionSetFormValid(get(possibleOptionIdsAtom))(
+            optionSets,
+          ),
         () => "옵션 세트를 정확히 입력해주세요.",
       ),
     );
@@ -469,7 +453,6 @@ const potentialCalcMoleculeConstructor = ((_, scope) => {
     addOptionSetAtom,
     editOptionAtom,
     removeOptionSetAtom,
-    adjustOptionSetsAtom,
     possibleOptionIdsAtom,
     optionPresetsAtom,
     currentOptionPresetAtom,

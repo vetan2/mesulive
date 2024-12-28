@@ -3,6 +3,7 @@ import { concatAll, type Monoid } from "fp-ts/lib/Monoid";
 import { type Option } from "fp-ts/lib/Option";
 import { P, match } from "ts-pattern";
 
+import { type EffectiveStat } from "~/entities/stat";
 import { A, E, O } from "~/shared/fp";
 import { convertToNumber } from "~/shared/number";
 import { entries } from "~/shared/object";
@@ -219,14 +220,18 @@ export const optionSetMonoid = (
   empty: {},
 });
 
-export const isOptionSetFormValid = (form: OptionSetForm) =>
-  !form.every(
-    A.every(
-      ({ stat, figure }) =>
-        // 입력값이 비정상인 경우
-        O.isNone(stat) || E.isLeft(figure.value) || figure.value.right === 0,
-    ),
-  );
+export const isOptionSetFormValid =
+  (possibleStats: EffectiveStat[]) => (form: OptionSetForm) =>
+    !form.every(
+      A.every(
+        ({ stat, figure }) =>
+          // 입력값이 비정상인 경우
+          O.isNone(stat) ||
+          E.isLeft(figure.value) ||
+          figure.value.right === 0 ||
+          !possibleStats.includes(stat.value),
+      ),
+    );
 
 export const refineOptionSetForm = (
   form: OptionSetForm,

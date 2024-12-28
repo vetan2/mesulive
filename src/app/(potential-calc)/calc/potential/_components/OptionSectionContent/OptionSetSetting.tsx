@@ -6,7 +6,8 @@ import { useMemo } from "react";
 import { P, match } from "ts-pattern";
 
 import { PotentialCalcMolecule } from "~/app/(potential-calc)/calc/potential/_lib/molecules";
-import { effectiveStatLabels } from "~/entities/stat";
+import { Potential } from "~/entities/potential";
+import { type EffectiveStat, effectiveStatLabels } from "~/entities/stat";
 import { E, O } from "~/shared/fp";
 import { cx } from "~/shared/style";
 import { S } from "~/shared/ui";
@@ -41,6 +42,20 @@ export const OptionSetSetting = ({ index }: Props) => {
     return null;
   }
 
+  const convertStatToOption = (stat: EffectiveStat): [string, string] => [
+    stat,
+    effectiveStatLabels[stat],
+  ];
+
+  const enableOptions: [string, string][] = [
+    ["NONE", "없음"],
+    ...(possibleOptionIds ?? []).map(convertStatToOption),
+  ];
+  const unableStats = Potential.possibleStats.filter(
+    (s) => !possibleOptionIds?.includes(s),
+  );
+  const unableOptions = unableStats.map(convertStatToOption);
+
   return (
     <S.Card shadow="sm" className="flex flex-col gap-3 overflow-visible p-3">
       {optionSet.map((record, recordIndex) => (
@@ -48,6 +63,7 @@ export const OptionSetSetting = ({ index }: Props) => {
           <S.Select
             isLoading={isPendingForPossibleOptionIds}
             isDisabled={isPendingForPossibleOptionIds}
+            disabledKeys={unableStats}
             size="sm"
             className="flex-[3]"
             placeholder="옵션 선택"
@@ -66,22 +82,33 @@ export const OptionSetSetting = ({ index }: Props) => {
                 stat: e.target.value,
               });
             }}
+            isInvalid={pipe(
+              record.stat,
+              O.match(
+                () => false,
+                (s) => unableStats.some((stat) => stat === s),
+              ),
+            )}
+            errorMessage="해당 옵션은 설정된 장비에 적용할 수 없습니다."
           >
-            {[
-              ["NONE", "없음"],
-              ...(possibleOptionIds ?? []).map((stat) => [
-                stat,
-                effectiveStatLabels[stat],
-              ]),
-            ].map(([stat, name]) => (
-              <S.SelectItem
-                key={stat}
-                value={stat}
-                className={cx(stat === "NONE" && "text-gray-400")}
-              >
-                {name}
-              </S.SelectItem>
-            ))}
+            <S.SelectSection showDivider>
+              {enableOptions.map(([stat, name]) => (
+                <S.SelectItem
+                  key={stat}
+                  value={stat}
+                  className={cx(stat === "NONE" && "italic")}
+                >
+                  {name}
+                </S.SelectItem>
+              ))}
+            </S.SelectSection>
+            <S.SelectSection>
+              {unableOptions.map(([stat, name]) => (
+                <S.SelectItem key={stat} value={stat}>
+                  {name}
+                </S.SelectItem>
+              ))}
+            </S.SelectSection>
           </S.Select>
           <S.Input
             type="number"

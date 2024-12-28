@@ -13,6 +13,7 @@ import {
   ModalFooter,
   Navbar,
   SelectItem,
+  SelectSection,
   Tooltip,
 } from "@nextui-org/react";
 
@@ -40,6 +41,7 @@ export const S = {
   ModalFooter,
   Navbar,
   SelectItem,
+  SelectSection,
   Tooltip,
 
   // custom
