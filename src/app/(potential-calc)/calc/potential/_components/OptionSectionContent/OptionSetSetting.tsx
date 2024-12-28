@@ -91,24 +91,22 @@ export const OptionSetSetting = ({ index }: Props) => {
             )}
             errorMessage="해당 옵션은 설정된 장비에 적용할 수 없습니다."
           >
-            <S.SelectSection showDivider>
+            <>
               {enableOptions.map(([stat, name]) => (
                 <S.SelectItem
                   key={stat}
                   value={stat}
-                  className={cx(stat === "NONE" && "italic")}
+                  className={cx(stat === "NONE" && "text-default-400")}
                 >
                   {name}
                 </S.SelectItem>
               ))}
-            </S.SelectSection>
-            <S.SelectSection>
               {unableOptions.map(([stat, name]) => (
-                <S.SelectItem key={stat} value={stat}>
+                <S.SelectItem key={stat} value={stat} className="hidden">
                   {name}
                 </S.SelectItem>
               ))}
-            </S.SelectSection>
+            </>
           </S.Select>
           <S.Input
             type="number"
