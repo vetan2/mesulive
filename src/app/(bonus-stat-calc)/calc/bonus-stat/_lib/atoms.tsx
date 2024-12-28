@@ -76,6 +76,7 @@ const statEfficiency = atomFamily((stat: BonusStat.PossibleStat) => {
       .with("DEX", () => 0.1)
       .with("ATTACK", () => 4)
       .with("ALL %", () => 10)
+      .with("DAMAGE", () => 14)
       .otherwise(() => null),
     undefined,
   );
