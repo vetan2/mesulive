@@ -1,8 +1,10 @@
+import { pipe } from "fp-ts/lib/function";
 import { useAtomValue } from "jotai";
 import { useAtomCallback } from "jotai/utils";
 import { useCallback, useState } from "react";
 
 import { type PotentialCalcMoleculeStructure } from "~/app/(potential-calc)/calc/potential/_lib/molecules";
+import { Potential } from "~/entities/potential";
 import { DefaultModal, S } from "~/shared/ui";
 import { type ModalProps } from "~/shared/ui/Modal";
 
@@ -25,7 +27,11 @@ export const CreateOptionPresetModal = ({ molecule, ...props }: Props) => {
       (get, set, name: string) => {
         const newPreset = {
           name,
-          optionSets: get(optionSetFormAtom),
+          optionSets: pipe(
+            get(optionSetFormAtom),
+            Potential.refineOptionSetForm,
+            Potential.convertRefinedOptionSetFormToOptionSetForm,
+          ),
         };
 
         set(addOptionPresetAtom, newPreset);

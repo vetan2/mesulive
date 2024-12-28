@@ -1,3 +1,4 @@
+import { match, P } from "ts-pattern";
 import { z } from "zod";
 
 // 유효 스탯
@@ -63,3 +64,32 @@ export const effectiveStatLabels: Record<EffectiveStat, string> = {
   MESO_OBTAIN: "메소 획득량 %",
   AUTO_STEAL: "공격 시 오토스틸",
 };
+
+export const formatStat = (stat: EffectiveStat, figure?: number) =>
+  match(stat)
+    .with(
+      P.union(
+        "STR %",
+        "DEX %",
+        "INT %",
+        "LUK %",
+        "HP %",
+        "ATTACK %",
+        "MAGIC_ATTACK %",
+        "DAMAGE",
+        "ALL %",
+        "IGNORE_DEFENSE",
+        "BOSS_DAMAGE",
+        "CRITICAL_DAMAGE",
+        "ITEM_DROP",
+        "MESO_OBTAIN",
+      ),
+      (stat) => `${effectiveStatLabels[stat].slice(0, -2)} : +${figure}%`,
+    )
+    .with("AUTO_STEAL", () => `공격 시 ${figure}% 확률로 오토스틸`)
+    .with("COOL_DOWN", () => `모든 스킬의 재사용 대기시간: -${figure}초`)
+    .with(
+      P.union("STR_PER_9LEV", "DEX_PER_9LEV", "INT_PER_9LEV", "LUK_PER_9LEV"),
+      (stat) => `${effectiveStatLabels[stat]} +${figure}`,
+    )
+    .otherwise((stat) => `${effectiveStatLabels[stat]} : ${figure}`);

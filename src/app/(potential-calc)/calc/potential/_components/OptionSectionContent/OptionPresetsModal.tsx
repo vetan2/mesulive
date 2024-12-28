@@ -8,7 +8,7 @@ import { Fragment, type ComponentProps } from "react";
 
 import { type PotentialCalcMoleculeStructure } from "~/app/(potential-calc)/calc/potential/_lib/molecules";
 import { Potential } from "~/entities/potential";
-import { effectiveStatLabels } from "~/entities/stat";
+import { formatStat } from "~/entities/stat";
 import { entries } from "~/shared/object";
 import { DefaultModal, S } from "~/shared/ui";
 
@@ -33,7 +33,8 @@ export const OptionPresetsModal = ({ molecule, ...props }: Props) => {
             optionPresets.map((preset) => (
               <div
                 key={preset.name}
-                className="relative flex items-start rounded-2xl border-1 border-default-200 p-3 shadow-sm"
+                className="relative flex items-start gap-2 rounded-2xl border-1 border-default-200 p-3
+                  shadow-sm"
               >
                 <div className="flex-1">
                   <p className="text-start text-base">{preset.name}</p>
@@ -47,10 +48,7 @@ export const OptionPresetsModal = ({ molecule, ...props }: Props) => {
                       (sets) =>
                         sets.map((set) =>
                           entries(set)
-                            .map(
-                              ([key, value]) =>
-                                `${effectiveStatLabels[key]}: ${value}`,
-                            )
+                            .map(([stat, value]) => formatStat(stat, value))
                             .join(" / "),
                         ),
                     ).map((str, index) => (

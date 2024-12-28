@@ -7,6 +7,7 @@ import { type EffectiveStat } from "~/entities/stat";
 import { A, E, O } from "~/shared/fp";
 import { convertToNumber } from "~/shared/number";
 import { entries } from "~/shared/object";
+import { createFormPayload } from "~/shared/react";
 
 import { Potential } from ".";
 import {
@@ -233,6 +234,15 @@ export const isOptionSetFormValid =
       ),
     );
 
+export const createNewOptionSetFormElementElement =
+  (): OptionSetForm[number][number] => ({
+    stat: O.none,
+    figure: { input: "", value: E.right(0) },
+  });
+
+export const createNewOptionSetFormElement = (): OptionSetForm[number] =>
+  Array.from({ length: 3 }).map(() => createNewOptionSetFormElementElement());
+
 export const refineOptionSetForm = (
   form: OptionSetForm,
 ): RefinedOptionSetForm =>
@@ -260,3 +270,16 @@ export const convertRefinedOptionSetFormToOptionSets =
         ),
       ),
     );
+
+export const convertRefinedOptionSetFormToOptionSetForm = (
+  refined: RefinedOptionSetForm,
+): OptionSetForm =>
+  refined.map((set, _) => [
+    ...set.map(({ stat, figure }) => ({
+      stat: O.some(stat),
+      figure: createFormPayload(figure),
+    })),
+    ...Array.from({ length: Math.max(0, 3 - set.length) }).map(() =>
+      createNewOptionSetFormElementElement(),
+    ),
+  ]);

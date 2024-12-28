@@ -1,6 +1,7 @@
 "use client";
 
 import { useMolecule } from "bunshi/react";
+import { pipe } from "fp-ts/lib/function";
 import { atom, useAtomValue, useSetAtom } from "jotai";
 import { useAtomCallback } from "jotai/utils";
 import { ListPlus, Pencil, Plus } from "lucide-react";
@@ -9,6 +10,7 @@ import { useCallback, useMemo } from "react";
 
 import { useRegisterPossibleOptionIdsUpdate } from "~/app/(potential-calc)/calc/potential/_lib/hooks";
 import { PotentialCalcMolecule } from "~/app/(potential-calc)/calc/potential/_lib/molecules";
+import { Potential } from "~/entities/potential";
 import { cx } from "~/shared/style";
 import { DefaultModal, S } from "~/shared/ui";
 
@@ -70,7 +72,11 @@ export const OptionSectionContent = ({ className }: Props) => {
                 <S.Button
                   onPress={() => {
                     set(editOptionPresetAtom, currentOptionPreset.name, {
-                      optionSets: get(optionSetFormAtom),
+                      optionSets: pipe(
+                        get(optionSetFormAtom),
+                        Potential.refineOptionSetForm,
+                        Potential.convertRefinedOptionSetFormToOptionSetForm,
+                      ),
                       name: currentOptionPreset.name,
                     });
                     close();

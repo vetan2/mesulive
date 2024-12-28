@@ -220,13 +220,8 @@ const potentialCalcMoleculeConstructor = ((_, scope) => {
 
   const cubePriceSettingModalOpen = atom(false);
 
-  const createNewOptionSet = (): Potential.OptionSetForm[number] =>
-    Array.from({ length: 3 }).map(() => ({
-      stat: O.none,
-      figure: { input: "", value: E.right(0) },
-    }));
   const _optionSetsAtom = atomWithReset<Potential.OptionSetForm>([
-    createNewOptionSet(),
+    Potential.createNewOptionSetFormElement(),
   ]);
   const optionSetFormAtom = atom(
     (get) => get(_optionSetsAtom),
@@ -247,7 +242,9 @@ const potentialCalcMoleculeConstructor = ((_, scope) => {
   );
 
   const addOptionSetAtom = atom(null, (get, set) => {
-    set(_optionSetsAtom, (prev) => prev.concat([createNewOptionSet()]));
+    set(_optionSetsAtom, (prev) =>
+      prev.concat([Potential.createNewOptionSetFormElement()]),
+    );
   });
   const editOptionAtom = atom(
     null,
