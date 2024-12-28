@@ -1,3 +1,4 @@
+import { VisuallyHidden } from "@nextui-org/react";
 import { type ReactNode } from "react";
 import { match } from "ts-pattern";
 
@@ -5,7 +6,12 @@ import { cx } from "~/shared/style";
 
 import { PermanentDrawer } from "./PermanentDrawer";
 import { PersistedDrawer } from "./PersistedDrawer";
-import { TemporaryDrawer, TemporaryDrawerContent } from "./TemporaryDrawer";
+import {
+  TemporaryDrawer,
+  TemporaryDrawerContent,
+  TemporaryDrawerDescription,
+  TemporaryDrawerTitle,
+} from "./TemporaryDrawer";
 
 export interface DrawerProps {
   children?: ReactNode;
@@ -43,6 +49,10 @@ export const Drawer = ({
         onOpenChange={onOpenChange}
       >
         <TemporaryDrawerContent className={cx("flex flex-row", className)}>
+          <VisuallyHidden>
+            <TemporaryDrawerTitle>메뉴</TemporaryDrawerTitle>
+            <TemporaryDrawerDescription>메뉴</TemporaryDrawerDescription>
+          </VisuallyHidden>
           <div className="flex-1">{children}</div>
           <div className="mx-4 my-auto h-12 w-1.5 flex-shrink-0 rounded-full bg-zinc-300 md:hidden" />
         </TemporaryDrawerContent>

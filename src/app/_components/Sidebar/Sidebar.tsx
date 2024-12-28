@@ -44,7 +44,11 @@ export const Sidebar = () => {
         }}
         className="h-full w-72 bg-white md:hidden"
       >
-        <SidebarContent />
+        <SidebarContent
+          onLinkPress={() => {
+            setIsOpen(false);
+          }}
+        />
       </Drawer>
       <Drawer
         variant="persisted"
@@ -57,7 +61,7 @@ export const Sidebar = () => {
         }}
         className="hidden h-full w-72 border-r-1 border-r-default-100 bg-white md:max-lg:block"
       >
-        <SidebarContent />
+        <SidebarContent key="persisted-md" />
       </Drawer>
       <Drawer
         variant="persisted"
@@ -70,7 +74,7 @@ export const Sidebar = () => {
         }}
         className="hidden h-full border-r-1 border-r-default-100 bg-white lg:block"
       >
-        <SidebarContent />
+        <SidebarContent key="persisted-lg" />
       </Drawer>
     </>
   );
