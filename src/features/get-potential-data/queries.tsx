@@ -164,7 +164,10 @@ export const useOptionTables = createQuery({
           optionGrade: TE.tryCatch(
             () =>
               queryClient.fetchQuery<inferData<typeof useOptionGrade>>(
-                useOptionGrade.getOptions(variables),
+                useOptionGrade.getOptions({
+                  grade: variables.grade,
+                  method: variables.method,
+                }),
               ),
             E.toError,
           ),
