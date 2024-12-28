@@ -4,15 +4,15 @@ import { pipe } from "fp-ts/lib/function";
 import { useAtomValue, useSetAtom } from "jotai";
 import { Pencil, X } from "lucide-react";
 import { overlay } from "overlay-kit";
-import { Fragment, useState, type ComponentProps } from "react";
+import { Fragment, type ComponentProps } from "react";
 
 import { type PotentialCalcMoleculeStructure } from "~/app/(potential-calc)/calc/potential/_lib/molecules";
 import { Potential } from "~/entities/potential";
 import { effectiveStatLabels } from "~/entities/stat";
-import { type AtomValue } from "~/shared/jotai";
 import { entries } from "~/shared/object";
 import { DefaultModal, S } from "~/shared/ui";
-import { type ModalProps } from "~/shared/ui/Modal";
+
+import { EditNameModal } from "./EditNameModal";
 
 interface Props extends Omit<ComponentProps<typeof S.Modal>, "children"> {
   molecule: PotentialCalcMoleculeStructure;
@@ -67,44 +67,8 @@ export const OptionPresetsModal = ({ molecule, ...props }: Props) => {
                     color="secondary"
                     variant="solid"
                     onPress={() => {
-                      overlay.open(({ isOpen, close, unmount }) => (
-                        <DefaultModal
-                          isOpen={isOpen}
-                          onClose={close}
-                          onExit={unmount}
-                          title="옵션 프리셋 적용"
-                        >
-                          <div className="flex flex-col items-center">
-                            <p>다음 프리셋을 적용하시겠습니까?</p>
-                            <b>{preset.name}</b>
-                          </div>
-                          <div className="flex gap-2">
-                            <S.Button
-                              onPress={() => {
-                                close();
-                              }}
-                              color="secondary"
-                              size="md"
-                              variant="flat"
-                              className="mt-2"
-                            >
-                              취소
-                            </S.Button>
-                            <S.Button
-                              onPress={() => {
-                                applyOptionPreset(preset.name);
-                                close();
-                                props.onClose?.();
-                              }}
-                              color="secondary"
-                              size="md"
-                              className="mt-2"
-                            >
-                              적용
-                            </S.Button>
-                          </div>
-                        </DefaultModal>
-                      ));
+                      applyOptionPreset(preset.name);
+                      props.onClose?.();
                     }}
                   >
                     적용하기
@@ -125,7 +89,7 @@ export const OptionPresetsModal = ({ molecule, ...props }: Props) => {
                             onClose={close}
                             onExit={unmount}
                             originalName={preset.name}
-                            onConfirm={(newName) => {
+                            onConfirmAction={(newName) => {
                               editOptionPreset(preset.name, {
                                 ...preset,
                                 name: newName,
@@ -200,44 +164,5 @@ export const OptionPresetsModal = ({ molecule, ...props }: Props) => {
         </S.ModalBody>
       </S.ModalContent>
     </S.Modal>
-  );
-};
-
-const EditNameModal = ({
-  originalName,
-  onConfirm,
-  optionPresets,
-  ...modalProps
-}: Pick<ModalProps, "isOpen" | "onClose" | "onExit"> & {
-  optionPresets: AtomValue<PotentialCalcMoleculeStructure["optionPresetsAtom"]>;
-  originalName: string;
-  onConfirm: (newName: string) => void;
-}) => {
-  const [newName, setNewName] = useState("");
-  const isInvalid = optionPresets.some((preset) => preset.name === newName);
-
-  return (
-    <DefaultModal {...modalProps} title="프리셋 이름 편집">
-      <S.Input
-        value={newName}
-        onChange={(e) => setNewName(e.target.value)}
-        label="프리셋 이름"
-        placeholder="새로운 프리셋 이름을 입력해주세요."
-        errorMessage="이미 존재하는 이름입니다."
-        isInvalid={isInvalid}
-        className="w-full"
-      />
-      <S.Button
-        onPress={() => {
-          onConfirm(newName);
-          modalProps.onClose?.();
-        }}
-        color="secondary"
-        size="md"
-        isDisabled={isInvalid}
-      >
-        저장
-      </S.Button>
-    </DefaultModal>
   );
 };

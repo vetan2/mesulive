@@ -5,7 +5,7 @@ import { pipe } from "fp-ts/lib/function";
 import { sign } from "fp-ts/lib/Ordering";
 import { produce } from "immer";
 import { type Getter, type Setter, atom } from "jotai";
-import { atomWithReset, atomWithStorage, type RESET } from "jotai/utils";
+import { atomWithReset, atomWithStorage, RESET } from "jotai/utils";
 import { z } from "zod";
 
 import { equipSchema, equips, type Equip } from "~/entities/equip";
@@ -324,7 +324,7 @@ const potentialCalcMoleculeConstructor = ((_, scope) => {
     { getOnInit: true },
   );
 
-  const currentOptionPresetAtom = atom<OptionPreset | undefined>(undefined);
+  const currentOptionPresetAtom = atomWithReset<OptionPreset | null>(null);
 
   const addOptionPresetAtom = atom(null, (get, set, preset: OptionPreset) => {
     set(optionPresetsAtom, (prev) => {
@@ -358,6 +358,10 @@ const potentialCalcMoleculeConstructor = ((_, scope) => {
     set(optionPresetsAtom, (prev) =>
       prev.filter((preset) => preset.name !== name),
     );
+
+    if (get(currentOptionPresetAtom)?.name === name) {
+      set(currentOptionPresetAtom, RESET);
+    }
   });
 
   const applyOptionPresetAtom = atom(null, (get, set, name: string) => {

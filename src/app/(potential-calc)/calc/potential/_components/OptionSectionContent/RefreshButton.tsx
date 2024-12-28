@@ -9,16 +9,18 @@ import { PotentialCalcMolecule } from "~/app/(potential-calc)/calc/potential/_li
 import { S } from "~/shared/ui";
 
 export const RefreshButton = () => {
-  const { refinedOptionSetFormAtom: refinedOptionSetsAtom } = useMolecule(
+  const { refinedOptionSetFormAtom, currentOptionPresetAtom } = useMolecule(
     PotentialCalcMolecule,
   );
-  const setOptionSets = useSetAtom(refinedOptionSetsAtom);
+  const setOptionSets = useSetAtom(refinedOptionSetFormAtom);
+  const setCurrentOptionPreset = useSetAtom(currentOptionPresetAtom);
 
   return (
     <S.Button
       size="sm"
       onPress={() => {
         setOptionSets(RESET);
+        setCurrentOptionPreset(RESET);
       }}
       className="ml-2 w-20"
       variant="flat"

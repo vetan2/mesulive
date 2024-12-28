@@ -36,6 +36,7 @@ export const CreateOptionPresetModal = ({ molecule, ...props }: Props) => {
   );
 
   const isInvalid = optionPresets.some((preset) => preset.name === name);
+  const isEmpty = name === "";
 
   return (
     <DefaultModal {...props} title="새 프리셋으로 저장">
@@ -47,17 +48,27 @@ export const CreateOptionPresetModal = ({ molecule, ...props }: Props) => {
         isInvalid={isInvalid}
         errorMessage="이미 존재하는 이름입니다."
       />
-      <S.Button
-        onPress={() => {
-          if (!isInvalid) {
+      <div className="flex gap-2">
+        <S.Button
+          onPress={() => {
+            props.onClose?.();
+          }}
+          variant="flat"
+          color="secondary"
+        >
+          취소
+        </S.Button>
+        <S.Button
+          onPress={() => {
             handleClick(name);
             props.onClose?.();
-          }
-        }}
-        color="secondary"
-      >
-        저장
-      </S.Button>
+          }}
+          isDisabled={isInvalid || isEmpty}
+          color="secondary"
+        >
+          저장
+        </S.Button>
+      </div>
     </DefaultModal>
   );
 };

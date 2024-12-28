@@ -13,6 +13,7 @@ import { cx } from "~/shared/style";
 import { DefaultModal, S } from "~/shared/ui";
 
 import { CreateOptionPresetModal } from "./CreateOptionPresetModal";
+import { EditNameModal } from "./EditNameModal";
 import { OptionSetSetting } from "./OptionSetSetting";
 
 interface Props {
@@ -27,6 +28,7 @@ export const OptionSectionContent = ({ className }: Props) => {
     addOptionSetAtom,
     currentOptionPresetAtom,
     editOptionPresetAtom,
+    optionPresetsAtom,
   } = molecule;
   const optionSetsLengthAtom = useMemo(
     () => atom((get) => get(optionSetFormAtom).length),
@@ -86,20 +88,63 @@ export const OptionSectionContent = ({ className }: Props) => {
     ),
   );
 
+  const openEditNameModal = useAtomCallback(
+    useCallback(
+      (get, set) => {
+        const currentOptionPreset = get(currentOptionPresetAtom);
+
+        if (currentOptionPreset?.name) {
+          const optoinPresets = get(optionPresetsAtom);
+          overlay.open(({ isOpen, close, unmount }) => (
+            <EditNameModal
+              isOpen={isOpen}
+              onClose={close}
+              onExit={unmount}
+              originalName={currentOptionPreset.name}
+              optionPresets={optoinPresets}
+              onConfirmAction={(newName) => {
+                set(editOptionPresetAtom, currentOptionPreset.name, {
+                  ...currentOptionPreset,
+                  name: newName,
+                });
+              }}
+            />
+          ));
+        }
+      },
+      [currentOptionPresetAtom, editOptionPresetAtom, optionPresetsAtom],
+    ),
+  );
+
   useRegisterPossibleOptionIdsUpdate();
 
   return (
     <div className={className}>
       {currentOptionPreset && (
-        <S.Chip
-          size="sm"
-          color="secondary"
-          variant="shadow"
-          classNames={{ content: cx("font-semibold") }}
-        >
-          현재 프리셋:
-          <span className="ml-1.5 font-bold">{currentOptionPreset.name}</span>
-        </S.Chip>
+        <div className="flex">
+          <S.Chip
+            size="sm"
+            color="secondary"
+            variant="shadow"
+            classNames={{ content: cx("font-semibold") }}
+          >
+            현재 프리셋:
+            <span className="ml-1.5 font-bold">{currentOptionPreset.name}</span>
+          </S.Chip>
+          <S.Button
+            size="sm"
+            className="ml-1 h-6 w-6 min-w-fit"
+            radius="md"
+            isIconOnly
+            variant="flat"
+            color="secondary"
+            onPress={() => {
+              openEditNameModal();
+            }}
+          >
+            <Pencil className="size-3" />
+          </S.Button>
+        </div>
       )}
       <div className="mt-3 flex flex-col gap-3">
         {Array.from({ length: optionSetsLength }).map((_, i) => (
