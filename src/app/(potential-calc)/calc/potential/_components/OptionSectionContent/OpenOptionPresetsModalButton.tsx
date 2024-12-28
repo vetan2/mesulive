@@ -16,6 +16,9 @@ export const OpenOptionPresetsModalButton = () => {
     <S.Button
       size="sm"
       onPress={() => {
+        gtag("event", "potential_calc", {
+          action: "Open Option Presets Modal",
+        });
         overlay.open(({ isOpen, close, unmount }) => (
           <OptionPresetsModal
             isOpen={isOpen}
