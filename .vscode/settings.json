@@ -1,5 +1,14 @@
 {
-  "cSpell.words": ["ADDI", "clsx", "nextui", "trpc", "meso"],
+  "cSpell.words": [
+    "ADDI",
+    "clsx",
+    "meso",
+    "mesulive",
+    "nextui",
+    "starcatch",
+    "starforce",
+    "trpc"
+  ],
   "eslint.codeActionsOnSave.mode": "problems",
   "git.ignoreLimitWarning": true,
   "prettier.requireConfig": true,
