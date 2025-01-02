@@ -1,7 +1,7 @@
 "use client";
 
 import { createScope, molecule, type MoleculeConstructor } from "bunshi";
-import { pipe } from "fp-ts/lib/function";
+import { flow, pipe } from "fp-ts/lib/function";
 import { atom } from "jotai";
 import { z } from "zod";
 
@@ -28,18 +28,27 @@ const starforceSimulatorMoleculeConstructor = ((_, scope) => {
       set(_levelAtom, {
         input,
         value: pipe(
-          convertToNumber(input),
-          O.toNullable,
-          parseZodWithErrorMessage(
-            z
-              .number({ message: "레벨을 입력해주세요." })
-              .int({ message: "정수를 입력해주세요." })
-              .min(0, {
-                message: "0 이상의 값을 입력해주세요.",
-              })
-              .max(300, {
-                message: "300 이하의 값을 입력해주세요.",
-              }),
+          input,
+          E.fromPredicate(
+            (s) => s !== "",
+            () => "레벨을 입력해주세요.",
+          ),
+          E.chain(
+            flow(
+              convertToNumber,
+              O.toNullable,
+              parseZodWithErrorMessage(
+                z
+                  .number({ message: "레벨을 입력해주세요." })
+                  .int({ message: "정수를 입력해주세요." })
+                  .min(0, {
+                    message: "0 이상의 값을 입력해주세요.",
+                  })
+                  .max(300, {
+                    message: "300 이하의 값을 입력해주세요.",
+                  }),
+              ),
+            ),
           ),
         ),
       });
@@ -70,7 +79,7 @@ const starforceSimulatorMoleculeConstructor = ((_, scope) => {
     input: "",
     value: E.of(0),
   });
-  const currentStarforce = atom(
+  const currentStarforceAtom = atom(
     (get) => get(_currentStarforce),
     (get, set, input: string) => {
       set(_currentStarforce, {
@@ -98,10 +107,26 @@ const starforceSimulatorMoleculeConstructor = ((_, scope) => {
 
   const _targetStarforce = atom<FormPayload<number>>({
     input: "",
-    value: E.of(0),
+    value: E.left("목표 스타포스를 입력해주세요."),
   });
-  const targetStarforce = atom(
-    (get) => get(_currentStarforce),
+  const _filteredTargetStarforce = atom((get) => {
+    const currentStarforce = pipe(
+      get(_currentStarforce).value,
+      E.getOrElse(() => 0),
+    );
+    return pipe(get(_targetStarforce), (o) => ({
+      ...o,
+      value: pipe(
+        o.value,
+        E.filterOrElse(
+          (n) => n > currentStarforce,
+          () => "현재 스타포스보다 높은 값을 입력해주세요.",
+        ),
+      ),
+    }));
+  });
+  const targetStarforceAtom = atom(
+    (get) => get(_filteredTargetStarforce),
     (get, set, input: string) => {
       const currentStarforce = pipe(
         get(_currentStarforce).value,
@@ -111,23 +136,32 @@ const starforceSimulatorMoleculeConstructor = ((_, scope) => {
       set(_targetStarforce, {
         input,
         value: pipe(
-          convertToNumber(input || 0),
-          O.toNullable,
-          parseZodWithErrorMessage(
-            z
-              .number({ message: "올바른 값을 입력해주세요." })
-              .int({
-                message: "정수를 입력해주세요.",
-              })
-              .min(0, {
-                message: "0 이상의 값을 입력해주세요.",
-              })
-              .min(currentStarforce + 1, {
-                message: "현재 스타포스보다 높은 값을 입력해주세요.",
-              })
-              .max(25, {
-                message: "25 이하의 값을 입력해주세요.",
-              }),
+          input,
+          E.fromPredicate(
+            (s) => s !== "",
+            () => "목표 스타포스를 입력해주세요.",
+          ),
+          E.chain(
+            flow(
+              convertToNumber,
+              O.toNullable,
+              parseZodWithErrorMessage(
+                z
+                  .number({ message: "올바른 값을 입력해주세요." })
+                  .int({
+                    message: "정수를 입력해주세요.",
+                  })
+                  .min(0, {
+                    message: "0 이상의 값을 입력해주세요.",
+                  })
+                  .min(currentStarforce + 1, {
+                    message: "현재 스타포스보다 높은 값을 입력해주세요.",
+                  })
+                  .max(25, {
+                    message: "25 이하의 값을 입력해주세요.",
+                  }),
+              ),
+            ),
           ),
         ),
       });
@@ -145,20 +179,29 @@ const starforceSimulatorMoleculeConstructor = ((_, scope) => {
       set(_simulationCountAtom, {
         input,
         value: pipe(
-          convertToNumber(input),
-          O.toNullable,
-          parseZodWithErrorMessage(
-            z
-              .number({ message: "올바른 값을 입력해주세요." })
-              .int({
-                message: "정수를 입력해주세요.",
-              })
-              .min(1, {
-                message: "1 이상의 값을 입력해주세요.",
-              })
-              .max(1000000, {
-                message: "100만 이하의 값을 입력해주세요.",
-              }),
+          input,
+          E.fromPredicate(
+            (s) => s !== "",
+            () => "시뮬레이션 횟수를 입력해주세요.",
+          ),
+          E.chain(
+            flow(
+              convertToNumber,
+              O.toNullable,
+              parseZodWithErrorMessage(
+                z
+                  .number({ message: "올바른 값을 입력해주세요." })
+                  .int({
+                    message: "정수를 입력해주세요.",
+                  })
+                  .min(1, {
+                    message: "1 이상의 값을 입력해주세요.",
+                  })
+                  .max(1000000, {
+                    message: "100만 이하의 값을 입력해주세요.",
+                  }),
+              ),
+            ),
           ),
         ),
       });
@@ -184,8 +227,8 @@ const starforceSimulatorMoleculeConstructor = ((_, scope) => {
   return {
     levelAtom,
     spareCostAtom,
-    currentStarforce,
-    targetStarforce,
+    currentStarforceAtom,
+    targetStarforceAtom,
     simulationCountAtom,
     safeGuardRecordAtom,
     starcatchRecordAtom,
