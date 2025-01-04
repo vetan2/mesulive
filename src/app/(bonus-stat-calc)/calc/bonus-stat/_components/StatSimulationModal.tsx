@@ -1,11 +1,12 @@
 "use client";
 
+import { ModalBody, ModalContent } from "@nextui-org/react";
 import { useAtom } from "jotai";
 import { useEffect } from "react";
 
 import { bonusStatCalcAtoms } from "~/app/(bonus-stat-calc)/calc/bonus-stat/_lib";
 import { BreakPoint, useBreakPoint } from "~/shared/style/breakPoint";
-import { S } from "~/shared/ui";
+import { Modal, ModalHeader } from "~/shared/ui";
 
 import { StatSimulationContent } from "./StatSimulationContent";
 
@@ -23,18 +24,18 @@ export const StatSimulationModal = () => {
   }, [breakPoint, setIsOpen]);
 
   return (
-    <S.Modal
+    <Modal
       isOpen={isOpen}
       onClose={() => {
         setIsOpen(false);
       }}
     >
-      <S.ModalContent>
-        <S.ModalHeader>스탯 환산치 계산</S.ModalHeader>
-        <S.ModalBody className="pb-6">
+      <ModalContent>
+        <ModalHeader>스탯 환산치 계산</ModalHeader>
+        <ModalBody className="pb-6">
           <StatSimulationContent />
-        </S.ModalBody>
-      </S.ModalContent>
-    </S.Modal>
+        </ModalBody>
+      </ModalContent>
+    </Modal>
   );
 };

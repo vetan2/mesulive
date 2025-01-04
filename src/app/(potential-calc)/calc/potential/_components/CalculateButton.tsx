@@ -1,5 +1,6 @@
 "use client";
 
+import { Tooltip } from "@nextui-org/react";
 import { useQueryClient } from "@tanstack/react-query";
 import { useMolecule } from "bunshi/react";
 import { flow, identity, pipe } from "fp-ts/lib/function";
@@ -22,7 +23,7 @@ import { trpc } from "~/features/trpc/client";
 import { A, E, O, T, TO } from "~/shared/fp";
 import { type AtomValue } from "~/shared/jotai";
 import { cx } from "~/shared/style";
-import { S } from "~/shared/ui";
+import { Button } from "~/shared/ui";
 
 import { ResultModal } from "./ResultModal";
 
@@ -363,14 +364,14 @@ export const CalculateButton = ({ className }: Props) => {
   }, []);
 
   return (
-    <S.Tooltip
+    <Tooltip
       content={pipe(
         inputStatus,
         E.match(identity, () => undefined),
       )}
       isDisabled={E.isRight(inputStatus)}
     >
-      <S.Button
+      <Button
         size="lg"
         color={isDisabled ? "default" : "primary"}
         className={cx("flex justify-center font-bold", className)}
@@ -381,7 +382,7 @@ export const CalculateButton = ({ className }: Props) => {
         }}
       >
         계산하기
-      </S.Button>
-    </S.Tooltip>
+      </Button>
+    </Tooltip>
   );
 };

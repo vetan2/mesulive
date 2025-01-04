@@ -1,6 +1,7 @@
 "use client";
 
 import {
+  // eslint-disable-next-line no-restricted-imports
   Checkbox as CheckboxOrig,
   type CheckboxProps,
 } from "@nextui-org/react";

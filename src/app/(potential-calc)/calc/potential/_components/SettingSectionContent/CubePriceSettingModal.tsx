@@ -1,3 +1,4 @@
+import { Input, ModalBody, ModalContent, SelectItem } from "@nextui-org/react";
 import { useMolecule } from "bunshi/react";
 import { identity, pipe } from "fp-ts/lib/function";
 import { useAtom, useAtomValue, useSetAtom } from "jotai";
@@ -10,10 +11,10 @@ import { Potential } from "~/entities/potential";
 import { E } from "~/shared/fp";
 import { entries } from "~/shared/object";
 import { cx } from "~/shared/style";
-import { S } from "~/shared/ui";
+import { Modal, ModalHeader, Select } from "~/shared/ui";
 
 type Props = Omit<
-  ComponentProps<typeof S.Modal>,
+  ComponentProps<typeof Modal>,
   "children" | "isOpen" | "onClose" | "onExit"
 >;
 
@@ -25,16 +26,16 @@ export const CubePriceSettingModal = ({ ...props }: Props) => {
   const [isOpen, setIsOpen] = useAtom(cubePriceSettingModalOpen);
 
   return (
-    <S.Modal
+    <Modal
       {...props}
       isOpen={isOpen}
       onClose={() => {
         setIsOpen(false);
       }}
     >
-      <S.ModalContent>
-        <S.ModalHeader>큐브 가격 설정</S.ModalHeader>
-        <S.ModalBody className="flex flex-col gap-4 pb-6">
+      <ModalContent>
+        <ModalHeader>큐브 가격 설정</ModalHeader>
+        <ModalBody className="flex flex-col gap-4 pb-6">
           {entries(cubePrices).map(([cube, { price, unit }]) => (
             <div key={cube}>
               <p
@@ -52,7 +53,7 @@ export const CubePriceSettingModal = ({ ...props }: Props) => {
                 {Potential.resetMethodLabels[cube]}
               </p>
               <div className="mt-2 flex items-start gap-2">
-                <S.Input
+                <Input
                   size="sm"
                   className="flex-[2]"
                   value={price.input}
@@ -67,7 +68,7 @@ export const CubePriceSettingModal = ({ ...props }: Props) => {
                   )}
                   aria-label={Potential.resetMethodLabels[cube]}
                 />
-                <S.Select
+                <Select
                   size="sm"
                   className="flex-1"
                   selectedKeys={[unit]}
@@ -77,16 +78,16 @@ export const CubePriceSettingModal = ({ ...props }: Props) => {
                   aria-label={Potential.resetMethodLabels[cube]}
                 >
                   {currencyUnits.map((unit) => (
-                    <S.SelectItem key={unit} value={unit}>
+                    <SelectItem key={unit} value={unit}>
                       {currencyUnitLabels[unit]}
-                    </S.SelectItem>
+                    </SelectItem>
                   ))}
-                </S.Select>
+                </Select>
               </div>
             </div>
           ))}
-        </S.ModalBody>
-      </S.ModalContent>
-    </S.Modal>
+        </ModalBody>
+      </ModalContent>
+    </Modal>
   );
 };

@@ -1,5 +1,6 @@
 "use client";
 
+import { ModalBody, ModalContent } from "@nextui-org/react";
 import { pipe } from "fp-ts/lib/function";
 import { useAtomValue, useSetAtom } from "jotai";
 import { Pencil, X } from "lucide-react";
@@ -10,11 +11,11 @@ import { type PotentialCalcMoleculeStructure } from "~/app/(potential-calc)/calc
 import { Potential } from "~/entities/potential";
 import { formatStat } from "~/entities/stat";
 import { entries } from "~/shared/object";
-import { DefaultModal, S } from "~/shared/ui";
+import { Button, DefaultModal, Modal, ModalHeader } from "~/shared/ui";
 
 import { EditNameModal } from "./EditNameModal";
 
-interface Props extends Omit<ComponentProps<typeof S.Modal>, "children"> {
+interface Props extends Omit<ComponentProps<typeof Modal>, "children"> {
   molecule: PotentialCalcMoleculeStructure;
 }
 
@@ -25,10 +26,10 @@ export const OptionPresetsModal = ({ molecule, ...props }: Props) => {
   const removeOptionPreset = useSetAtom(molecule.removeOptionPresetAtom);
 
   return (
-    <S.Modal size="xl" className="max-h-[80%] min-h-[40%]" {...props}>
-      <S.ModalContent className="flex flex-col">
-        <S.ModalHeader>옵션 프리셋</S.ModalHeader>
-        <S.ModalBody className="gap-2 overflow-auto pb-6">
+    <Modal size="xl" className="max-h-[80%] min-h-[40%]" {...props}>
+      <ModalContent className="flex flex-col">
+        <ModalHeader>옵션 프리셋</ModalHeader>
+        <ModalBody className="gap-2 overflow-auto pb-6">
           {optionPresets.length > 0 ? (
             optionPresets.map((preset) => (
               <div
@@ -60,7 +61,7 @@ export const OptionPresetsModal = ({ molecule, ...props }: Props) => {
                   </p>
                 </div>
                 <div className="md:flex">
-                  <S.Button
+                  <Button
                     className="w-full"
                     color="secondary"
                     variant="solid"
@@ -70,9 +71,9 @@ export const OptionPresetsModal = ({ molecule, ...props }: Props) => {
                     }}
                   >
                     적용하기
-                  </S.Button>
+                  </Button>
                   <div className="mt-2 md:ml-2 md:mt-0 md:flex">
-                    <S.Button
+                    <Button
                       className=""
                       radius="md"
                       size="md"
@@ -98,8 +99,8 @@ export const OptionPresetsModal = ({ molecule, ...props }: Props) => {
                       }}
                     >
                       <Pencil className="size-5" />
-                    </S.Button>
-                    <S.Button
+                    </Button>
+                    <Button
                       className="ml-2"
                       radius="md"
                       size="md"
@@ -119,7 +120,7 @@ export const OptionPresetsModal = ({ molecule, ...props }: Props) => {
                               <b>{preset.name}</b>
                             </div>
                             <div className="flex gap-2">
-                              <S.Button
+                              <Button
                                 onPress={() => {
                                   close();
                                 }}
@@ -129,8 +130,8 @@ export const OptionPresetsModal = ({ molecule, ...props }: Props) => {
                                 className="mt-2"
                               >
                                 취소
-                              </S.Button>
-                              <S.Button
+                              </Button>
+                              <Button
                                 onPress={() => {
                                   removeOptionPreset(preset.name);
                                   close();
@@ -140,14 +141,14 @@ export const OptionPresetsModal = ({ molecule, ...props }: Props) => {
                                 className="mt-2"
                               >
                                 삭제
-                              </S.Button>
+                              </Button>
                             </div>
                           </DefaultModal>
                         ));
                       }}
                     >
                       <X className="size-5" />
-                    </S.Button>
+                    </Button>
                   </div>
                 </div>
               </div>
@@ -159,8 +160,8 @@ export const OptionPresetsModal = ({ molecule, ...props }: Props) => {
               자주 사용하는 옵션 세트를 프리셋으로 저장해보세요!
             </div>
           )}
-        </S.ModalBody>
-      </S.ModalContent>
-    </S.Modal>
+        </ModalBody>
+      </ModalContent>
+    </Modal>
   );
 };

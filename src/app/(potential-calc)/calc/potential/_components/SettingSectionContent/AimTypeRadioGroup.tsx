@@ -6,7 +6,7 @@ import { useAtom } from "jotai";
 import { PotentialCalcMolecule } from "~/app/(potential-calc)/calc/potential/_lib/molecules";
 import { Potential } from "~/entities/potential";
 import { cx } from "~/shared/style";
-import { S } from "~/shared/ui";
+import { Radio, RadioGroup } from "~/shared/ui";
 
 interface Props {
   className?: string;
@@ -17,7 +17,7 @@ export const AimTypeRadioGroup = ({ className }: Props) => {
   const [aimType, setAimType] = useAtom(aimTypeAtom);
 
   return (
-    <S.RadioGroup
+    <RadioGroup
       label="목표 타입"
       className={cx(className)}
       size="sm"
@@ -27,10 +27,10 @@ export const AimTypeRadioGroup = ({ className }: Props) => {
       value={aimType}
     >
       {Potential.aimTypes.map((aimType) => (
-        <S.Radio key={aimType} value={aimType}>
+        <Radio key={aimType} value={aimType}>
           {Potential.aimTypeLabels[aimType]}
-        </S.Radio>
+        </Radio>
       ))}
-    </S.RadioGroup>
+    </RadioGroup>
   );
 };

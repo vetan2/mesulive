@@ -1,10 +1,11 @@
 "use client";
 
+import { Input } from "@nextui-org/react";
 import { useState } from "react";
 
 import type { PotentialCalcMoleculeStructure } from "~/app/(potential-calc)/calc/potential/_lib/molecules";
 import type { AtomValue } from "~/shared/jotai";
-import { DefaultModal, S } from "~/shared/ui";
+import { Button, DefaultModal } from "~/shared/ui";
 import type { ModalProps } from "~/shared/ui/Modal";
 
 export const EditNameModal = ({
@@ -23,7 +24,7 @@ export const EditNameModal = ({
 
   return (
     <DefaultModal {...modalProps} title="프리셋 이름 편집">
-      <S.Input
+      <Input
         value={newName}
         onChange={(e) => setNewName(e.target.value)}
         label="프리셋 이름"
@@ -33,7 +34,7 @@ export const EditNameModal = ({
         className="w-full"
       />
       <div className="flex gap-2">
-        <S.Button
+        <Button
           onPress={() => {
             modalProps.onClose?.();
           }}
@@ -42,8 +43,8 @@ export const EditNameModal = ({
           variant="flat"
         >
           취소
-        </S.Button>
-        <S.Button
+        </Button>
+        <Button
           onPress={() => {
             onConfirmAction(newName);
             modalProps.onClose?.();
@@ -53,7 +54,7 @@ export const EditNameModal = ({
           isDisabled={isInvalid || isEmpty}
         >
           저장
-        </S.Button>
+        </Button>
       </div>
     </DefaultModal>
   );

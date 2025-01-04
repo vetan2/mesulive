@@ -8,7 +8,7 @@ import { match } from "ts-pattern";
 import { PotentialCalcMolecule } from "~/app/(potential-calc)/calc/potential/_lib/molecules";
 import { Potential } from "~/entities/potential";
 import { cx } from "~/shared/style";
-import { S } from "~/shared/ui";
+import { Checkbox, CheckboxGroup } from "~/shared/ui";
 
 interface Props {
   className?: string;
@@ -36,11 +36,11 @@ export const ResetMethodCheckboxGroup = ({ className }: Props) => {
 
   return (
     <>
-      <S.CheckboxGroup
+      <CheckboxGroup
         label={
           <div className="md:md-0 mb-1">
             재설정 수단(복수 선택 가능)
-            {/* <S.Button
+            {/* <Button
               size="sm"
               color="primary"
               className="block h-6 md:ml-2 md:inline"
@@ -50,7 +50,7 @@ export const ResetMethodCheckboxGroup = ({ className }: Props) => {
               }}
             >
               큐브 가격 설정
-            </S.Button> */}
+            </Button> */}
           </div>
         }
         className={cx(className)}
@@ -61,7 +61,7 @@ export const ResetMethodCheckboxGroup = ({ className }: Props) => {
         value={resetMethods}
       >
         {Potential.resetMethods.map((method) => (
-          <S.Checkbox
+          <Checkbox
             key={method}
             value={method}
             onValueChange={(selected) => {
@@ -131,10 +131,10 @@ export const ResetMethodCheckboxGroup = ({ className }: Props) => {
               />
               <p>{Potential.resetMethodLabels[method]}</p>
             </div>
-          </S.Checkbox>
+          </Checkbox>
         ))}
         {/* <CubePriceSettingModal /> */}
-      </S.CheckboxGroup>
+      </CheckboxGroup>
     </>
   );
 };

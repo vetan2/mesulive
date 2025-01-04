@@ -1,12 +1,12 @@
 "use client";
 
+import { Input } from "@nextui-org/react";
 import { pipe } from "fp-ts/lib/function";
 import { useAtom, useAtomValue } from "jotai";
 
 import { bonusStatCalcAtoms } from "~/app/(bonus-stat-calc)/calc/bonus-stat/_lib";
 import { E, O } from "~/shared/fp";
 import { convertToNumber } from "~/shared/number";
-import { S } from "~/shared/ui";
 import { getFirstZodErrorMessage } from "~/shared/zod";
 
 export const EquipLevelInput = () => {
@@ -22,7 +22,7 @@ export const EquipLevelInput = () => {
   const isTouched = equipLevel != null;
 
   return (
-    <S.Input
+    <Input
       label="장비 레벨"
       type="number"
       onValueChange={(v) => {

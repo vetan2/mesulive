@@ -1,10 +1,9 @@
-import { Image } from "@nextui-org/react";
+import { Image, Link } from "@nextui-org/react";
 import NextImage from "next/image";
 import { z } from "zod";
 
 import { Reboot } from "~/shared/assets/images";
 import { cx } from "~/shared/style";
-import { S } from "~/shared/ui";
 
 const idResponseSchema = z.object({
   ocid: z.string(),
@@ -49,7 +48,7 @@ export const DeveloperProfile = async () => {
     .then(({ character_image }) => character_image);
 
   return (
-    <S.Link
+    <Link
       href="https://maple.gg/u/%EC%BF%A0%EB%9D%BC%ED%85%8C"
       target="_blank"
       rel="noreferrer"
@@ -65,6 +64,6 @@ export const DeveloperProfile = async () => {
         <p>제작자: 쿠라테</p>
         <NextImage src={Reboot} alt="리부트" className="ml-1 mt-0.5" />
       </div>
-    </S.Link>
+    </Link>
   );
 };

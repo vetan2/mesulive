@@ -6,7 +6,7 @@ import { RESET } from "jotai/utils";
 import { RefreshCcw } from "lucide-react";
 
 import { PotentialCalcMolecule } from "~/app/(potential-calc)/calc/potential/_lib/molecules";
-import { S } from "~/shared/ui";
+import { Button } from "~/shared/ui";
 
 export const RefreshButton = () => {
   const { refinedOptionSetFormAtom, currentOptionPresetAtom } = useMolecule(
@@ -16,7 +16,7 @@ export const RefreshButton = () => {
   const setCurrentOptionPreset = useSetAtom(currentOptionPresetAtom);
 
   return (
-    <S.Button
+    <Button
       size="sm"
       onPress={() => {
         setOptionSets(RESET);
@@ -27,6 +27,6 @@ export const RefreshButton = () => {
       color="primary"
     >
       <RefreshCcw className="size-4" /> 초기화
-    </S.Button>
+    </Button>
   );
 };

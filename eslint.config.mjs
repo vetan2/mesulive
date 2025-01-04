@@ -78,6 +78,27 @@ export default [
       ],
 
       "no-console": 1,
+      "no-restricted-imports": [
+        "error",
+        {
+          paths: [
+            {
+              name: "@nextui-org/react",
+              importNames: [
+                "Button",
+                "Checkbox",
+                "CheckboxGroup",
+                "Modal",
+                "ModalHeader",
+                "Radio",
+                "RadioGroup",
+                "Select",
+              ],
+              message: 'Use the custom Button component from "~/shared/ui".',
+            },
+          ],
+        },
+      ],
     },
   },
   {

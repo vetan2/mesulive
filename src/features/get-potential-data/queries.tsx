@@ -1,5 +1,6 @@
 "use client";
 
+import { ModalBody, ModalContent, ModalFooter } from "@nextui-org/react";
 import { sequenceS } from "fp-ts/lib/Apply";
 import { flow, pipe } from "fp-ts/lib/function";
 import { fromCompare } from "fp-ts/lib/Ord";
@@ -24,7 +25,7 @@ import {
 } from "~/shared/function";
 import { entries } from "~/shared/object";
 import { getQueryClient } from "~/shared/queryClient";
-import { S } from "~/shared/ui";
+import { Modal, ModalHeader } from "~/shared/ui";
 
 export const useOptionTable = createQuery({
   queryKey: ["potential", "optionTable"],
@@ -70,20 +71,20 @@ export const useOptionTable = createQuery({
       useEffect(() => {
         if (result.isError) {
           overlay.open(({ close, isOpen, unmount }) => (
-            <S.Modal onClose={close} isOpen={isOpen} onExit={unmount}>
-              <S.ModalContent>
-                <S.ModalHeader className="text-red-500">
+            <Modal onClose={close} isOpen={isOpen} onExit={unmount}>
+              <ModalContent>
+                <ModalHeader className="text-red-500">
                   <ServerCrash />
                   <p className="ml-2">서버 오류</p>
-                </S.ModalHeader>
-                <S.ModalBody className="text-center">
+                </ModalHeader>
+                <ModalBody className="text-center">
                   잠재능력 데이터를 불러오는데 실패했습니다.
                   <br />
                   같은 문제가 계속 발생한다면 페이지를 새로고침해주세요.
-                </S.ModalBody>
-                <S.ModalFooter />
-              </S.ModalContent>
-            </S.Modal>
+                </ModalBody>
+                <ModalFooter />
+              </ModalContent>
+            </Modal>
           ));
         }
       }, [result.isError]);
@@ -109,20 +110,20 @@ export const useGradeUpRecord = createQuery({
       useEffect(() => {
         if (result.isError) {
           overlay.open(({ close, isOpen, unmount }) => (
-            <S.Modal onClose={close} isOpen={isOpen} onExit={unmount}>
-              <S.ModalContent>
-                <S.ModalHeader className="text-red-500">
+            <Modal onClose={close} isOpen={isOpen} onExit={unmount}>
+              <ModalContent>
+                <ModalHeader className="text-red-500">
                   <ServerCrash />
                   <p className="ml-2">서버 오류</p>
-                </S.ModalHeader>
-                <S.ModalBody className="text-center">
+                </ModalHeader>
+                <ModalBody className="text-center">
                   잠재능력 데이터를 불러오는데 실패했습니다.
                   <br />
                   같은 문제가 계속 발생한다면 페이지를 새로고침해주세요.
-                </S.ModalBody>
-                <S.ModalFooter />
-              </S.ModalContent>
-            </S.Modal>
+                </ModalBody>
+                <ModalFooter />
+              </ModalContent>
+            </Modal>
           ));
         }
       }, [result.isError]);

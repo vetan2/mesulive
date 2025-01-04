@@ -3,7 +3,7 @@ import { type ReactNode } from "react";
 
 import { cx } from "~/shared/style";
 import { type SVGComponent } from "~/shared/types";
-import { S } from "~/shared/ui";
+import { Button } from "~/shared/ui";
 
 interface Props {
   href: string;
@@ -25,7 +25,7 @@ export const MainLinkButton = ({
   classNames,
 }: Props) => {
   return (
-    <S.Button
+    <Button
       size="lg"
       className={cx(
         "h-32 w-full flex-col gap-0 rounded-[32px] px-4 py-2.5 text-white",
@@ -44,6 +44,6 @@ export const MainLinkButton = ({
       />
       <p className="text-2xl font-bold">{title}</p>
       {subtitle && <p>{subtitle}</p>}
-    </S.Button>
+    </Button>
   );
 };

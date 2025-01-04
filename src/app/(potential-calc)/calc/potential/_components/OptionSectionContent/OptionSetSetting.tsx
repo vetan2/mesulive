@@ -1,3 +1,4 @@
+import { Card, Input, SelectItem } from "@nextui-org/react";
 import { useMolecule } from "bunshi/react";
 import { identity, pipe } from "fp-ts/lib/function";
 import { atom, useAtomValue, useSetAtom } from "jotai";
@@ -10,7 +11,7 @@ import { Potential } from "~/entities/potential";
 import { type EffectiveStat, effectiveStatLabels } from "~/entities/stat";
 import { E, O } from "~/shared/fp";
 import { cx } from "~/shared/style";
-import { S } from "~/shared/ui";
+import { Button, Select } from "~/shared/ui";
 
 interface Props {
   index: number;
@@ -57,10 +58,10 @@ export const OptionSetSetting = ({ index }: Props) => {
   const unableOptions = unableStats.map(convertStatToOption);
 
   return (
-    <S.Card shadow="sm" className="flex flex-col gap-3 overflow-visible p-3">
+    <Card shadow="sm" className="flex flex-col gap-3 overflow-visible p-3">
       {optionSet.map((record, recordIndex) => (
         <div key={recordIndex} className="flex items-start gap-3">
-          <S.Select
+          <Select
             isLoading={isPendingForPossibleOptionIds}
             isDisabled={isPendingForPossibleOptionIds}
             disabledKeys={unableStats}
@@ -93,22 +94,22 @@ export const OptionSetSetting = ({ index }: Props) => {
           >
             <>
               {enableOptions.map(([stat, name]) => (
-                <S.SelectItem
+                <SelectItem
                   key={stat}
                   value={stat}
                   className={cx(stat === "NONE" && "text-default-400")}
                 >
                   {name}
-                </S.SelectItem>
+                </SelectItem>
               ))}
               {unableOptions.map(([stat, name]) => (
-                <S.SelectItem key={stat} value={stat} className="hidden">
+                <SelectItem key={stat} value={stat} className="hidden">
                   {name}
-                </S.SelectItem>
+                </SelectItem>
               ))}
             </>
-          </S.Select>
-          <S.Input
+          </Select>
+          <Input
             type="number"
             size="sm"
             className="flex-1"
@@ -163,7 +164,7 @@ export const OptionSetSetting = ({ index }: Props) => {
           />
         </div>
       ))}
-      <S.Button
+      <Button
         className="absolute right-[-8px] top-[-8px] z-10 !size-6 min-w-0 bg-danger-100 p-1"
         radius="full"
         size="sm"
@@ -175,7 +176,7 @@ export const OptionSetSetting = ({ index }: Props) => {
         }}
       >
         <X />
-      </S.Button>
-    </S.Card>
+      </Button>
+    </Card>
   );
 };

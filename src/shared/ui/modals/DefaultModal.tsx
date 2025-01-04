@@ -2,12 +2,11 @@ import { ModalBody, ModalContent } from "@nextui-org/react";
 import { type ComponentProps, type ReactNode } from "react";
 
 import { cx } from "~/shared/style";
-import { type S } from "~/shared/ui";
 import { Modal } from "~/shared/ui/Modal";
 import { ModalHeader } from "~/shared/ui/ModalHeader";
 
 interface Props
-  extends Omit<ComponentProps<typeof S.Modal>, "children" | "title"> {
+  extends Omit<ComponentProps<typeof Modal>, "children" | "title"> {
   title?: ReactNode;
   children: ReactNode;
   modalHeaderProps?: ComponentProps<typeof ModalHeader>;

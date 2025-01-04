@@ -4,13 +4,13 @@ import { useSetAtom } from "jotai";
 import { MenuIcon } from "lucide-react";
 
 import { sidebarAtoms } from "~/app/_components/Sidebar/atoms";
-import { S } from "~/shared/ui";
+import { Button } from "~/shared/ui";
 
 export const MenuButton = () => {
   const setIsSidebarOpen = useSetAtom(sidebarAtoms.isOpen);
 
   return (
-    <S.Button
+    <Button
       isIconOnly
       size="sm"
       variant="light"
@@ -21,6 +21,6 @@ export const MenuButton = () => {
       className="xl:hidden"
     >
       <MenuIcon className="size-5 md:size-6" />
-    </S.Button>
+    </Button>
   );
 };

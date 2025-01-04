@@ -1,13 +1,12 @@
 "use client";
 
-import { type InputProps } from "@nextui-org/react";
+import { Input, type InputProps } from "@nextui-org/react";
 import { pipe } from "fp-ts/lib/function";
 import { useAtom, useAtomValue } from "jotai";
 
 import { bonusStatCalcAtoms } from "~/app/(bonus-stat-calc)/calc/bonus-stat/_lib";
 import { E, O } from "~/shared/fp";
 import { convertToNumber } from "~/shared/number";
-import { S } from "~/shared/ui";
 import { getFirstZodErrorMessage } from "~/shared/zod";
 
 type Props = Pick<InputProps, "classNames">;
@@ -26,7 +25,7 @@ export const AimStatInput = ({ classNames }: Props) => {
   const isTouched = aimStat != null;
 
   return (
-    <S.Input
+    <Input
       classNames={classNames}
       label="목표 추가옵션 값"
       type="number"

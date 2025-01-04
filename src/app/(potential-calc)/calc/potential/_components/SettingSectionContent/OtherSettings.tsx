@@ -4,7 +4,7 @@ import { useMolecule } from "bunshi/react";
 import { useAtom, useAtomValue } from "jotai";
 
 import { PotentialCalcMolecule } from "~/app/(potential-calc)/calc/potential/_lib/molecules";
-import { S } from "~/shared/ui";
+import { Checkbox } from "~/shared/ui";
 
 export const OtherSettings = () => {
   const { isMiracleTimeAtom, aimTypeAtom } = useMolecule(PotentialCalcMolecule);
@@ -14,7 +14,7 @@ export const OtherSettings = () => {
   return (
     <div>
       <p className="font-bold text-default-800">기타 설정</p>
-      <S.Checkbox
+      <Checkbox
         size="sm"
         isDisabled={aimType !== "GRADE_UP"}
         isSelected={isMiracleTime}
@@ -23,7 +23,7 @@ export const OtherSettings = () => {
         }}
       >
         미라클 타임
-      </S.Checkbox>
+      </Checkbox>
     </div>
   );
 };

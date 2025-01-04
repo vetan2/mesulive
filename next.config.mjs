@@ -36,7 +36,7 @@ const nextConfig = {
 
   experimental: {
     swcPlugins: [["@swc-jotai/debug-label", {}]],
-    optimizePackageImports: ["@nextui-org/react"],
+    optimizePackageImports: ["@nextui-org/react", "zod"],
   },
 };
 

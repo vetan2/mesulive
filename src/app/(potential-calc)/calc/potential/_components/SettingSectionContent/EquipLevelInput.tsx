@@ -1,5 +1,6 @@
 "use client";
 
+import { Input } from "@nextui-org/react";
 import { useMolecule } from "bunshi/react";
 import { identity, pipe } from "fp-ts/lib/function";
 import { useAtom } from "jotai";
@@ -7,7 +8,6 @@ import { useState } from "react";
 
 import { PotentialCalcMolecule } from "~/app/(potential-calc)/calc/potential/_lib/molecules";
 import { E } from "~/shared/fp";
-import { S } from "~/shared/ui";
 
 export const EquipLevelInput = () => {
   const [touched, setTouched] = useState(false);
@@ -20,7 +20,7 @@ export const EquipLevelInput = () => {
   );
 
   return (
-    <S.Input
+    <Input
       label="장비 레벨"
       type="number"
       onValueChange={(value) => {

@@ -1,6 +1,7 @@
 "use client";
 
 import {
+  // eslint-disable-next-line no-restricted-imports
   Modal as ModalOrig,
   type ModalProps as ModalPropsOrig,
 } from "@nextui-org/react";

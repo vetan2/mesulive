@@ -1,16 +1,17 @@
 "use client";
 
+import { ModalBody, ModalContent } from "@nextui-org/react";
 import { useAtomValue } from "jotai";
 import { type ComponentProps } from "react";
 
 import { type PotentialCalcMoleculeStructure } from "~/app/(potential-calc)/calc/potential/_lib/molecules";
 import { Potential } from "~/entities/potential";
-import { S } from "~/shared/ui";
+import { Modal, ModalHeader } from "~/shared/ui";
 
 import { OptionResultSection } from "./OptionResultSection";
 import { ResultSection } from "./ResultSection";
 
-interface Props extends Omit<ComponentProps<typeof S.Modal>, "children"> {
+interface Props extends Omit<ComponentProps<typeof Modal>, "children"> {
   resultAtom: PotentialCalcMoleculeStructure["resultAtom"];
   grade: Potential.Grade;
   level: number;
@@ -31,14 +32,14 @@ export const ResultModal = ({
   );
 
   return (
-    <S.Modal
+    <Modal
       size={aimType === "OPTIONS" ? "4xl" : "2xl"}
       className="h-4/5"
       {...props}
     >
-      <S.ModalContent className="flex flex-col">
-        <S.ModalHeader>결과</S.ModalHeader>
-        <S.ModalBody className="flex h-0 flex-1 flex-row gap-4 pb-6 *:flex-1">
+      <ModalContent className="flex flex-col">
+        <ModalHeader>결과</ModalHeader>
+        <ModalBody className="flex h-0 flex-1 flex-row gap-4 pb-6 *:flex-1">
           <div className="flex h-full flex-col gap-6 overflow-y-auto">
             {results.map((result) => (
               <ResultSection
@@ -61,8 +62,8 @@ export const ResultModal = ({
               ))}
             </div>
           )}
-        </S.ModalBody>
-      </S.ModalContent>
-    </S.Modal>
+        </ModalBody>
+      </ModalContent>
+    </Modal>
   );
 };

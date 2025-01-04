@@ -1,3 +1,4 @@
+import { Input } from "@nextui-org/react";
 import { pipe } from "fp-ts/lib/function";
 import { useAtomValue } from "jotai";
 import { useAtomCallback } from "jotai/utils";
@@ -5,7 +6,7 @@ import { useCallback, useState } from "react";
 
 import { type PotentialCalcMoleculeStructure } from "~/app/(potential-calc)/calc/potential/_lib/molecules";
 import { Potential } from "~/entities/potential";
-import { DefaultModal, S } from "~/shared/ui";
+import { Button, DefaultModal } from "~/shared/ui";
 import { type ModalProps } from "~/shared/ui/Modal";
 
 interface Props extends Pick<ModalProps, "isOpen" | "onClose" | "onExit"> {
@@ -46,7 +47,7 @@ export const CreateOptionPresetModal = ({ molecule, ...props }: Props) => {
 
   return (
     <DefaultModal {...props} title="새 프리셋으로 저장">
-      <S.Input
+      <Input
         label="프리셋 이름"
         placeholder="프리셋 이름을 입력해주세요."
         value={name}
@@ -55,7 +56,7 @@ export const CreateOptionPresetModal = ({ molecule, ...props }: Props) => {
         errorMessage="이미 존재하는 이름입니다."
       />
       <div className="flex gap-2">
-        <S.Button
+        <Button
           onPress={() => {
             props.onClose?.();
           }}
@@ -63,8 +64,8 @@ export const CreateOptionPresetModal = ({ molecule, ...props }: Props) => {
           color="secondary"
         >
           취소
-        </S.Button>
-        <S.Button
+        </Button>
+        <Button
           onPress={() => {
             handleClick(name);
             props.onClose?.();
@@ -73,7 +74,7 @@ export const CreateOptionPresetModal = ({ molecule, ...props }: Props) => {
           color="secondary"
         >
           저장
-        </S.Button>
+        </Button>
       </div>
     </DefaultModal>
   );

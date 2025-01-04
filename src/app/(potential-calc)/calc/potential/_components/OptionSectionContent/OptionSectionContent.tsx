@@ -1,5 +1,6 @@
 "use client";
 
+import { Chip } from "@nextui-org/react";
 import { useMolecule } from "bunshi/react";
 import { pipe } from "fp-ts/lib/function";
 import { atom, useAtomValue, useSetAtom } from "jotai";
@@ -12,7 +13,7 @@ import { useRegisterPossibleOptionIdsUpdate } from "~/app/(potential-calc)/calc/
 import { PotentialCalcMolecule } from "~/app/(potential-calc)/calc/potential/_lib/molecules";
 import { Potential } from "~/entities/potential";
 import { cx } from "~/shared/style";
-import { DefaultModal, S } from "~/shared/ui";
+import { Button, DefaultModal } from "~/shared/ui";
 
 import { CreateOptionPresetModal } from "./CreateOptionPresetModal";
 import { EditNameModal } from "./EditNameModal";
@@ -60,7 +61,7 @@ export const OptionSectionContent = ({ className }: Props) => {
                 계속하시겠습니까?
               </div>
               <div className="flex gap-2">
-                <S.Button
+                <Button
                   onPress={() => {
                     close();
                   }}
@@ -68,8 +69,8 @@ export const OptionSectionContent = ({ className }: Props) => {
                   color="secondary"
                 >
                   취소
-                </S.Button>
-                <S.Button
+                </Button>
+                <Button
                   onPress={() => {
                     set(editOptionPresetAtom, currentOptionPreset.name, {
                       optionSets: pipe(
@@ -84,7 +85,7 @@ export const OptionSectionContent = ({ className }: Props) => {
                   color="secondary"
                 >
                   확인
-                </S.Button>
+                </Button>
               </div>
             </DefaultModal>
           ));
@@ -128,7 +129,7 @@ export const OptionSectionContent = ({ className }: Props) => {
     <div className={className}>
       {currentOptionPreset && (
         <div className="flex">
-          <S.Chip
+          <Chip
             size="sm"
             color="secondary"
             variant="shadow"
@@ -136,8 +137,8 @@ export const OptionSectionContent = ({ className }: Props) => {
           >
             현재 프리셋:
             <span className="ml-1.5 font-bold">{currentOptionPreset.name}</span>
-          </S.Chip>
-          <S.Button
+          </Chip>
+          <Button
             size="sm"
             className="ml-1 h-6 w-6 min-w-fit"
             radius="md"
@@ -149,7 +150,7 @@ export const OptionSectionContent = ({ className }: Props) => {
             }}
           >
             <Pencil className="size-3" />
-          </S.Button>
+          </Button>
         </div>
       )}
       <div className="mt-3 flex flex-col gap-3">
@@ -157,7 +158,7 @@ export const OptionSectionContent = ({ className }: Props) => {
           <OptionSetSetting key={i} index={i} />
         ))}
         <div className="flex w-full flex-col gap-2">
-          <S.Button
+          <Button
             size="md"
             onPress={() => {
               addOptionSet();
@@ -166,9 +167,9 @@ export const OptionSectionContent = ({ className }: Props) => {
             className="w-full"
           >
             <Plus className="size-4" /> 옵션 세트 추가
-          </S.Button>
+          </Button>
           <div className="flex w-full flex-col gap-2 md:flex-row">
-            <S.Button
+            <Button
               size="md"
               isDisabled={!isOptionSetFormValid}
               onPress={() => {
@@ -187,8 +188,8 @@ export const OptionSectionContent = ({ className }: Props) => {
               className="w-full md:w-0 md:flex-1"
             >
               <ListPlus className="size-4" /> 새 프리셋으로 저장
-            </S.Button>
-            <S.Button
+            </Button>
+            <Button
               size="md"
               onPress={() => {
                 openEditOptionPresetModal();
@@ -199,7 +200,7 @@ export const OptionSectionContent = ({ className }: Props) => {
               className="w-full md:w-0 md:flex-1"
             >
               <Pencil className="size-4" /> 현재 프리셋에 덮어쓰기
-            </S.Button>
+            </Button>
           </div>
         </div>
       </div>

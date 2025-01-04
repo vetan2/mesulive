@@ -66,7 +66,7 @@ const potentialCalcMoleculeConstructor = ((_, scope) => {
     },
   );
 
-  const _gradeAtom = atom<Potential.Grade>(Potential.grades[0]);
+  const _gradeAtom = atom<Potential.Grade>("LEGENDARY");
   const gradeAtom = atom(
     (get) => get(_gradeAtom),
     (get, set, input: string) => {

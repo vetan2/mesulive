@@ -3,7 +3,7 @@
 import { useSetAtom } from "jotai";
 
 import { bonusStatCalcAtoms } from "~/app/(bonus-stat-calc)/calc/bonus-stat/_lib";
-import { S } from "~/shared/ui";
+import { Button } from "~/shared/ui";
 
 export const OpenStatSimulationModalButton = () => {
   const setIsStatSimulationModalOpen = useSetAtom(
@@ -11,7 +11,7 @@ export const OpenStatSimulationModalButton = () => {
   );
 
   return (
-    <S.Button
+    <Button
       className="w-full lg:hidden"
       color="secondary"
       onPress={() => {
@@ -19,6 +19,6 @@ export const OpenStatSimulationModalButton = () => {
       }}
     >
       스탯 환산치 계산
-    </S.Button>
+    </Button>
   );
 };

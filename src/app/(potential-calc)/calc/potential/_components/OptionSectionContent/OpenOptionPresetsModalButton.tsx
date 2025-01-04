@@ -5,7 +5,7 @@ import { List } from "lucide-react";
 import { overlay } from "overlay-kit";
 
 import { PotentialCalcMolecule } from "~/app/(potential-calc)/calc/potential/_lib/molecules";
-import { S } from "~/shared/ui";
+import { Button } from "~/shared/ui";
 
 import { OptionPresetsModal } from "./OptionPresetsModal";
 
@@ -13,7 +13,7 @@ export const OpenOptionPresetsModalButton = () => {
   const molecule = useMolecule(PotentialCalcMolecule);
 
   return (
-    <S.Button
+    <Button
       size="sm"
       onPress={() => {
         gtag("event", "potential_calc", {
@@ -33,6 +33,6 @@ export const OpenOptionPresetsModalButton = () => {
       color="secondary"
     >
       <List className="size-4" /> 프리셋
-    </S.Button>
+    </Button>
   );
 };

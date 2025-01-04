@@ -1,18 +1,19 @@
 "use client";
 
+import { SelectItem } from "@nextui-org/react";
 import { useMolecule } from "bunshi/react";
 import { useAtom } from "jotai";
 
 import { PotentialCalcMolecule } from "~/app/(potential-calc)/calc/potential/_lib/molecules";
 import { Potential } from "~/entities/potential";
-import { S } from "~/shared/ui";
+import { Select } from "~/shared/ui";
 
 export const GradeSelect = () => {
   const { gradeAtom } = useMolecule(PotentialCalcMolecule);
   const [grade, setGrade] = useAtom(gradeAtom);
 
   return (
-    <S.Select
+    <Select
       label="잠재능력 등급"
       onChange={(e) => {
         setGrade(e.target.value);
@@ -20,10 +21,10 @@ export const GradeSelect = () => {
       selectedKeys={[grade]}
     >
       {Potential.grades.map((grade) => (
-        <S.SelectItem key={grade} value={grade}>
+        <SelectItem key={grade} value={grade}>
           {Potential.gradeLabels[grade]}
-        </S.SelectItem>
+        </SelectItem>
       ))}
-    </S.Select>
+    </Select>
   );
 };

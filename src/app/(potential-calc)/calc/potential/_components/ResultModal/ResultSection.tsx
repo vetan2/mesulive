@@ -1,3 +1,4 @@
+import { Input } from "@nextui-org/react";
 import { pipe } from "fp-ts/lib/function";
 import { ArrowRightLeftIcon } from "lucide-react";
 import NextImage from "next/image";
@@ -13,7 +14,6 @@ import { maxFractionDigits, maxFractionDigitsString } from "~/shared/math";
 import { TopPctCost } from "~/shared/math/geometricDistribution";
 import { convertToNumber, putUnit } from "~/shared/number";
 import { cx } from "~/shared/style";
-import { S } from "~/shared/ui";
 
 const MAX_FRAC_DIGITS = 4;
 
@@ -111,7 +111,7 @@ export const ResultSection = ({ result, grade, level, className }: Props) => {
         </p>
       </div>
       <div className="flex items-start gap-2">
-        <S.Input
+        <Input
           classNames={{ base: cx("flex-1") }}
           type="number"
           value={topPct}
@@ -158,7 +158,7 @@ export const ResultSection = ({ result, grade, level, className }: Props) => {
           }
         />
         <ArrowRightLeftIcon className="mt-2 size-6 text-default-500" />
-        <S.Input
+        <Input
           classNames={{ base: cx("flex-1") }}
           type="number"
           value={cost}

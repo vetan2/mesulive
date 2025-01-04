@@ -1,6 +1,6 @@
 "use client";
 
-import { type AlertProps } from "@nextui-org/react";
+import { Alert, Link, type AlertProps } from "@nextui-org/react";
 import { omit } from "lodash-es";
 import { CirclePlus } from "lucide-react";
 import NextLink from "next/link";
@@ -10,7 +10,6 @@ import { getKSTDate } from "~/shared/date";
 import { cx } from "~/shared/style";
 import { mergeClassNames } from "~/shared/style/utils";
 import { type Optional } from "~/shared/types";
-import { S } from "~/shared/ui";
 
 interface Props {
   classNames?: AlertProps["classNames"] & { container?: string };
@@ -28,7 +27,7 @@ const noticeContents: (Optional<
     description: (
       <>
         2024.12.24{" "}
-        <S.Link
+        <Link
           as={NextLink}
           href="/calc/potential"
           className="text-sm text-white"
@@ -36,7 +35,7 @@ const noticeContents: (Optional<
           showAnchorIcon
         >
           잠재능력 계산기
-        </S.Link>
+        </Link>
         에 <b>미라클 타임</b> 기능이 추가되었습니다.
       </>
     ),
@@ -53,7 +52,7 @@ const noticeContents: (Optional<
     description: (
       <>
         2024.12.25{" "}
-        <S.Link
+        <Link
           as={NextLink}
           href="/calc/potential"
           className="text-sm text-white"
@@ -61,7 +60,7 @@ const noticeContents: (Optional<
           showAnchorIcon
         >
           잠재능력 계산기
-        </S.Link>
+        </Link>
         에 <b>옵션 세트 프리셋</b> 기능이 추가되었습니다.
       </>
     ),
@@ -89,7 +88,7 @@ export const Notices = ({ classNames }: Props) => {
           { variant, color, description, classNames: contentClassNames, icon },
           index,
         ) => (
-          <S.Alert
+          <Alert
             key={index}
             radius="full"
             icon={icon}

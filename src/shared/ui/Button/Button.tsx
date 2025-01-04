@@ -1,5 +1,6 @@
 "use client";
 
+// eslint-disable-next-line no-restricted-imports
 import { type ButtonProps, Button as ButtonOrig } from "@nextui-org/react";
 import { forwardRef } from "react";
 

@@ -1,6 +1,7 @@
 "use client";
 
 import {
+  // eslint-disable-next-line no-restricted-imports
   CheckboxGroup as CheckboxGroupOrig,
   type CheckboxGroupProps,
 } from "@nextui-org/react";

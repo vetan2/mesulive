@@ -1,12 +1,13 @@
 "use client";
 
+import { SelectItem } from "@nextui-org/react";
 import { useAtomValue, useSetAtom } from "jotai";
 import { match } from "ts-pattern";
 
 import { bonusStatCalcAtoms } from "~/app/(bonus-stat-calc)/calc/bonus-stat/_lib";
 import { equipTypeSchema } from "~/entities/equip";
 import { convertToNumber } from "~/shared/number";
-import { S } from "~/shared/ui";
+import { Select } from "~/shared/ui";
 
 export const WeaponGradeSelect = () => {
   const equipType = useAtomValue(bonusStatCalcAtoms.equipType);
@@ -14,7 +15,7 @@ export const WeaponGradeSelect = () => {
   const setWeaponGrade = useSetAtom(bonusStatCalcAtoms.weaponGrade);
 
   return (
-    <S.Select
+    <Select
       isDisabled={equipType !== equipTypeSchema.enum.WEAPON}
       label="무기 추옵 등급"
       defaultSelectedKeys={["none"]}
@@ -39,10 +40,10 @@ export const WeaponGradeSelect = () => {
           .map((_, i) => i + 1 + (isBossDrop ? 2 : 0))
           .reverse(),
       ].map((grade) => (
-        <S.SelectItem key={grade || "none"} value={grade || undefined}>
+        <SelectItem key={grade || "none"} value={grade || undefined}>
           {grade ? `${8 - grade}추` : "선택안함"}
-        </S.SelectItem>
+        </SelectItem>
       ))}
-    </S.Select>
+    </Select>
   );
 };

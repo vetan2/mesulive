@@ -1,3 +1,4 @@
+import { Input } from "@nextui-org/react";
 import { pipe } from "fp-ts/lib/function";
 import { ArrowRightLeftIcon } from "lucide-react";
 import { useEffect, useState } from "react";
@@ -8,7 +9,7 @@ import { O } from "~/shared/fp";
 import { maxFractionDigits, useTopPctCost } from "~/shared/math";
 import { convertToNumber, putUnit } from "~/shared/number";
 import { cx } from "~/shared/style";
-import { S, SectionSubtitle } from "~/shared/ui";
+import { SectionSubtitle } from "~/shared/ui";
 
 const MAX_FRAC_DIGITS = 4;
 
@@ -60,7 +61,7 @@ export const ResultRow = ({ method, prob }: Props) => {
           .otherwise(() => "")}
       </p>
       <div className="mt-2 flex items-start gap-2">
-        <S.Input
+        <Input
           classNames={{ base: cx("flex-1") }}
           type="number"
           startContent={
@@ -97,7 +98,7 @@ export const ResultRow = ({ method, prob }: Props) => {
           }}
         />
         <ArrowRightLeftIcon className="size-6 text-default-500" />
-        <S.Input
+        <Input
           classNames={{ base: cx("flex-1") }}
           type="number"
           endContent={

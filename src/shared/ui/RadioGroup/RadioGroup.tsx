@@ -1,6 +1,7 @@
 "use client";
 
 import {
+  // eslint-disable-next-line no-restricted-imports
   RadioGroup as RadioGroupOrig,
   type RadioGroupProps,
 } from "@nextui-org/react";

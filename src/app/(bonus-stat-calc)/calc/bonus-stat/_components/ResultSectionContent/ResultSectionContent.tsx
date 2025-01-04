@@ -1,11 +1,11 @@
 "use client";
 
+import { CircularProgress } from "@nextui-org/react";
 import { AnimatePresence, m } from "framer-motion";
 import { match } from "ts-pattern";
 
 import { useCalcResult } from "~/app/(bonus-stat-calc)/calc/bonus-stat/_lib/hooks";
 import { BonusStat } from "~/entities/bonus-stat";
-import { S } from "~/shared/ui";
 
 import { ResultRow } from "./ResultRow";
 
@@ -31,7 +31,7 @@ export const ResultSectionContent = () => {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
           >
-            <S.CircularProgress
+            <CircularProgress
               classNames={{ svg: "w-20 h-20" }}
               aria-label="Loading..."
             />
